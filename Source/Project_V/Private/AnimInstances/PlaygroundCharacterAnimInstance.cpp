@@ -15,6 +15,8 @@ void UPlaygroundCharacterAnimInstance::NativeInitializeAnimation()
 	}
 }
 
+
+
 void UPlaygroundCharacterAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 {
 	if (!OwningCharacter || !OwningMovementComponent)
