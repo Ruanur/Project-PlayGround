@@ -10,6 +10,7 @@
 #include "DataAssets/Input/DataAsset_InputConfig.h"
 #include "Components/Input/PlaygroundInputComponent.h"
 #include "PlaygroundGameplayTags.h"
+#include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -44,6 +45,19 @@ APlaygroundPlayerCharacter::APlaygroundPlayerCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 }
 
+void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (PlaygroundAbilitySystemComponent && PlaygroundAttributeSet)
+	{
+		const FString ASCText = FString::Printf(TEXT("Owner Actor: %s, AvatarActor: %s"), *PlaygroundAbilitySystemComponent->GetOwnerActor()->GetActorLabel(), *PlaygroundAbilitySystemComponent->GetAvatarActor()->GetActorLabel());
+
+		Debug::Print(TEXT("Ability system component valid") + ASCText, FColor::Green);
+		Debug::Print(TEXT("AttributeSet valid. ") + ASCText, FColor::Green);
+	}
+}
+
 void APlaygroundPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	checkf(InputConfigDataAsset, TEXT("Forgot to assign a valid data asset as input config"));
@@ -64,8 +78,6 @@ void APlaygroundPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Play
 void APlaygroundPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Debug::Print(TEXT("Workinig"));
 }
 
 void APlaygroundPlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)

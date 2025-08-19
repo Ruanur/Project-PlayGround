@@ -4,10 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "AbilitySystemInterface.h"
 #include "PlaygroundBaseCharacter.generated.h"
 
+
+class UPlaygroundAbilitySystemComponent;
+class UPlaygroundAttributeSet;
+
 UCLASS()
-class PROJECT_V_API APlaygroundBaseCharacter : public ACharacter
+class PROJECT_V_API APlaygroundBaseCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -15,5 +20,25 @@ public:
 	// Sets default values for this character's properties
 	APlaygroundBaseCharacter();
 
+	//~ Begin IAbilitySystemInterface Interface.
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const;
+	//~ End IAbilitySystemInterface Interface
 
+protected:
+
+	//~ Begin APawn Interface.
+	virtual void PossessedBy(AController* NewController) override;
+	//~ End APawn Interface
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem");
+	UPlaygroundAbilitySystemComponent* PlaygroundAbilitySystemComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem");
+	UPlaygroundAttributeSet* PlaygroundAttributeSet;
+
+public: 
+	FORCEINLINE UPlaygroundAbilitySystemComponent* GetPlaygroundAbilitySystemComponent() const { return PlaygroundAbilitySystemComponent; }
+	
+	FORCEINLINE UPlaygroundAttributeSet* GetPlaygroundAttributeSet() const { return PlaygroundAttributeSet; }
+	
 };

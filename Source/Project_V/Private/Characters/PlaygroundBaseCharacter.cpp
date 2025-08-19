@@ -2,6 +2,8 @@
 
 
 #include "Characters/PlaygroundBaseCharacter.h"
+#include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
+#include "AbilitySystem/PlaygroundAttributeSet.h"
 
 // Sets default values
 APlaygroundBaseCharacter::APlaygroundBaseCharacter()
@@ -12,6 +14,24 @@ APlaygroundBaseCharacter::APlaygroundBaseCharacter()
 
 	GetMesh()->bReceivesDecals = false;
 
+	PlaygroundAbilitySystemComponent = CreateDefaultSubobject<UPlaygroundAbilitySystemComponent>(TEXT("PlaygroundAbilitySystemComponent"));
+
+	PlaygroundAttributeSet = CreateDefaultSubobject<UPlaygroundAttributeSet>(TEXT("PlaygroundAttributeSet"));
+}
+
+UAbilitySystemComponent* APlaygroundBaseCharacter::GetAbilitySystemComponent() const
+{
+	return GetPlaygroundAbilitySystemComponent();
+}
+
+void APlaygroundBaseCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (PlaygroundAbilitySystemComponent)
+	{
+		PlaygroundAbilitySystemComponent->InitAbilityActorInfo(this, this);
+	}
 }
 
 

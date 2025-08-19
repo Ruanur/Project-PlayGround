@@ -14,7 +14,8 @@ public class Project_V : ModuleRules
 			"Engine", 
 			"InputCore", 
 			"EnhancedInput", 
-			"GameplayTags"});
+			"GameplayTags",
+			"GameplayTasks"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
