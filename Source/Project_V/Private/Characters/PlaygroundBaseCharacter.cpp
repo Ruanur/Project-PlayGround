@@ -1,6 +1,6 @@
 // Copyright 2025. Jinsol Co. All rights reserved
 
-
+//GAS ±â¹Ý
 #include "Characters/PlaygroundBaseCharacter.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "AbilitySystem/PlaygroundAttributeSet.h"

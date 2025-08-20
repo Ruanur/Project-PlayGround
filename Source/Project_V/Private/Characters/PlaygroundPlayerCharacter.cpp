@@ -115,5 +115,4 @@ void APlaygroundPlayerCharacter::Input_Look(const FInputActionValue& InputAction
 	{
 		AddControllerPitchInput(LookAxisVector.Y * LookSensitivityPitch);
 	}
-
 }
