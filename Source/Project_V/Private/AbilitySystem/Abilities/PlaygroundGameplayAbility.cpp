@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/Abilities/PlaygroundGameplayAbility.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
+#include "Components/Combat/PawnCombatComponent.h"
 
 void UPlaygroundGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
@@ -35,4 +36,9 @@ void UPlaygroundGameplayAbility::EndAbility(
         }
     }
    
+}
+
+UPawnCombatComponent* UPlaygroundGameplayAbility::GetPawnCombatComponentFromActorInfo() const
+{
+    return GetAvatarActorFromActorInfo()->FindComponentByClass<UPawnCombatComponent>();
 }
