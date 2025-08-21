@@ -77,6 +77,8 @@ void APlaygroundPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Play
 
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Look, ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
+
+	PlaygroundInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &ThisClass::Input_AbilityInputPressed, &ThisClass::Input_AbilityInputReleased);
 }
 
 void APlaygroundPlayerCharacter::BeginPlay()
@@ -119,4 +121,14 @@ void APlaygroundPlayerCharacter::Input_Look(const FInputActionValue& InputAction
 	{
 		AddControllerPitchInput(LookAxisVector.Y * LookSensitivityPitch);
 	}
+}
+
+void APlaygroundPlayerCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag)
+{
+	PlaygroundAbilitySystemComponent->OnAbilityInputPressed(InInputTag);
+}
+
+void APlaygroundPlayerCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag)
+{
+	PlaygroundAbilitySystemComponent->OnAbilityInputReleased(InInputTag);
 }

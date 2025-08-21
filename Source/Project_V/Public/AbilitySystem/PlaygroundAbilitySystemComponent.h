@@ -14,4 +14,7 @@ class PROJECT_V_API UPlaygroundAbilitySystemComponent : public UAbilitySystemCom
 {
 	GENERATED_BODY()
 	
+public:
+	void OnAbilityInputPressed(const FGameplayTag& InInputTag);
+	void OnAbilityInputReleased(const FGameplayTag& InInputTag);
 };
