@@ -29,6 +29,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInputAction* InputAction;
+
+	bool IsVaild() const
+	{
+		return InputTag.IsValid() && InputAction;
+	}
 };
 // -----------------------------
 // 입력 설정을 Data Asset으로 관리하는 클래스
@@ -54,4 +59,7 @@ public:
 	// - 배열에서 InputTag를 검색
 	// - 일치하는 항목이 없거나 유효하지 않으면 nullptr 반환
 	UInputAction* FindNativeInputActionByTag(const FGameplayTag& InInputTag) const;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
+	TArray<FPlaygroundInputActionConfig> AbilityInputActions;
 };
