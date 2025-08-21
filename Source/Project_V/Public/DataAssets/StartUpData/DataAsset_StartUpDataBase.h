@@ -17,7 +17,7 @@ class PROJECT_V_API UDataAsset_StartUpDataBase : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	virtual void GiveToAbilitySystemComponent(UPlaygroundAbilitySystemComponent* InPlayergroundASCToGive, int32 ApplyLevel = 1);
+	virtual void GiveToAbilitySystemComponent(UPlaygroundAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "StartUpData")
@@ -27,7 +27,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "StartUpData")
 	TArray<TSubclassOf<UPlaygroundGameplayAbility>> ReactiveAbilities;
 
-	void GrantAbilities(const TArray<TSubclassOf<UPlaygroundGameplayAbility>>& InAbilitiesToGive, UPlaygroundAbilitySystemComponent* InPlayergroundASCToGive, int32 ApplyLevel = 1);
+	void GrantAbilities(const TArray<TSubclassOf<UPlaygroundGameplayAbility>>& InAbilitiesToGive, UPlaygroundAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
 
 	
 };

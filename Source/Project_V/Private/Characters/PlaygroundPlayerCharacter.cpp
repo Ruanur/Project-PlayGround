@@ -11,6 +11,7 @@
 #include "Components/Input/PlaygroundInputComponent.h"
 #include "PlaygroundGameplayTags.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
+#include "DataAssets/StartUpData/DataAsset_PlayerStartUpData.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -49,12 +50,12 @@ void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if (PlaygroundAbilitySystemComponent && PlaygroundAttributeSet)
+	if (!CharacterStartUpData.IsNull())
 	{
-		const FString ASCText = FString::Printf(TEXT("Owner Actor: %s, AvatarActor: %s"), *PlaygroundAbilitySystemComponent->GetOwnerActor()->GetActorLabel(), *PlaygroundAbilitySystemComponent->GetAvatarActor()->GetActorLabel());
-
-		Debug::Print(TEXT("Ability system component valid") + ASCText, FColor::Green);
-		Debug::Print(TEXT("AttributeSet valid. ") + ASCText, FColor::Green);
+		if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous())
+		{
+			LoadedData->GiveToAbilitySystemComponent(PlaygroundAbilitySystemComponent);
+		}
 	}
 }
 

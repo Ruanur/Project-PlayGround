@@ -5,15 +5,15 @@
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/PlaygroundGameplayAbility.h"
 
-void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UPlaygroundAbilitySystemComponent* InPlayergroundASCToGive, int32 ApplyLevel)
+void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UPlaygroundAbilitySystemComponent* InASCToGive, int32 ApplyLevel)
 {
-	check(InPlayergroundASCToGive);
+	check(InASCToGive);
 
-	GrantAbilities(ActivateOnGivenAbilities, InPlayergroundASCToGive, ApplyLevel);
-	GrantAbilities(ReactiveAbilities, InPlayergroundASCToGive, ApplyLevel);
+	GrantAbilities(ActivateOnGivenAbilities, InASCToGive, ApplyLevel);
+	GrantAbilities(ReactiveAbilities, InASCToGive, ApplyLevel);
 }
 
-void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UPlaygroundGameplayAbility>>& InAbilitiesToGive, UPlaygroundAbilitySystemComponent* InPlayergroundASCToGive, int32 ApplyLevel)
+void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UPlaygroundGameplayAbility>>& InAbilitiesToGive, UPlaygroundAbilitySystemComponent* InASCToGive, int32 ApplyLevel)
 {
 	if (InAbilitiesToGive.IsEmpty())
 	{
@@ -25,10 +25,10 @@ void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UPlaygr
 		if (!Ability) continue;
 
 		FGameplayAbilitySpec AbilitySpec(Ability);
-		AbilitySpec.SourceObject = InPlayergroundASCToGive->GetAvatarActor();
+		AbilitySpec.SourceObject = InASCToGive->GetAvatarActor();
 		AbilitySpec.Level = ApplyLevel;
 
 
-		InPlayergroundASCToGive->GiveAbility(AbilitySpec);
+		InASCToGive->GiveAbility(AbilitySpec);
 	}
 }

@@ -10,6 +10,7 @@
 
 class UPlaygroundAbilitySystemComponent;
 class UPlaygroundAttributeSet;
+class UDataAsset_StartUpDataBase;
 
 UCLASS()
 class PROJECT_V_API APlaygroundBaseCharacter : public ACharacter, public IAbilitySystemInterface
@@ -35,6 +36,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem");
 	UPlaygroundAttributeSet* PlaygroundAttributeSet;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData");
+	TSoftObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
 
 public: 
 	FORCEINLINE UPlaygroundAbilitySystemComponent* GetPlaygroundAbilitySystemComponent() const { return PlaygroundAbilitySystemComponent; }
