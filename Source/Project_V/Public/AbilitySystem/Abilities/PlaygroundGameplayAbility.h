@@ -7,6 +7,7 @@
 #include "PlaygroundGameplayAbility.generated.h"
 
 class UPawnCombatComponent;
+class UPlaygroundAbilitySystemComponent;
 
 UENUM(BlueprintType)
 enum class EPlaygroundAbilityActivationPolicy : uint8
@@ -38,5 +39,8 @@ protected:
 
 	UFUNCTION(BlueprintPure, Category = "Playground|Ability")
 	UPawnCombatComponent* GetPawnCombatComponentFromActorInfo() const;
+
+	UFUNCTION(BlueprintPure, Category = "Playground|Ability")
+	UPlaygroundAbilitySystemComponent* GetPlaygroundAbilitySystemComponentFromActorInfo() const;
 	
 };
