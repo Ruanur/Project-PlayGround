@@ -18,7 +18,7 @@ class PROJECT_V_API UPlaygroundCharacterAnimInstance : public UPlaygroundBaseAni
 
 public:
 	virtual void NativeInitializeAnimation() override;
-	virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds);
+	virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds) override;
 
 protected:
 	UPROPERTY()

@@ -12,6 +12,7 @@
 #include "PlaygroundGameplayTags.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "DataAssets/StartUpData/DataAsset_PlayerStartUpData.h"
+#include "Components/Combat/PlayerCombatComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -44,6 +45,8 @@ APlaygroundPlayerCharacter::APlaygroundPlayerCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+
+	PlayerCombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("PlayerCombatComponent"));
 }
 
 void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)

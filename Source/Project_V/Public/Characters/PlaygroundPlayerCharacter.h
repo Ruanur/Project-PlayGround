@@ -6,10 +6,12 @@
 #include "Characters/PlaygroundBaseCharacter.h"
 #include "PlaygroundPlayerCharacter.generated.h"
 
+
 class USpringArmComponent;
 class UCameraComponent;
 class UDataAsset_InputConfig;
 struct FInputActionValue;
+class UPlayerCombatComponent;
 
 /**
  * 
@@ -41,6 +43,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"));
 	UCameraComponent* FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"));
+	UPlayerCombatComponent* PlayerCombatComponent;
 #pragma region Inputs
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"));
 	UDataAsset_InputConfig* InputConfigDataAsset;
@@ -49,5 +53,7 @@ private:
 	void Input_Look(const FInputActionValue& InputActionValue);
 #pragma endregion
 
+public:
+	FORCEINLINE UPlayerCombatComponent* GetPlayerCombatComponent() const { return PlayerCombatComponent; }
 
 };
