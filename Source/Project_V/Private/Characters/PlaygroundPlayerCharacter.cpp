@@ -28,9 +28,10 @@ APlaygroundPlayerCharacter::APlaygroundPlayerCharacter()
 	bUseControllerRotationYaw = false;
 
 
-	//카메라 거리와 각도 조절
+	//카메라 거리와 각도 조절, 카메라 세팅
 	//SocketOffset: 카메라 붐 위치 조정 
 	//bUsePawnControlRotation: 컨트롤러 회전을 따라 카메라 회전
+	//TODO : 줌 인, 줌 아웃 확장
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 200.f;
@@ -46,13 +47,17 @@ APlaygroundPlayerCharacter::APlaygroundPlayerCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
+	//Combat Component 추가
 	PlayerCombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("PlayerCombatComponent"));
 }
 
+//플레이어가 Controller에 의해 소유될 때 호출
 void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
+	//CharacterStartUpData 동기 로드 
+	//플레이어 시작 시 어빌리티, 애트리뷰트 부여
 	if (!CharacterStartUpData.IsNull())
 	{
 		if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous())
@@ -62,6 +67,7 @@ void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
 	}
 }
 
+//입력 바인딩 - Enhanced Input System
 void APlaygroundPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	checkf(InputConfigDataAsset, TEXT("Forgot to assign a valid data asset as input config"));
@@ -106,6 +112,9 @@ void APlaygroundPlayerCharacter::Input_Move(const FInputActionValue& InputAction
 	}
 }
 
+//마우스를 통한 회전
+//감도 하드코딩 1.0 
+// TODO: 환경 설정 내에서 설정 가능하게 확장
 void APlaygroundPlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 {
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
@@ -123,6 +132,8 @@ void APlaygroundPlayerCharacter::Input_Look(const FInputActionValue& InputAction
 	}
 }
 
+
+//입력 이벤트 전달_ASC
 void APlaygroundPlayerCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag)
 {
 	PlaygroundAbilitySystemComponent->OnAbilityInputPressed(InInputTag);
