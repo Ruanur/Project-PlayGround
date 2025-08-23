@@ -2,4 +2,9 @@
 
 
 #include "AnimInstances/Player/PlaygroundPlayerLinkedAnimLayer.h"
+#include "AnimInstances/Player/PlaygroundPlayerAnimInstance.h"
 
+UPlaygroundPlayerAnimInstance* UPlaygroundPlayerLinkedAnimLayer::GetPlayerAnimInstance() const
+{
+    return Cast<UPlaygroundPlayerAnimInstance>(GetOwningComponent()->GetAnimInstance());;
+}

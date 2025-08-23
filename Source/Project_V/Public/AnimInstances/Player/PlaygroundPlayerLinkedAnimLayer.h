@@ -6,6 +6,7 @@
 #include "AnimInstances/PlaygroundBaseAnimInstance.h"
 #include "PlaygroundPlayerLinkedAnimLayer.generated.h"
 
+class UPlaygroundPlayerAnimInstance;
 /**
  * 
  */
@@ -14,4 +15,8 @@ class PROJECT_V_API UPlaygroundPlayerLinkedAnimLayer : public UPlaygroundBaseAni
 {
 	GENERATED_BODY()
 	
+
+public:
+	UFUNCTION(BlueprintPure, meta = (NotBlueprintThreadSafe))
+	UPlaygroundPlayerAnimInstance* GetPlayerAnimInstance() const;
 };
