@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Items/Weapons/PlaygroundWeaponBase.h"
+#include "PlayergroundTypes/PlaygroundStructTypes.h"
 #include "PlaygroundPlayerWeapon.generated.h"
 
 /**
@@ -14,4 +15,7 @@ class PROJECT_V_API APlaygroundPlayerWeapon : public APlaygroundWeaponBase
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	FPlaygroundPlayerWeaponData PlayerWeaponData;
 };
