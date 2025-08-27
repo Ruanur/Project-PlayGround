@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "Items/Weapons/PlaygroundWeaponBase.h"
 #include "PlayergroundTypes/PlaygroundStructTypes.h"
+#include "GameplayAbilitySpecHandle.h"
 #include "PlaygroundPlayerWeapon.generated.h"
+
 
 /**
  * 
@@ -18,4 +20,13 @@ class PROJECT_V_API APlaygroundPlayerWeapon : public APlaygroundWeaponBase
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
 	FPlaygroundPlayerWeaponData PlayerWeaponData;
+
+	UFUNCTION(BlueprintCallable)
+	void AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle>& InSpecHandles);
+
+	UFUNCTION(BlueprintPure)
+	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;
+
+private:
+	TArray<FGameplayAbilitySpecHandle> GrantedAbilitySpecHandles;
 };

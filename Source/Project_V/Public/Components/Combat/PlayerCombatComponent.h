@@ -17,5 +17,5 @@ class PROJECT_V_API UPlayerCombatComponent : public UPawnCombatComponent
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "Playground|Combat")
-	APlaygroundPlayerWeapon* GetHeroCarriedWeaponByTag(FGameplayTag InWeaponTag) const;
+	APlaygroundPlayerWeapon* GetPlayerCarriedWeaponByTag(FGameplayTag InWeaponTag) const;
 };

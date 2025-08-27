@@ -4,7 +4,7 @@
 #include "Components/Combat/PlayerCombatComponent.h"
 #include "Items/Weapons/PlaygroundPlayerWeapon.h"
 
-APlaygroundPlayerWeapon* UPlayerCombatComponent::GetHeroCarriedWeaponByTag(FGameplayTag InWeaponTag) const
+APlaygroundPlayerWeapon* UPlayerCombatComponent::GetPlayerCarriedWeaponByTag(FGameplayTag InWeaponTag) const
 {
     return Cast<APlaygroundPlayerWeapon>(GetCharacterCarriedWeaponByTag(InWeaponTag));
 }

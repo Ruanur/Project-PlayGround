@@ -3,3 +3,12 @@
 
 #include "Items/Weapons/PlaygroundPlayerWeapon.h"
 
+void APlaygroundPlayerWeapon::AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle>& InSpecHandles)
+{
+	GrantedAbilitySpecHandles = InSpecHandles;
+}
+
+TArray<FGameplayAbilitySpecHandle> APlaygroundPlayerWeapon::GetGrantedAbilitySpecHandles() const
+{
+	return GrantedAbilitySpecHandles;
+}
