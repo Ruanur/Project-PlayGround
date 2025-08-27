@@ -30,7 +30,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInputAction* InputAction;
 
-	bool IsVaild() const
+	bool IsValid() const
 	{
 		return InputTag.IsValid() && InputAction;
 	}

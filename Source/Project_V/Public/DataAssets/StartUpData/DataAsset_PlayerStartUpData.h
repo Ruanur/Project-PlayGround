@@ -4,23 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
-#include "GameplayTagContainer.h"
+#include "PlayergroundTypes/PlaygroundStructTypes.h"
 #include "DataAsset_PlayerStartUpData.generated.h"
 
-
-USTRUCT(BlueprintType)
-struct FPlaygroundPlayerAbilitySet
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "InputTag"))
-	FGameplayTag InputTag;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UPlaygroundGameplayAbility> AbilityToGrant;
-
-	bool IsVaild() const;
-};
 
 /**
  * 

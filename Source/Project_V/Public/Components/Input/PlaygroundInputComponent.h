@@ -41,7 +41,7 @@ inline void UPlaygroundInputComponent::BindAbilityInputAction(const UDataAsset_I
 
 	for (const FPlaygroundInputActionConfig& AbilityInputActionConfig : InInputConfig->AbilityInputActions)
 	{
-		if (!AbilityInputActionConfig.IsVaild())
+		if (!AbilityInputActionConfig.IsValid())
 		{
 			continue;
 		}
