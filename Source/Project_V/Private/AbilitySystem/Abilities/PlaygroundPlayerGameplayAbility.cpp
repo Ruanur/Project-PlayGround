@@ -17,11 +17,12 @@ APlaygroundPlayerCharacter* UPlaygroundPlayerGameplayAbility::GetPlayerCharacter
 
 APlayGroundPlayerController* UPlaygroundPlayerGameplayAbility::GetPlayerControllerFromActorInfo()
 {
-    if (CachedPlaygroundPlayerController.IsValid())
+    if (!CachedPlaygroundPlayerController.IsValid())
     {
         CachedPlaygroundPlayerController = Cast<APlayGroundPlayerController>(CurrentActorInfo->PlayerController);
     }
-    return CachedPlaygroundPlayerController.IsValid() ? CachedPlaygroundPlayerController.Get() : nullptr;
+
+    return CachedPlaygroundPlayerController.IsValid()? CachedPlaygroundPlayerController.Get() : nullptr;
 }
 
 UPlayerCombatComponent* UPlaygroundPlayerGameplayAbility::GetPlayerCombatComponentFromActorInfo()

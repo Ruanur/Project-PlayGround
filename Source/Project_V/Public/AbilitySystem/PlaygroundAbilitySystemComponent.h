@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "PlayergroundTypes/PlaygroundStructTypes.h"
 #include "PlaygroundAbilitySystemComponent.generated.h"
 
 /**
@@ -17,4 +18,7 @@ class PROJECT_V_API UPlaygroundAbilitySystemComponent : public UAbilitySystemCom
 public:
 	void OnAbilityInputPressed(const FGameplayTag& InInputTag);
 	void OnAbilityInputReleased(const FGameplayTag& InInputTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Playground|Ability", meta = (ApplyLevel = "1"))
+	void GrantPlayerWeaponAbilities(const TArray<FPlaygroundPlayerAbilitySet>& InDefaultWeaponAbilities, int32 ApplyLevel, TArray<FGameplayAbilitySpecHandle>& OutGrantedAbilitySpecHandles);
 };

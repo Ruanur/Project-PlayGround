@@ -26,7 +26,7 @@ struct FPlaygroundPlayerAbilitySet
 USTRUCT(BlueprintType)
 struct FPlaygroundPlayerWeaponData
 {
-	GENERATED_BODY()
+	GENERATED_BODY() 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UPlaygroundPlayerLinkedAnimLayer> WeaponAnimLayerToLink;
