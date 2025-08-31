@@ -6,7 +6,7 @@
 #include "PlaygroundStructTypes.generated.h"
 
 class UPlaygroundPlayerLinkedAnimLayer;
-class UPlaygroundGameplayAbility;
+class UPlaygroundPlayerGameplayAbility;
 class UInputMappingContext;
 
 USTRUCT(BlueprintType)
@@ -18,7 +18,7 @@ struct FPlaygroundPlayerAbilitySet
 	FGameplayTag InputTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UPlaygroundGameplayAbility> AbilityToGrant;
+	TSubclassOf<UPlaygroundPlayerGameplayAbility> AbilityToGrant;
 
 	bool IsValid() const;
 };

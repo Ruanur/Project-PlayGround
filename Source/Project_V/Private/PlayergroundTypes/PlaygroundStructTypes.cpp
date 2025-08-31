@@ -2,7 +2,7 @@
 
 
 #include "PlayergroundTypes/PlaygroundStructTypes.h"
-#include "AbilitySystem/Abilities/PlaygroundGameplayAbility.h"
+#include "AbilitySystem/Abilities/PlaygroundPlayerGameplayAbility.h"
 
 bool FPlaygroundPlayerAbilitySet::IsValid() const
 {

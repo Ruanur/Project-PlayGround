@@ -17,9 +17,6 @@ void UPawnCombatComponent::RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegis
 	{
 		CurrentEquippedWeaponTag = InWeaponTagToRegister;
 	}
-
-	const FString WeaponString = FString::Printf(TEXT("A Weapon Named: %s has been registered using the tag %s"), *InWeaponToRegister->GetName(), *InWeaponTagToRegister.ToString());
-	Debug::Print(WeaponString);
 }
 
 APlaygroundWeaponBase* UPawnCombatComponent::GetCharacterCarriedWeaponByTag(FGameplayTag InWeaponTagToGet) const
