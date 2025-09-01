@@ -19,6 +19,7 @@ void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UPlaygroundAbility
 			if (!EffectClass) continue;
 
 			UGameplayEffect* EffectCDO = EffectClass->GetDefaultObject<UGameplayEffect>();
+
 			InASCToGive->ApplyGameplayEffectToSelf(
 				EffectCDO,
 				ApplyLevel,
