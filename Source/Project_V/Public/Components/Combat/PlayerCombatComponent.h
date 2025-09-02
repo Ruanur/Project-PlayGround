@@ -18,4 +18,7 @@ class PROJECT_V_API UPlayerCombatComponent : public UPawnCombatComponent
 public:
 	UFUNCTION(BlueprintCallable, Category = "Playground|Combat")
 	APlaygroundPlayerWeapon* GetPlayerCarriedWeaponByTag(FGameplayTag InWeaponTag) const;
+
+	virtual void OnHitTargetActor(AActor* HitActor) override;
+	virtual void OnWeaponPulledFromTargetActor(AActor* InteractedActor) override;
 };

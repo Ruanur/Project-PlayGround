@@ -7,6 +7,10 @@
 #include "PlaygroundWeaponBase.generated.h"
 
 class UBoxComponent;
+
+
+DECLARE_DELEGATE_OneParam(FOnTargetInteractedDelegate, AActor*)
+
 UCLASS()
 class PROJECT_V_API APlaygroundWeaponBase : public AActor
 {
@@ -15,6 +19,9 @@ class PROJECT_V_API APlaygroundWeaponBase : public AActor
 public:
 	// Sets default values for this actor's properties
 	APlaygroundWeaponBase();
+
+	FOnTargetInteractedDelegate OnWeaponHitTarget;
+	FOnTargetInteractedDelegate OnWeaponPulledFromTarget;
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapons")
