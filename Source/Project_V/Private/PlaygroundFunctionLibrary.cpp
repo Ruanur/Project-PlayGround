@@ -63,5 +63,5 @@ UPawnCombatComponent* UPlaygroundFunctionLibrary::BP_GetPawnCombatComponentFromA
 
 	OutValidType = CombatComponent ? EPlaygroundValidType::Valid : EPlaygroundValidType::InValid;
 
-	return nullptr;
+	return CombatComponent;
 }

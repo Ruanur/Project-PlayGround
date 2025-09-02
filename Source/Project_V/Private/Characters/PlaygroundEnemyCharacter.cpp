@@ -69,8 +69,6 @@ void APlaygroundEnemyCharacter::InitEnemyStartUpData()
 					//GiveToAbilitySystemComponent에 로드된 데이터 전달
 					//이를 통해 초기 데이터 전달
 					LoadedData->GiveToAbilitySystemComponent(PlaygroundAbilitySystemComponent);
-
-					Debug::Print(TEXT("Loaded Enemy Data"), FColor::Blue);
 				}
 			}
 		)
