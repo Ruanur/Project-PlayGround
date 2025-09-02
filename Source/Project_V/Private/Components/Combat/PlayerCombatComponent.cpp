@@ -3,6 +3,8 @@
 
 #include "Components/Combat/PlayerCombatComponent.h"
 #include "Items/Weapons/PlaygroundPlayerWeapon.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "PlaygroundGameplayTags.h"
 
 #include "PlaygroundDebugHelper.h"
 APlaygroundPlayerWeapon* UPlayerCombatComponent::GetPlayerCarriedWeaponByTag(FGameplayTag InWeaponTag) const
@@ -12,10 +14,25 @@ APlaygroundPlayerWeapon* UPlayerCombatComponent::GetPlayerCarriedWeaponByTag(FGa
 
 void UPlayerCombatComponent::OnHitTargetActor(AActor* HitActor)
 {
-    Debug::Print(GetOwningPawn()->GetActorNameOrLabel() + TEXT("Hit ") + HitActor->GetActorNameOrLabel(), FColor::Green);
+    if (OverlappedActors.Contains(HitActor))
+    {
+        return;
+    }
+
+    OverlappedActors.AddUnique(HitActor);
+
+    FGameplayEventData Data;
+    Data.Instigator = GetOwningPawn();
+    Data.Target = HitActor;
+
+    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+        GetOwningPawn(),
+        PlaygroundGameplayTags::Shared_Event_MeleeHit,
+        Data
+    );
 }
 
 void UPlayerCombatComponent::OnWeaponPulledFromTargetActor(AActor* InteractedActor)
 {
-    Debug::Print(GetOwningPawn()->GetActorNameOrLabel() + TEXT("'s Weapon Pulled From ") + InteractedActor->GetActorNameOrLabel(), FColor::Green);
+    
 }
