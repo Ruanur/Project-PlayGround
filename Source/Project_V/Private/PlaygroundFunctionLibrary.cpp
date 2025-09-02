@@ -3,6 +3,7 @@
 
 #include "PlaygroundFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Interfaces/PawnCombatInterface.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 
 UPlaygroundAbilitySystemComponent* UPlaygroundFunctionLibrary::NativeGetPlaygroundASCFromActor(AActor* InActor)
@@ -43,4 +44,24 @@ bool UPlaygroundFunctionLibrary::NativeDoesActorHaveTag(AActor* InActor, FGamepl
 void UPlaygroundFunctionLibrary::BP_DoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck, EPlaygroundConfrimType& OutConfrimType)
 {
 	OutConfrimType = NativeDoesActorHaveTag(InActor, TagToCheck) ? EPlaygroundConfrimType::Yes : EPlaygroundConfrimType::No;
+}
+
+UPawnCombatComponent* UPlaygroundFunctionLibrary::NativeGetPawnCombatComponentFromActor(AActor* InActor)
+{
+	check(InActor);
+	if (IPawnCombatInterface* PawnCombatInterface = Cast<IPawnCombatInterface>(InActor))
+	{
+		return PawnCombatInterface->GetPawnCombatComponent();
+	}
+
+	return nullptr;
+}
+
+UPawnCombatComponent* UPlaygroundFunctionLibrary::BP_GetPawnCombatComponentFromActor(AActor* InActor, EPlaygroundValidType& OutValidType)
+{
+	UPawnCombatComponent* CombatComponent = NativeGetPawnCombatComponentFromActor(InActor);
+
+	OutValidType = CombatComponent ? EPlaygroundValidType::Valid : EPlaygroundValidType::InValid;
+
+	return nullptr;
 }

@@ -31,8 +31,13 @@ APlaygroundEnemyCharacter::APlaygroundEnemyCharacter()
 
 	//전투 관련 로직을 처리할 UEnemyCombatComponent를 생성 후 몬스터에 추가
 	//전투 코드를 분리하여 관리
-	CreateDefaultSubobject<UEnemyCombatComponent>("EnemyCombatComponent");
+	EnemyCombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>("EnemyCombatComponent");
 
+}
+
+UPawnCombatComponent* APlaygroundEnemyCharacter::GetPawnCombatComponent() const
+{
+	return EnemyCombatComponent;
 }
 
 void APlaygroundEnemyCharacter::PossessedBy(AController* NewController)

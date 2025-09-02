@@ -19,6 +19,9 @@ class PROJECT_V_API APlaygroundEnemyCharacter : public APlaygroundBaseCharacter
 public:
 	APlaygroundEnemyCharacter();
 
+	//~ Begin IPawnCombatInterface Interface.
+	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+	//~ End IPawnCombatInterface Interface
 protected:
 	//~ Begin APawn Interface.
 	virtual void PossessedBy(AController* NewController) override;

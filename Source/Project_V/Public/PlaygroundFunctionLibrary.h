@@ -4,16 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "PlayergroundTypes/PlaygroundEnumTypes.h"
 #include "PlaygroundFunctionLibrary.generated.h"
 
 class UPlaygroundAbilitySystemComponent;
+class UPawnCombatComponent;
 
-UENUM()
-enum class EPlaygroundConfrimType : uint8
-{
-	Yes,
-	No
-};
 /**
  * 
  */
@@ -35,4 +31,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Playground|FunctionLibrary", meta = (DisplayName = "Does Actor Have Tag", ExpandEnumAsExecs = "OutConfrimType"))
 	static void BP_DoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck, EPlaygroundConfrimType& OutConfrimType);
+
+	static UPawnCombatComponent* NativeGetPawnCombatComponentFromActor(AActor* InActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Playground|FunctionLibrary", meta = (DisplayName = "Get Pawn Combat Component From Actor", ExpandEnumAsExecs = "OutValidType"))
+	static UPawnCombatComponent* BP_GetPawnCombatComponentFromActor(AActor* InActor, EPlaygroundValidType& OutValidType);
 };

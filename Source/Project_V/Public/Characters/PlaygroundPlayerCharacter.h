@@ -32,6 +32,11 @@ class PROJECT_V_API APlaygroundPlayerCharacter : public APlaygroundBaseCharacter
 public:
 	APlaygroundPlayerCharacter();
 	
+
+	//~ Begin IPawnCombatInterface Interface.
+	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+	//~ End IPawnCombatInterface Interface
+
 protected:
 	//플레이어가 Controller에 소유될 때 호출
 	//~ Begin APawn Interface.

@@ -24,6 +24,11 @@ UAbilitySystemComponent* APlaygroundBaseCharacter::GetAbilitySystemComponent() c
 	return GetPlaygroundAbilitySystemComponent();
 }
 
+UPawnCombatComponent* APlaygroundBaseCharacter::GetPawnCombatComponent() const
+{
+	return nullptr;
+}
+
 void APlaygroundBaseCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);

@@ -51,6 +51,11 @@ APlaygroundPlayerCharacter::APlaygroundPlayerCharacter()
 	PlayerCombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("PlayerCombatComponent"));
 }
 
+UPawnCombatComponent* APlaygroundPlayerCharacter::GetPawnCombatComponent() const
+{
+	return PlayerCombatComponent;
+}
+
 //플레이어가 Controller에 의해 소유될 때 호출
 void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
 {
