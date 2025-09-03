@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "PlayergroundTypes/PlaygroundEnumTypes.h"
 #include "PlaygroundGameplayAbility.generated.h"
 
 class UPawnCombatComponent;
@@ -42,5 +43,10 @@ protected:
 
 	UFUNCTION(BlueprintPure, Category = "Playground|Ability")
 	UPlaygroundAbilitySystemComponent* GetPlaygroundAbilitySystemComponentFromActorInfo() const;
+
+	FActiveGameplayEffectHandle NativeApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle);
 	
+
+	UFUNCTION(BlueprintCallable, Category = "Playground|Ability", meta = (DisplayName = "Apply Gameplay Effect Spec Handle To Target Actor", ExpandEnumAsExecs = "OutSuccessType"))
+	FActiveGameplayEffectHandle BP_ApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle, EPlaygroundSuccessType& OutSuccessType);
 };

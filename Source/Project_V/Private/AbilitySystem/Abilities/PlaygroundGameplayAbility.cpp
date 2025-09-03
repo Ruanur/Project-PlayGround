@@ -4,6 +4,7 @@
 #include "AbilitySystem/Abilities/PlaygroundGameplayAbility.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "Components/Combat/PawnCombatComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 void UPlaygroundGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
@@ -47,3 +48,26 @@ UPlaygroundAbilitySystemComponent* UPlaygroundGameplayAbility::GetPlaygroundAbil
 {
     return Cast<UPlaygroundAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent);
 }
+
+FActiveGameplayEffectHandle UPlaygroundGameplayAbility::NativeApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle)
+{
+    UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+
+    check(TargetASC && InSpecHandle.IsValid());
+
+    return GetPlaygroundAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(
+        *InSpecHandle.Data,
+        TargetASC
+    );
+}
+
+FActiveGameplayEffectHandle UPlaygroundGameplayAbility::BP_ApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle, EPlaygroundSuccessType& OutSuccessType)
+{
+    FActiveGameplayEffectHandle ActiveGameplayEffectHandle =  NativeApplyEffectSpecHandleToTarget(TargetActor, InSpecHandle);
+
+    OutSuccessType = ActiveGameplayEffectHandle.WasSuccessfullyApplied() ? EPlaygroundSuccessType::Successful : EPlaygroundSuccessType::Failed;
+
+    return ActiveGameplayEffectHandle;
+}
+
+
