@@ -36,4 +36,6 @@ namespace PlaygroundGameplayTags
 
 	/* Shared Tags */
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);
+
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_BaseDamage);
 }

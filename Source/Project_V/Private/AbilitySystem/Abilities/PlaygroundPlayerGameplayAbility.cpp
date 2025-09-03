@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/Abilities/PlaygroundPlayerGameplayAbility.h"
 #include "Characters/PlaygroundPlayerCharacter.h"
+#include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
+#include "PlaygroundGameplayTags.h"
 #include "Controllers/PlayGroundPlayerController.h"
 
 APlaygroundPlayerCharacter* UPlaygroundPlayerGameplayAbility::GetPlayerCharacterFromActorInfo()
@@ -28,4 +30,32 @@ APlayGroundPlayerController* UPlaygroundPlayerGameplayAbility::GetPlayerControll
 UPlayerCombatComponent* UPlaygroundPlayerGameplayAbility::GetPlayerCombatComponentFromActorInfo()
 {
     return GetPlayerCharacterFromActorInfo()->GetPlayerCombatComponent();
+}
+
+FGameplayEffectSpecHandle UPlaygroundPlayerGameplayAbility::MakePlayerDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InCurrentComboCount)
+{
+    check(EffectClass);
+
+    FGameplayEffectContextHandle ContextHandle = GetPlaygroundAbilitySystemComponentFromActorInfo()->MakeEffectContext();
+    ContextHandle.SetAbility(this);
+    ContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
+    ContextHandle.AddInstigator(GetAvatarActorFromActorInfo(), GetAvatarActorFromActorInfo());
+
+    FGameplayEffectSpecHandle EffectSpecHandle = GetPlaygroundAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(
+        EffectClass,
+        GetAbilityLevel(),
+        ContextHandle
+    );
+
+    EffectSpecHandle.Data->SetSetByCallerMagnitude(
+        PlaygroundGameplayTags::Shared_SetByCaller_BaseDamage,
+        InWeaponBaseDamage
+    );
+
+    if (InCurrentAttackTypeTag.IsValid())
+    {
+        EffectSpecHandle.Data->SetSetByCallerMagnitude(InCurrentAttackTypeTag, InCurrentComboCount);
+    }
+
+    return EffectSpecHandle;
 }

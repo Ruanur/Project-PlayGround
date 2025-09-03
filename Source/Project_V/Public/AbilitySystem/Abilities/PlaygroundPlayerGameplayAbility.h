@@ -26,6 +26,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Playground|Ability")
 	UPlayerCombatComponent* GetPlayerCombatComponentFromActorInfo();
 
+	UFUNCTION(BlueprintPure, Category = "Playground|Ability")
+	FGameplayEffectSpecHandle MakePlayerDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InCurrentComboCount);
+
+
 private:
 	TWeakObjectPtr<APlaygroundPlayerCharacter> CachedPlaygroundPlayerCharacter;
 	TWeakObjectPtr<APlayGroundPlayerController> CachedPlaygroundPlayerController;
