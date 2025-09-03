@@ -32,7 +32,7 @@ UPlayerCombatComponent* UPlaygroundPlayerGameplayAbility::GetPlayerCombatCompone
     return GetPlayerCharacterFromActorInfo()->GetPlayerCombatComponent();
 }
 
-FGameplayEffectSpecHandle UPlaygroundPlayerGameplayAbility::MakePlayerDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InCurrentComboCount)
+FGameplayEffectSpecHandle UPlaygroundPlayerGameplayAbility::MakePlayerDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InUsedComboCount)
 {
     check(EffectClass);
 
@@ -54,7 +54,7 @@ FGameplayEffectSpecHandle UPlaygroundPlayerGameplayAbility::MakePlayerDamageEffe
 
     if (InCurrentAttackTypeTag.IsValid())
     {
-        EffectSpecHandle.Data->SetSetByCallerMagnitude(InCurrentAttackTypeTag, InCurrentComboCount);
+        EffectSpecHandle.Data->SetSetByCallerMagnitude(InCurrentAttackTypeTag, InUsedComboCount);
     }
 
     return EffectSpecHandle;
