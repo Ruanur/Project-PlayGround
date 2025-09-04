@@ -16,4 +16,6 @@ class PROJECT_V_API UGEExecCalc_DamageTaken : public UGameplayEffectExecutionCal
 
 public:
 	UGEExecCalc_DamageTaken();
+
+	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
 };
