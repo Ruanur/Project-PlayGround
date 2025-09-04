@@ -94,6 +94,7 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 	float TargetDefensePower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetPlaygroundDamageCapture().DefensePowerDef, EvaluateParameters, TargetDefensePower);
 	Debug::Print(TEXT("TargetDefensePower"), TargetDefensePower);
+
 	//피해 계산식
 	if (UsedLightAttackComboCount != 0)
 	{
@@ -105,7 +106,7 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 	
 	if (UsedHeavyAttackComboCount != 0)
 	{
-		const float DamageIncreasePercentHeavy = UsedLightAttackComboCount * 0.15f + 1.f;
+		const float DamageIncreasePercentHeavy = UsedHeavyAttackComboCount * 0.15f + 1.f;
 
 		BaseDamage *= DamageIncreasePercentHeavy;
 		Debug::Print(TEXT("ScaledBaseDamageHeavy"), BaseDamage);
