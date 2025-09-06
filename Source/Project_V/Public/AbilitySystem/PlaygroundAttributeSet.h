@@ -26,6 +26,8 @@ public:
 	//속성 함수
 	UPlaygroundAttributeSet();
 
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData CurrentHealth;
 	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, CurrentHealth)
