@@ -35,10 +35,18 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_SetByCaller_AttackType_Heavy);
 
 	/* Enemy Tags */
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Ability_Melee);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Ability_Ranged);
+
+
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Weapon);
 
+
 	/* Shared Tags */
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_HitReact);
+
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_HitReact);
 
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_BaseDamage);
 }
