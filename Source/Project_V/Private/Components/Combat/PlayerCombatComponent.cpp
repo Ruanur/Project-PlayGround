@@ -40,9 +40,19 @@ void UPlayerCombatComponent::OnHitTargetActor(AActor* HitActor)
         PlaygroundGameplayTags::Shared_Event_MeleeHit,
         Data
     );
+
+    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+        GetOwningPawn(),
+        PlaygroundGameplayTags::Player_Event_HitPause,
+        FGameplayEventData()
+    );
 }
 
 void UPlayerCombatComponent::OnWeaponPulledFromTargetActor(AActor* InteractedActor)
 {
-    
+    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+        GetOwningPawn(),
+        PlaygroundGameplayTags::Player_Event_HitPause,
+        FGameplayEventData()
+    );
 }
