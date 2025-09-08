@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/PlaygroundAttributeSet.h"
 #include "GameplayEffectExtension.h"
+#include "PlaygroundFunctionLibrary.h"
+#include "PlaygroundGameplayTags.h"
 
 
 #include "PlaygroundDebugHelper.h"
@@ -52,11 +54,12 @@ void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMod
 		Debug::Print(DebugString, FColor::Green);
 
 		//TODO: Notify the UI
-		// 
+		
+		
 		//TODO: Handle Character Death 
-
 		if (NewCurrentHealth == 0.f)
 		{
+			UPlaygroundFunctionLibrary::AddGameplayTagToActorIfNone(Data.Target.GetAvatarActor(), PlaygroundGameplayTags::Shared_Status_Dead);
 
 		}
 	}
