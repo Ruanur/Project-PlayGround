@@ -64,6 +64,11 @@ UPawnUIComponent* APlaygroundPlayerCharacter::GetPawnUIComponent() const
 	return PlayerUIComponent;
 }
 
+UPlayerUIComponent* APlaygroundPlayerCharacter::GetPlayerUIComponent() const
+{
+	return PlayerUIComponent;
+}
+
 //플레이어가 Controller에 의해 소유될 때 호출
 void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
 {

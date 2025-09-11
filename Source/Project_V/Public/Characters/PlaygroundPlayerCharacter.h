@@ -40,6 +40,7 @@ public:
 	
 	//~ Begin IPawnUIInterface Interface.
 	virtual UPawnUIComponent* GetPawnUIComponent() const override;
+	virtual UPlayerUIComponent* GetPlayerUIComponent() const override;
 	//~ End IPawnUIInterface Interface.
 
 protected:
