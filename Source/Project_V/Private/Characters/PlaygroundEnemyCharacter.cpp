@@ -8,6 +8,7 @@
 #include "Components/Combat/EnemyCombatComponent.h"
 #include "Engine/AssetManager.h"
 #include "DataAssets/StartUpData/DataAsset_EnemyStartUpDataBase.h"
+#include "Components/UI/EnemyUIComponent.h"
 
 
 #include "PlaygroundDebugHelper.h"
@@ -33,11 +34,18 @@ APlaygroundEnemyCharacter::APlaygroundEnemyCharacter()
 	//전투 코드를 분리하여 관리
 	EnemyCombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>("EnemyCombatComponent");
 
+	EnemyUIComponent = CreateDefaultSubobject<UEnemyUIComponent>("EnemyUIComponent");
+
 }
 
 UPawnCombatComponent* APlaygroundEnemyCharacter::GetPawnCombatComponent() const
 {
 	return EnemyCombatComponent;
+}
+
+UPawnUIComponent* APlaygroundEnemyCharacter::GetPawnUIComponent() const
+{
+	return EnemyUIComponent;
 }
 
 void APlaygroundEnemyCharacter::PossessedBy(AController* NewController)

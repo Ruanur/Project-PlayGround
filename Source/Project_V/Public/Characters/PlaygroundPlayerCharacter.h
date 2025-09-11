@@ -13,6 +13,7 @@ class UCameraComponent;
 class UDataAsset_InputConfig;
 struct FInputActionValue;
 class UPlayerCombatComponent;
+class UPlayerUIComponent;
 
 /**
  * 플레이어 캐릭터 (APlaygroundBaseCharacter 상속)
@@ -36,6 +37,10 @@ public:
 	//~ Begin IPawnCombatInterface Interface.
 	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 	//~ End IPawnCombatInterface Interface
+	
+	//~ Begin IPawnUIInterface Interface.
+	virtual UPawnUIComponent* GetPawnUIComponent() const override;
+	//~ End IPawnUIInterface Interface.
 
 protected:
 	//플레이어가 Controller에 소유될 때 호출
@@ -62,6 +67,9 @@ private:
 	// 플레이어 전투 로직 담당 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"));
 	UPlayerCombatComponent* PlayerCombatComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"));
+	UPlayerUIComponent* PlayerUIComponent;
 
 #pragma endregion
 

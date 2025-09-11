@@ -13,6 +13,7 @@
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "DataAssets/StartUpData/DataAsset_PlayerStartUpData.h"
 #include "Components/Combat/PlayerCombatComponent.h"
+#include "Components/UI/PlayerUIComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -49,11 +50,18 @@ APlaygroundPlayerCharacter::APlaygroundPlayerCharacter()
 
 	//Combat Component 추가
 	PlayerCombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("PlayerCombatComponent"));
+
+	PlayerUIComponent = CreateDefaultSubobject<UPlayerUIComponent>(TEXT("PlayerUIComponent"));
 }
 
 UPawnCombatComponent* APlaygroundPlayerCharacter::GetPawnCombatComponent() const
 {
 	return PlayerCombatComponent;
+}
+
+UPawnUIComponent* APlaygroundPlayerCharacter::GetPawnUIComponent() const
+{
+	return PlayerUIComponent;
 }
 
 //플레이어가 Controller에 의해 소유될 때 호출
