@@ -16,3 +16,15 @@ void UPlaygroundWidgeBase::NativeOnInitialized()
 		}
 	}
 }
+
+void UPlaygroundWidgeBase::InitEnemyCreatedWidget(AActor* OwingEnemyActor)
+{
+	if (IPawnUIInterface* PawnUIInterface = Cast<IPawnUIInterface>(OwingEnemyActor))
+	{
+		UEnemyUIComponent* EnemyUIComponent = PawnUIInterface->GetEnemyUIComponent();
+
+		checkf(EnemyUIComponent, TEXT("Failed to extrac an EnemyUIComponent from %s"), *OwingEnemyActor->GetActorNameOrLabel());
+
+		BP_OnOwningEnemyUIComponentInitialized(EnemyUIComponent);
+	}
+}

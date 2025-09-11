@@ -7,6 +7,7 @@
 #include "PlaygroundWidgeBase.generated.h"
 
 class UPlayerUIComponent;
+class UEnemyUIComponent;
 
 /**
  * 
@@ -20,4 +21,11 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "On Owning Hero UI Component Initialized"))
 	void BP_OnOwningPlayerUIComponentInitialized(UPlayerUIComponent* OwningPlayerUIComponent);
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "On Owning Enemy UI Component Initialized"))
+	void BP_OnOwningEnemyUIComponentInitialized(UEnemyUIComponent* OwningEnemyUIComponent);
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void InitEnemyCreatedWidget(AActor* OwingEnemyActor);
 };
