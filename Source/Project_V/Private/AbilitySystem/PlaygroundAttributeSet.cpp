@@ -74,7 +74,9 @@ void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMod
 		Debug::Print(DebugString, FColor::Green);
 
 		//TODO: Notify the UI
-		
+		//이벤트 전달, 브로드캐스트 - 이 항목이 없으면 체력 변화에도 체력바가 동기화되지 않음
+		PawnUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealth());
+
 		
 		//TODO: Handle Character Death 
 		if (GetCurrentHealth() == 0.f)
