@@ -9,9 +9,11 @@
 #include "Engine/AssetManager.h"
 #include "DataAssets/StartUpData/DataAsset_EnemyStartUpDataBase.h"
 #include "Components/UI/EnemyUIComponent.h"
-
+#include "Components/WidgetComponent.h"
+#include "Widgets/PlaygroundWidgeBase.h"
 
 #include "PlaygroundDebugHelper.h"
+
 APlaygroundEnemyCharacter::APlaygroundEnemyCharacter()
 {
 	//AI 컨트롤러가 이 몬스터를 자동으로 소유하도록 설정
@@ -36,6 +38,8 @@ APlaygroundEnemyCharacter::APlaygroundEnemyCharacter()
 
 	EnemyUIComponent = CreateDefaultSubobject<UEnemyUIComponent>("EnemyUIComponent");
 
+	EnemyHealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("EnemyHealthWidgetComponent");
+	EnemyHealthWidgetComponent->SetupAttachment(GetMesh());
 }
 
 UPawnCombatComponent* APlaygroundEnemyCharacter::GetPawnCombatComponent() const
@@ -51,6 +55,17 @@ UPawnUIComponent* APlaygroundEnemyCharacter::GetPawnUIComponent() const
 UEnemyUIComponent* APlaygroundEnemyCharacter::GetEnemyUIComponent() const
 {
 	return EnemyUIComponent;
+}
+
+void APlaygroundEnemyCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (UPlaygroundWidgeBase* HealthWidget = Cast<UPlaygroundWidgeBase>(EnemyHealthWidgetComponent->GetUserWidgetObject()))
+	{
+		HealthWidget->InitEnemyCreatedWidget(this);
+
+	}
 }
 
 void APlaygroundEnemyCharacter::PossessedBy(AController* NewController)
