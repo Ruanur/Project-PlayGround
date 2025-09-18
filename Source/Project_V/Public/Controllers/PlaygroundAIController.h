@@ -19,6 +19,10 @@ class PROJECT_V_API APlaygroundAIController : public AAIController
 public:
 	APlaygroundAIController(const FObjectInitializer& ObjectInitializer);
 
+	//~ Begin IGenericTeamAgentInterface Interface.
+	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const;
+	//~ End IGenericTeamAgentInterface Interface
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UAIPerceptionComponent* EnemyPerceptionComponent;
