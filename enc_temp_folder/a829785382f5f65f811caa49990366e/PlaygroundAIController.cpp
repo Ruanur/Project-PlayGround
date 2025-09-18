@@ -22,15 +22,15 @@ APlaygroundAIController::APlaygroundAIController(const FObjectInitializer& Objec
 	AISenseConfig_Sight->DetectionByAffiliation.bDetectEnemies = true;
 	AISenseConfig_Sight->DetectionByAffiliation.bDetectFriendlies = false;
 	AISenseConfig_Sight->DetectionByAffiliation.bDetectNeutrals = false;
-	AISenseConfig_Sight->SightRadius = 5000.f; //시야거리
-	AISenseConfig_Sight->LoseSightRadius = 0.f; //플레이어 놓치지 않음
-	AISenseConfig_Sight->PeripheralVisionAngleDegrees = 360.f; //시야각
+	AISenseConfig_Sight->SightRadius = 5000.f;
+	//플레이어 놓치지 않음
+	AISenseConfig_Sight->LoseSightRadius = 0.f;
+	//시야각
+	AISenseConfig_Sight->PeripheralVisionAngleDegrees = 360.f;
 
 	EnemyPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>("EnemyPerceptionComponent");
 	EnemyPerceptionComponent->ConfigureSense(*AISenseConfig_Sight);
 	EnemyPerceptionComponent->SetDominantSense(UAISenseConfig_Sight::StaticClass());
-
-	//콜백 연결: 감지하거나 감지를 잃었을 때 호출 -> OnEnemyPerceptionUpdated
 	EnemyPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &ThisClass::OnEnemyPerceptionUpdated);
 }
 

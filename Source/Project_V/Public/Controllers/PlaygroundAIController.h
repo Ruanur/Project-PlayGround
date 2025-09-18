@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "PlaygroundAIController.generated.h"
 
+class UAIPerceptionComponent;
+class UAISenseConfig_Sight;
 /**
  * 
  */
@@ -17,4 +19,13 @@ class PROJECT_V_API APlaygroundAIController : public AAIController
 public:
 	APlaygroundAIController(const FObjectInitializer& ObjectInitializer);
 
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UAIPerceptionComponent* EnemyPerceptionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UAISenseConfig_Sight* AISenseConfig_Sight;
+
+	UFUNCTION()
+	virtual void OnEnemyPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 };
