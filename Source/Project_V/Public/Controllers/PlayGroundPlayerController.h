@@ -19,7 +19,7 @@ public:
 	APlayGroundPlayerController();
 
 	//~ Begin IGenericTeamAgentInterface Interface.
-	virtual FGenericTeamId GetGenericTeamId() const;
+	virtual FGenericTeamId GetGenericTeamId() const override;
 	//~ End IGenericTeamAgentInterface Interface
 private:
 	FGenericTeamId PlayerTeamID;
