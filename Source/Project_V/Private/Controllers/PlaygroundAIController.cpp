@@ -41,7 +41,10 @@ ETeamAttitude::Type APlaygroundAIController::GetTeamAttitudeTowards(const AActor
 
 	const IGenericTeamAgentInterface* OtherTeamAgent = Cast<const IGenericTeamAgentInterface>(PawnToCheck->GetController());
 
-	if (OtherTeamAgent && OtherTeamAgent->GetGenericTeamId() != GetGenericTeamId())
+	//OtherTeamAgent && OtherTeamAgent->GetGenericTeamId() != GetGenericTeamId() =>
+	//OtherTeamAgent && OtherTeamAgent->GetGenericTeamId() < GetGenericTeamId() 
+	//벽을 보는 에러가 있음, 플레이어 팀 ID와 적 팀 ID를 대수 비교 하여 플레이어만 해당하게 변경
+	if (OtherTeamAgent && OtherTeamAgent->GetGenericTeamId() < GetGenericTeamId())
 	{
 		return ETeamAttitude::Hostile;
 	}
@@ -88,11 +91,22 @@ void APlaygroundAIController::BeginPlay()
 // 감지 됐을 때 추가적인 효과를 삽입할 수도 있음
 void APlaygroundAIController::OnEnemyPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	if (Stimulus.WasSuccessfullySensed() && Actor)
+	if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
 	{
-		if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
+		if (!BlackboardComponent->GetValueAsObject(FName("TargetActor")))
 		{
-			BlackboardComponent->SetValueAsObject(FName("TargetActor"), Actor);
+			if (Stimulus.WasSuccessfullySensed() && Actor)
+			{
+				BlackboardComponent->SetValueAsObject(FName("TargetActor"), Actor);
+			}
 		}
 	}
+
+	//if (Stimulus.WasSuccessfullySensed() && Actor)
+	//{
+	//	if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
+	//	{
+	//		BlackboardComponent->SetValueAsObject(FName("TargetActor"), Actor);
+	//	}
+	//}
 }
