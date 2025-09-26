@@ -14,6 +14,7 @@
 APlaygroundAIController::APlaygroundAIController(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>("PathFollowingComponent"))
 {
+	//시야 정보를 통해 트리거
 	AISenseConfig_Sight = CreateDefaultSubobject<UAISenseConfig_Sight>("EnemySenseConfig_Sight");
 	AISenseConfig_Sight->DetectionByAffiliation.bDetectEnemies = true;
 	AISenseConfig_Sight->DetectionByAffiliation.bDetectFriendlies = false;
@@ -32,6 +33,8 @@ APlaygroundAIController::APlaygroundAIController(const FObjectInitializer& Objec
 	SetGenericTeamId(FGenericTeamId(1));
 }
 
+// 다른 액터의 Team ID 확인, 다른 Team ID : Hostile, 같은 Team ID : Friendly
+// Team 기반 적/아군 판별 시스템
 ETeamAttitude::Type APlaygroundAIController::GetTeamAttitudeTowards(const AActor& Other) const
 {
 	const APawn* PawnToCheck = Cast<const APawn>(&Other);
@@ -46,6 +49,13 @@ ETeamAttitude::Type APlaygroundAIController::GetTeamAttitudeTowards(const AActor
 	return ETeamAttitude::Friendly;
 }
 
+// Crowd Following 세부 설정
+// - 회피 기능 : On/Off
+// - 회피 품질(Low ~ High)
+// - 회피 그룹 및 충돌 그룹 (군집 별 회피 구분 가능)
+// - Collision Query Range (얼마나 멀리까지 충돌 검사할지)
+// 
+// AI 집단 이동의 충돌 회피와 품질 조정 담당
 void APlaygroundAIController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -64,6 +74,7 @@ void APlaygroundAIController::BeginPlay()
 			break;
 		}
 
+		//회피 그룹 1, 추후 보스 몬스터 그룹 int 값 설정 후 연출 구현
 		CrowdComp->SetAvoidanceGroup(1);
 		CrowdComp->SetGroupsToAvoid(1);
 		CrowdComp->SetCrowdCollisionQueryRange(CollisionQueryRange);
@@ -71,6 +82,10 @@ void APlaygroundAIController::BeginPlay()
 
 }
 
+// 감지 성공 시:
+// BlackBoard에 TargetActor를 저장 -> Behavior Tree가 접근
+// Ai Perception -> Blackboard -> Behavior Tree PipeLine Connecting
+// 감지 됐을 때 추가적인 효과를 삽입할 수도 있음
 void APlaygroundAIController::OnEnemyPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	if (Stimulus.WasSuccessfullySensed() && Actor)

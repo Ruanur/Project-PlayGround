@@ -36,8 +36,10 @@ APlaygroundEnemyCharacter::APlaygroundEnemyCharacter()
 	//전투 코드를 분리하여 관리
 	EnemyCombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>("EnemyCombatComponent");
 
+	//Enemy UI 관리
 	EnemyUIComponent = CreateDefaultSubobject<UEnemyUIComponent>("EnemyUIComponent");
 
+	//UI 위젯을 캐릭터 메시에 붙임
 	EnemyHealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("EnemyHealthWidgetComponent");
 	EnemyHealthWidgetComponent->SetupAttachment(GetMesh());
 }
@@ -59,8 +61,9 @@ UEnemyUIComponent* APlaygroundEnemyCharacter::GetEnemyUIComponent() const
 
 void APlaygroundEnemyCharacter::BeginPlay()
 {
+	//게임 시작 시 HP바 위젯 초기화 후 해당 위젯에 자기 자신을 참조로 전달
 	Super::BeginPlay();
-
+	
 	if (UPlaygroundWidgeBase* HealthWidget = Cast<UPlaygroundWidgeBase>(EnemyHealthWidgetComponent->GetUserWidgetObject()))
 	{
 		HealthWidget->InitEnemyCreatedWidget(this);
@@ -70,6 +73,7 @@ void APlaygroundEnemyCharacter::BeginPlay()
 
 void APlaygroundEnemyCharacter::PossessedBy(AController* NewController)
 {
+	//AIController가 이 Pawn을 소유할 때 호출됨, 이 때 초기 데이터 로딩(InitEnemyStartUpData) 트리거
 	Super::PossessedBy(NewController);
 
 	InitEnemyStartUpData();
