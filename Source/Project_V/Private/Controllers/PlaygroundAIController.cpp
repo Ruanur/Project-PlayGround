@@ -10,6 +10,7 @@
 #include "PlaygroundDebugHelper.h"
 
 //Path Following 동작 커스터마이징, Crowd 버전으로 교체함으로 여러 AI가 동시에 움직일 때 충돌없이 자연스레 회피하며 이동
+// 이 함수는 본래 AIController 부모로부터 파생된 PathFollowingComponent를 가짐 -> Super를 통한 Crowd 버전으로 교체
 // UPathFollowingComponent : 개별 이동 처리, Crowd: 집단 단위의 지능적인 이동 패턴 구현
 APlaygroundAIController::APlaygroundAIController(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>("PathFollowingComponent"))

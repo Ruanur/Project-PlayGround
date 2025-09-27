@@ -17,6 +17,7 @@ class PROJECT_V_API APlaygroundAIController : public AAIController
 	GENERATED_BODY()
 	
 public:
+	// FObjectInitializer
 	APlaygroundAIController(const FObjectInitializer& ObjectInitializer);
 
 	//~ Begin IGenericTeamAgentInterface Interface.
@@ -26,9 +27,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	// UAIPerceptionComponent = AI 기능 중 감지역할
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UAIPerceptionComponent* EnemyPerceptionComponent;
 
+	// UAISenseConfig_Sight = AI 기능 중 시야 감지
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UAISenseConfig_Sight* AISenseConfig_Sight;
 

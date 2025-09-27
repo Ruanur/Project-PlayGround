@@ -40,8 +40,9 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Ability_Melee);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Ability_Ranged);
 
-
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Weapon);
+
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Strafing);
 
 
 	/* Shared Tags */
