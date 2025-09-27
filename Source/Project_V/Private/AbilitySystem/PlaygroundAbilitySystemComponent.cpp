@@ -2,7 +2,7 @@
 
 
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
-#include "AbilitySystem/Abilities/PlaygroundGameplayAbility.h"
+#include "AbilitySystem/Abilities/PlaygroundPlayerGameplayAbility.h"
 
 void UPlaygroundAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InInputTag)
 {
@@ -64,4 +64,27 @@ void UPlaygroundAbilitySystemComponent::RemovedGrantedPlayerWeaponAbilities(UPAR
 	}
 
 	InSpecHandlesToRemove.Empty();
+}
+
+bool UPlaygroundAbilitySystemComponent::TryActivateAbilityByTag(FGameplayTag AbilityTagToActivate)
+{
+	check(AbilityTagToActivate.IsValid());
+
+	TArray<FGameplayAbilitySpec*> FoundAbilitySpecs;
+	GetActivatableGameplayAbilitySpecsByAllMatchingTags(AbilityTagToActivate.GetSingleTagContainer(), FoundAbilitySpecs);
+
+	if (!FoundAbilitySpecs.IsEmpty())
+	{
+		const int32 RandomAbilityIndex = FMath::RandRange(0, FoundAbilitySpecs.Num() - 1);
+		FGameplayAbilitySpec* SpecToActivate = FoundAbilitySpecs[RandomAbilityIndex];
+
+		check(SpecToActivate);
+
+		if (!SpecToActivate->IsActive())
+		{
+			return TryActivateAbility(SpecToActivate->Handle);
+		}
+	}
+
+	return false;
 }

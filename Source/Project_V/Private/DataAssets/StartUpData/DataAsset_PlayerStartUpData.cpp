@@ -2,7 +2,7 @@
 
 
 #include "DataAssets/StartUpData/DataAsset_PlayerStartUpData.h"
-#include "AbilitySystem/Abilities/PlaygroundGameplayAbility.h"
+#include "AbilitySystem/Abilities/PlaygroundPlayerGameplayAbility.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 
 void UDataAsset_PlayerStartUpData::GiveToAbilitySystemComponent(UPlaygroundAbilitySystemComponent* InASCToGive, int32 ApplyLevel)
