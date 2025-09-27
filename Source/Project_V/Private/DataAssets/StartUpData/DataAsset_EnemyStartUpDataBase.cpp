@@ -9,7 +9,7 @@ void UDataAsset_EnemyStartUpDataBase::GiveToAbilitySystemComponent(UPlaygroundAb
 {
 	Super::GiveToAbilitySystemComponent(InASCToGive, ApplyLevel);
 
-	if (EnemyCombatAbilities.IsEmpty())
+	if (!EnemyCombatAbilities.IsEmpty())
 	{
 		for (const TSubclassOf<UPlaygroundEnemyGameplayAbility>& AbilityClass : EnemyCombatAbilities)
 		{
