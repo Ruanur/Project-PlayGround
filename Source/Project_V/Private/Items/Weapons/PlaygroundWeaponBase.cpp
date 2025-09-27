@@ -4,6 +4,7 @@
 
 #include "Items/Weapons/PlaygroundWeaponBase.h"
 #include "Components/BoxComponent.h"
+#include "PlaygroundFunctionLibrary.h"
 
 #include "PlaygroundDebugHelper.h"
 APlaygroundWeaponBase::APlaygroundWeaponBase()
@@ -31,13 +32,21 @@ void APlaygroundWeaponBase::OnCollisionBoxBeginOverlap(UPrimitiveComponent* Over
 
 	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (WeaponOwningPawn != HitPawn)
+		if (UPlaygroundFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
 			OnWeaponHitTarget.ExecuteIfBound(OtherActor);
 		}
-
-		//TODO: 적 캐릭터에 대한 히트 체크
 	}
+	
+	//if (APawn* HitPawn = Cast<APawn>(OtherActor))
+	//{
+	//	if (WeaponOwningPawn != HitPawn)
+	//	{
+	//		OnWeaponHitTarget.ExecuteIfBound(OtherActor);
+	//	}
+
+	//	//TODO: 적 캐릭터에 대한 히트 체크
+	//}
 }
 
 void APlaygroundWeaponBase::OnCollisionBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -48,13 +57,21 @@ void APlaygroundWeaponBase::OnCollisionBoxEndOverlap(UPrimitiveComponent* Overla
 
 	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (WeaponOwningPawn != HitPawn)
+		if (UPlaygroundFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
 			OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
 		}
-
-		//TODO: 적 캐릭터에 대한 히트 체크
 	}
+
+	//if (APawn* HitPawn = Cast<APawn>(OtherActor))
+	//{
+	//	if (WeaponOwningPawn != HitPawn)
+	//	{
+	//		OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
+	//	}
+
+	//	//TODO: 적 캐릭터에 대한 히트 체크
+	//}
 }
 
 
