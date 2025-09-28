@@ -4,6 +4,7 @@
 #include "Characters/PlaygroundBaseCharacter.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "AbilitySystem/PlaygroundAttributeSet.h"
+#include "MotionWarpingComponent.h"
 
 // Sets default values
 APlaygroundBaseCharacter::APlaygroundBaseCharacter()
@@ -17,6 +18,8 @@ APlaygroundBaseCharacter::APlaygroundBaseCharacter()
 	PlaygroundAbilitySystemComponent = CreateDefaultSubobject<UPlaygroundAbilitySystemComponent>(TEXT("PlaygroundAbilitySystemComponent"));
 
 	PlaygroundAttributeSet = CreateDefaultSubobject<UPlaygroundAttributeSet>(TEXT("PlaygroundAttributeSet"));
+
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
 }
 
 UAbilitySystemComponent* APlaygroundBaseCharacter::GetAbilitySystemComponent() const

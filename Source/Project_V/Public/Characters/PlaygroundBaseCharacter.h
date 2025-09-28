@@ -13,6 +13,7 @@
 class UPlaygroundAbilitySystemComponent;
 class UPlaygroundAttributeSet;
 class UDataAsset_StartUpDataBase;
+class UMotionWarpingComponent;
 
 UCLASS()
 class PROJECT_V_API APlaygroundBaseCharacter : public ACharacter, public IAbilitySystemInterface, public IPawnCombatInterface, public IPawnUIInterface
@@ -47,6 +48,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem");
 	UPlaygroundAttributeSet* PlaygroundAttributeSet;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MotionWarping");
+	UMotionWarpingComponent* MotionWarpingComponent;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData");
 	TSoftObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
 

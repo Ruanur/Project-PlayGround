@@ -16,7 +16,8 @@ public class Project_V : ModuleRules
 			"EnhancedInput", 
 			"GameplayTags",
 			"GameplayTasks",
-            "AnimGraphRuntime"});
+            "AnimGraphRuntime",
+			"MotionWarping"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
