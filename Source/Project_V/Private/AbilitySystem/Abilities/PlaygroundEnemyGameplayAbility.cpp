@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/Abilities/PlaygroundEnemyGameplayAbility.h"
 #include "Characters/PlaygroundEnemyCharacter.h"
+#include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
+#include "PlaygroundGameplayTags.h"
 
 APlaygroundEnemyCharacter* UPlaygroundEnemyGameplayAbility::GetEnemyCharacterFromActorInfo()
 {
@@ -17,4 +19,27 @@ APlaygroundEnemyCharacter* UPlaygroundEnemyGameplayAbility::GetEnemyCharacterFro
 UEnemyCombatComponent* UPlaygroundEnemyGameplayAbility::GetEnemyCombatComponentFromActorInfo()
 {
     return GetEnemyCharacterFromActorInfo()->GetEnemyCombatComponent();
+}
+
+FGameplayEffectSpecHandle UPlaygroundEnemyGameplayAbility::MakeEnemyDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, const FScalableFloat& InDamageScalableFloat)
+{
+    check(EffectClass);
+
+    FGameplayEffectContextHandle ContextHandle = GetPlaygroundAbilitySystemComponentFromActorInfo()->MakeEffectContext();
+    ContextHandle.SetAbility(this);
+    ContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
+    ContextHandle.AddInstigator(GetAvatarActorFromActorInfo(), GetAvatarActorFromActorInfo());
+
+    FGameplayEffectSpecHandle EffectSpecHandle = GetPlaygroundAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(
+        EffectClass,
+        GetAbilityLevel(),
+        ContextHandle
+    );
+
+    EffectSpecHandle.Data->SetSetByCallerMagnitude(
+        PlaygroundGameplayTags::Shared_SetByCaller_BaseDamage,
+        InDamageScalableFloat.GetValueAtLevel(GetAbilityLevel())
+    );
+
+    return EffectSpecHandle;
 }
