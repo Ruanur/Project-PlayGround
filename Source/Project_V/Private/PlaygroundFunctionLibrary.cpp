@@ -81,3 +81,8 @@ bool UPlaygroundFunctionLibrary::IsTargetPawnHostile(APawn* QueryPawn, APawn* Ta
 
 	return false;
 }
+
+float UPlaygroundFunctionLibrary::GetScalableFloatValueAtLevel(const FScalableFloat& InScalableFloat, float InLevel)
+{
+	return InScalableFloat.GetValueAtLevel(InLevel);
+}
