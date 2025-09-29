@@ -7,6 +7,7 @@
 namespace PlaygroundGameplayTags
 {
 	//태그 입력
+	/* Input Tags */
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look);
 
@@ -14,6 +15,7 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_UnequipAxe);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_LightAttack_Axe);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_HeavyAttack_Axe);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Roll);
 
 	/* Player Tags */
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Equip_Axe);
@@ -21,6 +23,7 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Attack_Light_Axe);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Attack_Heavy_Axe);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_HitPause);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Roll);
 
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Weapon_Axe);
 	//PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Weapon_SWORD);
@@ -32,6 +35,7 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_HitPause);
 
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Status_JumpToFinisher);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Status_Rolling);
 
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_SetByCaller_AttackType_Light);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_SetByCaller_AttackType_Heavy);
