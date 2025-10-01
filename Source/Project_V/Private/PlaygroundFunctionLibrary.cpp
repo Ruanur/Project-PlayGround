@@ -6,6 +6,7 @@
 #include "Interfaces/PawnCombatInterface.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "GenericTeamAgentInterface.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UPlaygroundAbilitySystemComponent* UPlaygroundFunctionLibrary::NativeGetPlaygroundASCFromActor(AActor* InActor)
 {
@@ -85,4 +86,24 @@ bool UPlaygroundFunctionLibrary::IsTargetPawnHostile(APawn* QueryPawn, APawn* Ta
 float UPlaygroundFunctionLibrary::GetScalableFloatValueAtLevel(const FScalableFloat& InScalableFloat, float InLevel)
 {
 	return InScalableFloat.GetValueAtLevel(InLevel);
+}
+
+FGameplayTag UPlaygroundFunctionLibrary::ComputeHitReactDirectionTag(AActor* InAttacker, AActor* InVictim, float& OutAngleDifference)
+{
+	check(InAttacker && InVictim);
+
+	const FVector VictimForward = InVictim->GetActorForwardVector();
+	const FVector VictimToAttackerNormalized = (InAttacker->GetActorLocation() - InVictim->GetActorLocation()).GetSafeNormal();
+
+	const float DotResult = FVector::DotProduct(VictimForward, VictimToAttackerNormalized);
+	OutAngleDifference = UKismetMathLibrary::DegAcos(DotResult);
+
+	const FVector CrossResult = FVector::CrossProduct(VictimForward, VictimToAttackerNormalized);
+
+	if (CrossResult.Z < 0.f)
+	{
+		OutAngleDifference *= -1.f;
+	}
+
+	return FGameplayTag();
 }
