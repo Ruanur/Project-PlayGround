@@ -7,6 +7,7 @@
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "GenericTeamAgentInterface.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "PlaygroundGameplayTags.h"
 
 UPlaygroundAbilitySystemComponent* UPlaygroundFunctionLibrary::NativeGetPlaygroundASCFromActor(AActor* InActor)
 {
@@ -105,5 +106,22 @@ FGameplayTag UPlaygroundFunctionLibrary::ComputeHitReactDirectionTag(AActor* InA
 		OutAngleDifference *= -1.f;
 	}
 
-	return FGameplayTag();
+	if (OutAngleDifference >= -45.f && OutAngleDifference <= 45.f)
+	{
+		return PlaygroundGameplayTags::Shared_Status_HitReact_Front;
+	}
+	else if (OutAngleDifference < -45.f && OutAngleDifference >= -135.f)
+	{
+		return PlaygroundGameplayTags::Shared_Status_HitReact_Left;
+	}
+	else if (OutAngleDifference < -135.f || OutAngleDifference > 135.f)
+	{
+		return PlaygroundGameplayTags::Shared_Status_HitReact_Back;
+	}
+	else if (OutAngleDifference > 45.f && OutAngleDifference <= 135.f)
+	{
+		return PlaygroundGameplayTags::Shared_Status_HitReact_Right;
+	}
+
+	return PlaygroundGameplayTags::Shared_Status_HitReact_Front;
 }
