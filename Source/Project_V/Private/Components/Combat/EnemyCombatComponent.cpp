@@ -4,6 +4,7 @@
 #include "Components/Combat/EnemyCombatComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "PlaygroundGameplayTags.h"
+#include "PlaygroundFunctionLibrary.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -19,12 +20,12 @@ void UEnemyCombatComponent::OnHitTargetActor(AActor* HitActor)
 	// TODO: Implement block check
 	bool bIsValidBlock = false;
 
-	const bool bIsPlayerBlocking = false;
+	const bool bIsPlayerBlocking = UPlaygroundFunctionLibrary::NativeDoesActorHaveTag(HitActor, PlaygroundGameplayTags::Player_Status_Blocking);
 	const bool bIsMyAttackUnblockable = false;
 
 	if (bIsPlayerBlocking && !bIsMyAttackUnblockable)
 	{
-		//TODO: check if the block is valid
+		bIsValidBlock = UPlaygroundFunctionLibrary::IsValidBlock(GetOwningPawn(), HitActor);
 	}
 
 	FGameplayEventData EventData;
