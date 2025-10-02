@@ -133,9 +133,9 @@ bool UPlaygroundFunctionLibrary::IsValidBlock(AActor* InAttacker, AActor* InDefe
 
 	const float DotResult = FVector::DotProduct(InAttacker->GetActorForwardVector(), InDefender->GetActorForwardVector());
 
-	const FString DebugString = FString::Printf(TEXT("Dot Result %f %s"), DotResult, DotResult < -0.1f ? TEXT("Blocked") : TEXT("Not Blocked"));
+	//const FString DebugString = FString::Printf(TEXT("Dot Result %f %s"), DotResult, DotResult < -0.1f ? TEXT("Blocked") : TEXT("Not Blocked"));
 
-	Debug::Print(DebugString, DotResult < -0.1f ? FColor::Green : FColor::Red);
+	//Debug::Print(DebugString, DotResult < -0.1f ? FColor::Green : FColor::Red);
 
 	return DotResult < -0.1f ? true : false;
 }
