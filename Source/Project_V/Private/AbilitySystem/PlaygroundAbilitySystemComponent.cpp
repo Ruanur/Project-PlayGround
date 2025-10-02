@@ -2,6 +2,7 @@
 
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/PlaygroundPlayerGameplayAbility.h"
+#include "PlaygroundGameplayTags.h"
 
 void UPlaygroundAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InInputTag)
 {
@@ -18,9 +19,21 @@ void UPlaygroundAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag
 	}
 }
 
+//Å°´Ù¿î
 void UPlaygroundAbilitySystemComponent::OnAbilityInputReleased(const FGameplayTag& InInputTag)
 {
+	if (!InInputTag.IsValid() || !InInputTag.MatchesTag(PlaygroundGameplayTags::InputTag_MustBeHeld))
+	{
+		return;
+	}
 
+	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InInputTag) && AbilitySpec.IsActive())
+		{
+			CancelAbilityHandle(AbilitySpec.Handle);
+		}
+	}
 }
 
 void UPlaygroundAbilitySystemComponent::GrantPlayerWeaponAbilities(
