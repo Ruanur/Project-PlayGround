@@ -5,6 +5,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Characters/PlaygroundPlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "Widgets/PlaygroundWidgeBase.h"
+#include "Controllers/PlayGroundPlayerController.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -20,17 +22,6 @@ void UPlayerGameplayAbility_TargetLock::EndAbility(const FGameplayAbilitySpecHan
 	CleanUp();
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	CurrentLockedActor = GetNearestTargetFromAvailableActors(AvailableActorsToLock);
-
-	if (CurrentLockedActor)
-	{
-		Debug::Print(CurrentLockedActor->GetActorNameOrLabel());
-	}
-	else
-	{
-		CancelTargetLockAbility();
-	}
 }
 
 void UPlayerGameplayAbility_TargetLock::TryLockOnTarget()
@@ -41,6 +32,17 @@ void UPlayerGameplayAbility_TargetLock::TryLockOnTarget()
 	{
 		CancelTargetLockAbility();
 		return;
+	}
+
+	CurrentLockedActor = GetNearestTargetFromAvailableActors(AvailableActorsToLock);
+
+	if (CurrentLockedActor)
+	{
+		DrawTargetLockWidget();
+	}
+	else
+	{
+		CancelTargetLockAbility();
 	}
 }
 
@@ -82,6 +84,20 @@ AActor* UPlayerGameplayAbility_TargetLock::GetNearestTargetFromAvailableActors(c
 	return UGameplayStatics::FindNearestActor(GetPlayerCharacterFromActorInfo()->GetActorLocation(), InAvailableActors, ClosestDistance);
 }
 
+void UPlayerGameplayAbility_TargetLock::DrawTargetLockWidget()
+{
+	if (!DrawnTargetLockWidget)
+	{
+		checkf(TargetLockWidgetClass, TEXT("Forgot to assign a valid widget class in Blueprint"));
+
+		DrawnTargetLockWidget = CreateWidget<UPlaygroundWidgeBase>(GetPlayerControllerFromActorInfo(), TargetLockWidgetClass);
+
+		check(DrawnTargetLockWidget);
+
+		DrawnTargetLockWidget->AddToViewport();
+	}
+}
+
 void UPlayerGameplayAbility_TargetLock::CancelTargetLockAbility()
 {
 	CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true);
@@ -92,4 +108,9 @@ void UPlayerGameplayAbility_TargetLock::CleanUp()
 	AvailableActorsToLock.Empty();
 
 	CurrentLockedActor = nullptr;
+
+	if (DrawnTargetLockWidget)
+	{
+		DrawnTargetLockWidget->RemoveFromParent();
+	}
 }

@@ -6,6 +6,9 @@
 #include "AbilitySystem/Abilities/PlaygroundPlayerGameplayAbility.h"
 #include "PlayerGameplayAbility_TargetLock.generated.h"
 
+
+class UPlaygroundWidgeBase;
+
 /**
  * 
  */
@@ -23,8 +26,8 @@ protected:
 private:
 	void TryLockOnTarget();
 	void GetAvailableActorsToLock();
-	
 	AActor* GetNearestTargetFromAvailableActors(const TArray<AActor*>& InAvailableActors);
+	void DrawTargetLockWidget();
 
 	void CancelTargetLockAbility();
 	void CleanUp();
@@ -41,9 +44,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Target Lock")
 	bool bShowPersistanceDebugShape = false;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Target Lock")
+	TSubclassOf<UPlaygroundWidgeBase> TargetLockWidgetClass;
+
 	UPROPERTY()
 	TArray<AActor*> AvailableActorsToLock;
 
 	UPROPERTY()
 	AActor* CurrentLockedActor;
+
+	UPROPERTY()
+	UPlaygroundWidgeBase* DrawnTargetLockWidget;
 };
