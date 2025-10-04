@@ -102,7 +102,12 @@ void APlaygroundPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Play
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Look, ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
 
+	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_SwitchTarget, ETriggerEvent::Triggered, this, &ThisClass::Input_SwitchTargetTriggered);
+	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_SwitchTarget, ETriggerEvent::Completed, this, &ThisClass::Input_SwitchTargetCompleted);
+
 	PlaygroundInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &ThisClass::Input_AbilityInputPressed, &ThisClass::Input_AbilityInputReleased);
+
+	
 }
 
 void APlaygroundPlayerCharacter::BeginPlay()
@@ -148,6 +153,17 @@ void APlaygroundPlayerCharacter::Input_Look(const FInputActionValue& InputAction
 	{
 		AddControllerPitchInput(LookAxisVector.Y * LookSensitivityPitch);
 	}
+}
+
+void APlaygroundPlayerCharacter::Input_SwitchTargetTriggered(const FInputActionValue& InputActionValue)
+{
+
+}
+
+
+void APlaygroundPlayerCharacter::Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue)
+{
+
 }
 
 
