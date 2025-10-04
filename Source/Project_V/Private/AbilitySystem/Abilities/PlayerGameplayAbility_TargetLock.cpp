@@ -12,6 +12,7 @@
 #include "Components/SizeBox.h"
 #include "PlaygroundFunctionLibrary.h"
 #include "PlaygroundGameplayTags.h"
+#include "Kismet/KismetMathLibrary.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -40,6 +41,25 @@ void UPlayerGameplayAbility_TargetLock::OnTargetLockTick(float DeltaTime)
 	}
 
 	SetTargetLockWidgetPosition();
+
+	const bool bShouldOverrideRotation =
+		!UPlaygroundFunctionLibrary::NativeDoesActorHaveTag(GetPlayerCharacterFromActorInfo(), PlaygroundGameplayTags::Player_Status_Rolling)
+		&& !UPlaygroundFunctionLibrary::NativeDoesActorHaveTag(GetPlayerCharacterFromActorInfo(), PlaygroundGameplayTags::Player_Status_Blocking);
+
+	if (bShouldOverrideRotation)
+	{
+		const FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(
+			GetPlayerCharacterFromActorInfo()->GetActorLocation(),
+			CurrentLockedActor->GetActorLocation());
+
+
+
+		const FRotator CurrentControlRot = GetPlayerControllerFromActorInfo()->GetControlRotation();
+		const FRotator TargetRot = FMath::RInterpTo(CurrentControlRot, LookAtRot, DeltaTime, TargetLockRotationInterpSpeed);
+
+		GetPlayerControllerFromActorInfo()->SetControlRotation(FRotator(TargetRot.Pitch, TargetRot.Yaw, 0.f));
+		GetPlayerCharacterFromActorInfo()->SetActorRotation(FRotator(0.f, TargetRot.Yaw, 0.f));
+	}
 }
 
 void UPlayerGameplayAbility_TargetLock::TryLockOnTarget()
