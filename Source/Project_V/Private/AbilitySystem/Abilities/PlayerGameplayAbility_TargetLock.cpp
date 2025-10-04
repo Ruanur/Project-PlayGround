@@ -7,6 +7,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Widgets/PlaygroundWidgeBase.h"
 #include "Controllers/PlayGroundPlayerController.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Blueprint/WidgetTree.h"
+#include "Components/SizeBox.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -39,10 +42,13 @@ void UPlayerGameplayAbility_TargetLock::TryLockOnTarget()
 	if (CurrentLockedActor)
 	{
 		DrawTargetLockWidget();
+		
+		SetTargetLockWidgetPosition();
 	}
 	else
 	{
 		CancelTargetLockAbility();
+
 	}
 }
 
@@ -96,6 +102,42 @@ void UPlayerGameplayAbility_TargetLock::DrawTargetLockWidget()
 
 		DrawnTargetLockWidget->AddToViewport();
 	}
+}
+
+void UPlayerGameplayAbility_TargetLock::SetTargetLockWidgetPosition()
+{
+	if (!DrawnTargetLockWidget || !CurrentLockedActor)
+	{
+		CancelTargetLockAbility();
+		return;
+	}
+
+	FVector2D ScreenPosition;
+	UWidgetLayoutLibrary::ProjectWorldLocationToWidgetPosition(
+		GetPlayerControllerFromActorInfo(),
+		CurrentLockedActor->GetActorLocation(),
+		ScreenPosition,
+		true
+	);
+
+	if (TargetLockWidgetSize == FVector2D::ZeroVector)
+	{
+		DrawnTargetLockWidget->WidgetTree->ForEachWidget(
+			[this](UWidget* FoundWidget)
+			{
+				if (USizeBox* FoundSizeBox = Cast<USizeBox>(FoundWidget))
+				{
+					TargetLockWidgetSize.X = FoundSizeBox->GetWidthOverride();
+					TargetLockWidgetSize.Y = FoundSizeBox->GetHeightOverride();
+				}
+			}
+		);
+	}
+
+	ScreenPosition -= (TargetLockWidgetSize / 2.f);
+
+	DrawnTargetLockWidget->SetPositionInViewport(ScreenPosition, false);
+
 }
 
 void UPlayerGameplayAbility_TargetLock::CancelTargetLockAbility()
