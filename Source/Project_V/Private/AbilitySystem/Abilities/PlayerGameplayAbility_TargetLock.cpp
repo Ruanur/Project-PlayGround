@@ -10,6 +10,8 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/SizeBox.h"
+#include "PlaygroundFunctionLibrary.h"
+#include "PlaygroundGameplayTags.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -25,6 +27,19 @@ void UPlayerGameplayAbility_TargetLock::EndAbility(const FGameplayAbilitySpecHan
 	CleanUp();
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
+void UPlayerGameplayAbility_TargetLock::OnTargetLockTick(float DeltaTime)
+{
+	if (!CurrentLockedActor || 
+		UPlaygroundFunctionLibrary::NativeDoesActorHaveTag(CurrentLockedActor, PlaygroundGameplayTags::Shared_Status_Dead)
+		|| UPlaygroundFunctionLibrary::NativeDoesActorHaveTag(GetPlayerCharacterFromActorInfo(), PlaygroundGameplayTags::Shared_Status_Dead)
+		)
+	{
+		CancelTargetLockAbility();
+	}
+
+	SetTargetLockWidgetPosition();
 }
 
 void UPlayerGameplayAbility_TargetLock::TryLockOnTarget()
@@ -155,4 +170,7 @@ void UPlayerGameplayAbility_TargetLock::CleanUp()
 	{
 		DrawnTargetLockWidget->RemoveFromParent();
 	}
+	DrawnTargetLockWidget = nullptr;
+
+	TargetLockWidgetSize = FVector2D::ZeroVector;
 }
