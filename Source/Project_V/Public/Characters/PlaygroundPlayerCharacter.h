@@ -89,6 +89,8 @@ private:
 
 	void Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue);
 
+	FVector2D SwitchDirection = FVector2D::ZeroVector;
+
 	//어빌리티 입력 (누름)
 	void Input_AbilityInputPressed(FGameplayTag InInputTag);
 

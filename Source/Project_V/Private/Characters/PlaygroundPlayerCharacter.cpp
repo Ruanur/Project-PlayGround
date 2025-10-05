@@ -14,6 +14,7 @@
 #include "DataAssets/StartUpData/DataAsset_PlayerStartUpData.h"
 #include "Components/Combat/PlayerCombatComponent.h"
 #include "Components/UI/PlayerUIComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -157,13 +158,21 @@ void APlaygroundPlayerCharacter::Input_Look(const FInputActionValue& InputAction
 
 void APlaygroundPlayerCharacter::Input_SwitchTargetTriggered(const FInputActionValue& InputActionValue)
 {
-
+	SwitchDirection = InputActionValue.Get<FVector2D>();
 }
 
 
 void APlaygroundPlayerCharacter::Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue)
 {
+	FGameplayEventData Data;
 
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		this,
+		SwitchDirection.X > 0.f ? PlaygroundGameplayTags::Player_Event_SwitchTarget_Right : PlaygroundGameplayTags::Player_Event_SwitchTarget_Left,
+		Data
+	);
+
+	Debug::Print(TEXT("SwitchDirection: ") + SwitchDirection.ToString());
 }
 
 
