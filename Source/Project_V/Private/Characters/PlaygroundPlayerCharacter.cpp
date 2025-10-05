@@ -172,7 +172,7 @@ void APlaygroundPlayerCharacter::Input_SwitchTargetCompleted(const FInputActionV
 		Data
 	);
 
-	Debug::Print(TEXT("SwitchDirection: ") + SwitchDirection.ToString());
+	
 }
 
 
