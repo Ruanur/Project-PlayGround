@@ -50,8 +50,9 @@ void UPlayerGameplayAbility_TargetLock::OnTargetLockTick(float DeltaTime)
 	SetTargetLockWidgetPosition();
 
 	const bool bShouldOverrideRotation =
-		!UPlaygroundFunctionLibrary::NativeDoesActorHaveTag(GetPlayerCharacterFromActorInfo(), PlaygroundGameplayTags::Player_Status_Rolling)
-		&& !UPlaygroundFunctionLibrary::NativeDoesActorHaveTag(GetPlayerCharacterFromActorInfo(), PlaygroundGameplayTags::Player_Status_Blocking);
+		!UPlaygroundFunctionLibrary::NativeDoesActorHaveTag(GetPlayerCharacterFromActorInfo(), PlaygroundGameplayTags::Player_Status_Rolling);
+
+		//&& !UPlaygroundFunctionLibrary::NativeDoesActorHaveTag(GetPlayerCharacterFromActorInfo(), PlaygroundGameplayTags::Player_Status_Blocking);
 
 	if (bShouldOverrideRotation)
 	{
