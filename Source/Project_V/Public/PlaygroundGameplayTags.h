@@ -71,6 +71,8 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_HitReact);
 
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_SpawnProjectile);
+
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_BaseDamage);
 
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_Dead);
@@ -78,4 +80,7 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_HitReact_Left);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_HitReact_Right);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_HitReact_Back);
+
+
+
 }
