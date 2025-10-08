@@ -140,3 +140,13 @@ bool UPlaygroundFunctionLibrary::IsValidBlock(AActor* InAttacker, AActor* InDefe
 
 	return DotResult < -0.1f;
 }
+
+bool UPlaygroundFunctionLibrary::ApplyGameplayEffectSpecHandleToTargetActor(AActor* InInstigator, AActor* InTargetActor, const FGameplayEffectSpecHandle& InSpecHandle)
+{
+	UPlaygroundAbilitySystemComponent* SourceASC = NativeGetPlaygroundASCFromActor(InInstigator);
+	UPlaygroundAbilitySystemComponent* TargetASC = NativeGetPlaygroundASCFromActor(InTargetActor);
+
+	FActiveGameplayEffectHandle ActiveGameplayEffectHandle = SourceASC->ApplyGameplayEffectSpecToTarget(*InSpecHandle.Data, TargetASC);
+
+	return ActiveGameplayEffectHandle.WasSuccessfullyApplied();
+}
