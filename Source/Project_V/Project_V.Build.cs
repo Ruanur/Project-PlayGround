@@ -18,7 +18,7 @@ public class Project_V : ModuleRules
 			"GameplayTasks",
             "AnimGraphRuntime",
 			"MotionWarping",
-			"Niagara"});
+            "Niagara"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
