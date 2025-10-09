@@ -62,6 +62,7 @@ namespace PlaygroundGameplayTags
 
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Strafing);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_UnderAttack);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Unblockable);
 
 
 	/* Shared Tags */
