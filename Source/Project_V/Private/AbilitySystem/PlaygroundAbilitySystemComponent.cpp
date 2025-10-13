@@ -11,20 +11,15 @@ void UPlaygroundAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag
 		return;
 	}
 
+
+
 	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
 		if (!AbilitySpec.DynamicAbilityTags.HasTagExact(InInputTag)) continue;
 
-		if (InInputTag.MatchesTag(PlaygroundGameplayTags::InputTag_Toggleable))
+		if (InInputTag.MatchesTag(PlaygroundGameplayTags::InputTag_Toggleable) && AbilitySpec.IsActive())
 		{
-			if (AbilitySpec.IsActive())
-			{
-				CancelAbilityHandle(AbilitySpec.Handle);
-			}
-			else
-			{
-				TryActivateAbility(AbilitySpec.Handle);
-			}
+			CancelAbilityHandle(AbilitySpec.Handle);
 		}
 		else
 		{
