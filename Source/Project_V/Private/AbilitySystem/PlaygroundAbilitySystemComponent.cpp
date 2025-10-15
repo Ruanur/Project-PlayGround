@@ -46,7 +46,8 @@ void UPlaygroundAbilitySystemComponent::OnAbilityInputReleased(const FGameplayTa
 }
 
 void UPlaygroundAbilitySystemComponent::GrantPlayerWeaponAbilities(
-	const TArray<FPlaygroundPlayerAbilitySet>& InDefaultWeaponAbilities, 
+	const TArray<FPlaygroundPlayerAbilitySet>& InDefaultWeaponAbilities,
+	const TArray<FPlaygroundPlayerSpecialAbilitySet>& InSpecialWeaponAbilities,
 	int32 ApplyLevel, 
 	TArray<FGameplayAbilitySpecHandle>& OutGrantedAbilitySpecHandles)
 {
@@ -64,6 +65,19 @@ void UPlaygroundAbilitySystemComponent::GrantPlayerWeaponAbilities(
 		AbilitySpec.Level = ApplyLevel;
 		AbilitySpec.DynamicAbilityTags.AddTag(AbilitySet.InputTag);
 		
+
+		OutGrantedAbilitySpecHandles.AddUnique(GiveAbility(AbilitySpec));
+	}
+
+	for (const FPlaygroundPlayerSpecialAbilitySet& AbilitySet : InSpecialWeaponAbilities)
+	{
+		if (!AbilitySet.IsValid()) continue;
+
+		FGameplayAbilitySpec AbilitySpec(AbilitySet.AbilityToGrant);
+		AbilitySpec.SourceObject = GetAvatarActor();
+		AbilitySpec.Level = ApplyLevel;
+		AbilitySpec.DynamicAbilityTags.AddTag(AbilitySet.InputTag);
+
 
 		OutGrantedAbilitySpecHandles.AddUnique(GiveAbility(AbilitySpec));
 	}
