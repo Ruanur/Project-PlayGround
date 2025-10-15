@@ -46,6 +46,8 @@ void APlaygroundProjectileBase::BeginPlay()
 	{
 		ProjectileCollisionBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	}
+
+
 }
 
 void APlaygroundProjectileBase::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -92,6 +94,24 @@ void APlaygroundProjectileBase::OnProjectileHit(UPrimitiveComponent* HitComponen
 
 void APlaygroundProjectileBase::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OverlappedActors.Contains(OtherActor))
+	{
+		return;
+	}
+
+	OverlappedActors.AddUnique(OtherActor);
+
+	if (APawn* HitPawn = Cast<APawn>(OtherActor))
+	{
+		FGameplayEventData Data;
+		Data.Instigator = GetInstigator();
+		Data.Target = HitPawn;
+
+		if (UPlaygroundFunctionLibrary::IsTargetPawnHostile(GetInstigator(), HitPawn))
+		{
+			HandleApplyProjectileDamage(HitPawn, Data);
+		}
+	}
 }
 
 void APlaygroundProjectileBase::HandleApplyProjectileDamage(APawn* InHitPawn, const FGameplayEventData& InPayload)
