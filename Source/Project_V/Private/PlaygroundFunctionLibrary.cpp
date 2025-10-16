@@ -150,3 +150,8 @@ bool UPlaygroundFunctionLibrary::ApplyGameplayEffectSpecHandleToTargetActor(AAct
 
 	return ActiveGameplayEffectHandle.WasSuccessfullyApplied();
 }
+
+void UPlaygroundFunctionLibrary::CountDown(const UObject* WorldContextObject, float TotalTime, float UpdateInterval, float& OutRemainingTime, EPlaygroundCountDownActionInput CountDownInput, UPARAM(DisplayName = "Output") EPlaygroundCountDownActionOutput& CountDownOutput, FLatentActionInfo LatentInfo)
+{
+
+}

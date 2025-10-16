@@ -20,3 +20,19 @@ enum class EPlaygroundSuccessType : uint8
 	Successful,
 	Failed
 };
+
+//ÄðÅ¸ÀÓ Enum
+UENUM()
+enum class EPlaygroundCountDownActionInput : uint8
+{
+	Start,
+	Cancel
+};
+
+UENUM()
+enum class EPlaygroundCountDownActionOutput : uint8
+{
+	Updated,
+	Completed,
+	Cancelled
+};
