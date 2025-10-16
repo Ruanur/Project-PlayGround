@@ -53,6 +53,16 @@ FActiveGameplayEffectHandle UPlaygroundGameplayAbility::NativeApplyEffectSpecHan
 {
     UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 
+    if (!TargetASC)
+    {
+        UE_LOG(LogTemp, Error, TEXT("TargetASC is NULL. TargetActor: %s"), *GetNameSafe(TargetActor));
+    }
+
+    if (!InSpecHandle.IsValid())
+    {
+        UE_LOG(LogTemp, Error, TEXT("SpecHandle is INVALID."));
+    }
+
     check(TargetASC && InSpecHandle.IsValid());
 
     return GetPlaygroundAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(
