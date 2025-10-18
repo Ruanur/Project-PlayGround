@@ -29,7 +29,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Playground|Ability")
 	FGameplayEffectSpecHandle MakePlayerDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InUsedComboCount);
 
-
+	UFUNCTION(BlueprintCallable, Category = "Playground|Ability")
+	bool GetAbilityRemainingCooldownByTag(FGameplayTag InCooldownTag, float& TotalCooldownTime, float& RemainingCooldownTime);
 private:
 	TWeakObjectPtr<APlaygroundPlayerCharacter> CachedPlaygroundPlayerCharacter;
 	TWeakObjectPtr<APlayGroundPlayerController> CachedPlaygroundPlayerController;
