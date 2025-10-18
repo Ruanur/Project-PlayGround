@@ -8,9 +8,9 @@
 class FPlaygroundCountDownAction : public FPendingLatentAction
 {
 public:
-	FPlaygroundCountDownAction(float InTotalCountTime, float InUpdateInterval, float& InOutRemainingTime, EPlaygroundCountDownActionOutput& InCountDownOutput, const FLatentActionInfo& LatentInfo)
+	FPlaygroundCountDownAction(float InTotalCountDownTime, float InUpdateInterval, float& InOutRemainingTime, EPlaygroundCountDownActionOutput& InCountDownOutput, const FLatentActionInfo& LatentInfo)
 		: bNeedToCancel(false)
-		, TotalCountDownTime(InTotalCountTime)
+		, TotalCountDownTime(InTotalCountDownTime)
 		, OutRemainingTime(InOutRemainingTime)
 		, CountDownOutput(InCountDownOutput)
 		, ExecutionFunction(LatentInfo.ExecutionFunction)
@@ -21,6 +21,8 @@ public:
 	{
 
 	}
+
+	void CancelAction();
 
 private:
 	bool bNeedToCancel;

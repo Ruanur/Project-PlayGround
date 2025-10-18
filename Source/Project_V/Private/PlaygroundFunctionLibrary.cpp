@@ -8,6 +8,7 @@
 #include "GenericTeamAgentInterface.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "PlaygroundGameplayTags.h"
+#include "PlayergroundTypes/PlaygroundCountDownAction.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -153,5 +154,40 @@ bool UPlaygroundFunctionLibrary::ApplyGameplayEffectSpecHandleToTargetActor(AAct
 
 void UPlaygroundFunctionLibrary::CountDown(const UObject* WorldContextObject, float TotalTime, float UpdateInterval, float& OutRemainingTime, EPlaygroundCountDownActionInput CountDownInput, UPARAM(DisplayName = "Output") EPlaygroundCountDownActionOutput& CountDownOutput, FLatentActionInfo LatentInfo)
 {
+	UWorld* World = nullptr;
 
+	if (GEngine)
+	{
+		World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+	}
+
+	if (!World)
+	{
+		return;
+	}
+
+
+	FLatentActionManager& LatentActionManager = World->GetLatentActionManager();
+
+	FPlaygroundCountDownAction* FoundAction = LatentActionManager.FindExistingAction<FPlaygroundCountDownAction>(LatentInfo.CallbackTarget, LatentInfo.UUID);
+	
+	if (CountDownInput == EPlaygroundCountDownActionInput::Start)
+	{
+		if (!FoundAction)
+		{
+			LatentActionManager.AddNewAction(
+				LatentInfo.CallbackTarget,
+				LatentInfo.UUID,
+				new FPlaygroundCountDownAction(TotalTime, UpdateInterval, OutRemainingTime, CountDownOutput, LatentInfo)
+			);
+		}
+	}
+	if (CountDownInput == EPlaygroundCountDownActionInput::Cancel)
+	{
+		if (FoundAction)
+		{
+			FoundAction->CancelAction();
+		}
+	}
 }
+

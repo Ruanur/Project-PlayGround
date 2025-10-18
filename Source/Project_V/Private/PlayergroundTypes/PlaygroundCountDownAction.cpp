@@ -3,4 +3,7 @@
 
 #include "PlayergroundTypes/PlaygroundCountDownAction.h"
 
-
+void FPlaygroundCountDownAction::CancelAction()
+{
+	bNeedToCancel = true;
+}
