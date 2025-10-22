@@ -7,6 +7,21 @@
 #include "PlaygroundGameplayTags.h"
 
 
+void APlaygroundStoneBase::Consume(UPlaygroundAbilitySystemComponent* AbilitySystemComponent, int32 ApplyLevel)
+{
+	check(StoneGameplayEffectClass);
+
+	UGameplayEffect* EffectCDO = StoneGameplayEffectClass->GetDefaultObject<UGameplayEffect>();
+
+	AbilitySystemComponent->ApplyGameplayEffectToSelf(
+		EffectCDO,
+		ApplyLevel,
+		AbilitySystemComponent->MakeEffectContext()
+	);
+
+	BP_OnStoneConsumed();
+}
+
 void APlaygroundStoneBase::OnPickUpCollisionSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (APlaygroundPlayerCharacter* OverrlappedPlayerCharacter = Cast<APlaygroundPlayerCharacter>(OtherActor))
@@ -16,3 +31,4 @@ void APlaygroundStoneBase::OnPickUpCollisionSphereBeginOverlap(UPrimitiveCompone
 
 	}
 }
+

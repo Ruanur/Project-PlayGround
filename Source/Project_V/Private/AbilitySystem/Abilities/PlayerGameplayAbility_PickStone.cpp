@@ -49,3 +49,20 @@ void UPlayerGameplayAbility_PickStone::CollectStones()
 		CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true);
 	}
 }
+
+void UPlayerGameplayAbility_PickStone::ConsumeStones()
+{
+	if (CollectedStones.IsEmpty())
+	{
+		CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true);
+		return;
+	}
+
+	for (APlaygroundStoneBase* CollectedStone : CollectedStones)
+	{
+		if (CollectedStone)
+		{
+			CollectedStone->Consume(GetPlaygroundAbilitySystemComponentFromActorInfo(), GetAbilityLevel());
+		}
+	}
+}
