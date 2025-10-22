@@ -27,6 +27,9 @@ public:
 	UPlayerCombatComponent* GetPlayerCombatComponentFromActorInfo();
 
 	UFUNCTION(BlueprintPure, Category = "Playground|Ability")
+	UPlayerUIComponent* GetPlayerUIComponentFromActorInfo();
+
+	UFUNCTION(BlueprintPure, Category = "Playground|Ability")
 	FGameplayEffectSpecHandle MakePlayerDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InUsedComboCount);
 
 	UFUNCTION(BlueprintCallable, Category = "Playground|Ability")

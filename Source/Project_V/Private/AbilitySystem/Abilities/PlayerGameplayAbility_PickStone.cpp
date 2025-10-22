@@ -5,14 +5,19 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Characters/PlaygroundPlayerCharacter.h"
 #include "Items/PickUps/PlaygroundStoneBase.h"
+#include "Components/UI/PlayerUIComponent.h"
 
 void UPlayerGameplayAbility_PickStone::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	GetPlayerUIComponentFromActorInfo()->OnStoneInteracted.Broadcast(true);
+
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
 void UPlayerGameplayAbility_PickStone::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	GetPlayerUIComponentFromActorInfo()->OnStoneInteracted.Broadcast(false);
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
