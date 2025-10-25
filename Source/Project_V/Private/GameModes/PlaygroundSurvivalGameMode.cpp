@@ -2,6 +2,10 @@
 
 
 #include "GameModes/PlaygroundSurvivalGameMode.h"
+#include "Engine/AssetManager.h"
+#include "Characters/PlaygroundEnemyCharacter.h"
+
+#include "PlaygroundDebugHelper.h"
 
 void APlaygroundSurvivalGameMode::BeginPlay()
 {
@@ -12,6 +16,8 @@ void APlaygroundSurvivalGameMode::BeginPlay()
 	SetCurrentSurvivalGameModeState(EPlaygroundSurvivalGameModeState::WaitSpawnNewWave);
 
 	TotalWavesToSpawn = EnemyWaveSpawnerDataTable->GetRowNames().Num();
+
+	PreLoadNextWaveEnemies();
 }
 
 void APlaygroundSurvivalGameMode::Tick(float DeltaTime)
@@ -61,6 +67,7 @@ void APlaygroundSurvivalGameMode::Tick(float DeltaTime)
 			else
 			{
 				SetCurrentSurvivalGameModeState(EPlaygroundSurvivalGameModeState::WaitSpawnNewWave);
+				PreLoadNextWaveEnemies();
 			}
 		}
 	}
@@ -77,4 +84,43 @@ void APlaygroundSurvivalGameMode::SetCurrentSurvivalGameModeState(EPlaygroundSur
 bool APlaygroundSurvivalGameMode::HasFinishedAllWaves() const
 {
 	return CurrentWaveCount > TotalWavesToSpawn;
+}
+
+void APlaygroundSurvivalGameMode::PreLoadNextWaveEnemies()
+{
+	if (HasFinishedAllWaves())
+	{
+		return;
+	}
+
+	for (const FPlaygroundEnemyWaveSpawnerInfo& SpawnerInfo : GetCurrentWaveSpawnerTableRow()->EnemyWaveSpawnerDefinitions)
+	{
+		if (SpawnerInfo.SoftEnemyClassToSpawn.IsNull()) continue;
+
+		UAssetManager::GetStreamableManager().RequestAsyncLoad(
+			SpawnerInfo.SoftEnemyClassToSpawn.ToSoftObjectPath(),
+			FStreamableDelegate::CreateLambda(
+				[SpawnerInfo,this]()
+				{
+					if (UClass* LoadedEnemyClass = SpawnerInfo.SoftEnemyClassToSpawn.Get())
+					{
+						PreLoadedEnemyClassMap.Emplace(SpawnerInfo.SoftEnemyClassToSpawn, LoadedEnemyClass);
+						Debug::Print(LoadedEnemyClass->GetName() + TEXT(" is Loaded"));
+					}
+				}
+			)
+		);
+	}
+}
+
+FPlaygroundEnemyWaveSpawnerTableRow* APlaygroundSurvivalGameMode::GetCurrentWaveSpawnerTableRow() const
+{
+	const FName RowName = FName(TEXT("Wave") + FString::FromInt(CurrentWaveCount));
+
+
+	FPlaygroundEnemyWaveSpawnerTableRow* FoundRow = EnemyWaveSpawnerDataTable->FindRow<FPlaygroundEnemyWaveSpawnerTableRow>(RowName, FString());
+
+	checkf(FoundRow, TEXT("Could not find a valid row under the name &s in the data table"), *RowName.ToString());
+
+	return FoundRow;
 }
