@@ -76,5 +76,5 @@ void APlaygroundSurvivalGameMode::SetCurrentSurvivalGameModeState(EPlaygroundSur
 
 bool APlaygroundSurvivalGameMode::HasFinishedAllWaves() const
 {
-	return CurrentWaveCount >= TotalWavesToSpawn;
+	return CurrentWaveCount > TotalWavesToSpawn;
 }
