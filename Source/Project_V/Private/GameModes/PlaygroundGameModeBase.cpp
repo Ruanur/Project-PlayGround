@@ -3,3 +3,8 @@
 
 #include "GameModes/PlaygroundGameModeBase.h"
 
+APlaygroundGameModeBase::APlaygroundGameModeBase()
+{
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+}

@@ -14,4 +14,6 @@ class PROJECT_V_API APlaygroundGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	APlaygroundGameModeBase();
 };
