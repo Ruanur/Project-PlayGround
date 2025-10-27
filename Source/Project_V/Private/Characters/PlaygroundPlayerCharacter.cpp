@@ -15,6 +15,7 @@
 #include "Components/Combat/PlayerCombatComponent.h"
 #include "Components/UI/PlayerUIComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GameModes/PlaygroundGameModeBase.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -81,7 +82,34 @@ void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
 	{
 		if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous())
 		{
-			LoadedData->GiveToAbilitySystemComponent(PlaygroundAbilitySystemComponent);
+			int32 AbilityApplyLevel = 1;
+
+			if (APlaygroundGameModeBase* BaseGameMode = GetWorld()->GetAuthGameMode<APlaygroundGameModeBase>())
+			{
+				switch (BaseGameMode->GetCurrentGameDifficulty())
+				{
+				case EPlaygroundGameDifficulty::Easy:
+					AbilityApplyLevel = 4;
+					break;
+
+				case EPlaygroundGameDifficulty::Normal:
+					AbilityApplyLevel = 3;
+					break;
+
+				case EPlaygroundGameDifficulty::Hard:
+					AbilityApplyLevel = 2;
+					break;
+
+				case EPlaygroundGameDifficulty::VeryHard:
+					AbilityApplyLevel = 1;
+					break;
+
+				default:
+					break;
+				}
+			}
+
+			LoadedData->GiveToAbilitySystemComponent(PlaygroundAbilitySystemComponent, AbilityApplyLevel);
 		}
 	}
 }

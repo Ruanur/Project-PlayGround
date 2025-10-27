@@ -13,6 +13,7 @@
 #include "Widgets/PlaygroundWidgeBase.h"
 #include "Components/BoxComponent.h"
 #include "PlaygroundFunctionLibrary.h"
+#include "GameModes/PlaygroundGameModeBase.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -127,20 +128,46 @@ void APlaygroundEnemyCharacter::InitEnemyStartUpData()
 		return;
 	}
 
+	int32 AbilityApplyLevel = 1;
+
+	if (APlaygroundGameModeBase* BaseGameMode = GetWorld()->GetAuthGameMode<APlaygroundGameModeBase>())
+	{
+		switch (BaseGameMode->GetCurrentGameDifficulty())
+		{
+		case EPlaygroundGameDifficulty::Easy:
+			AbilityApplyLevel = 1;
+			break;
+
+		case EPlaygroundGameDifficulty::Normal:
+			AbilityApplyLevel = 2;
+			break;
+
+		case EPlaygroundGameDifficulty::Hard:
+			AbilityApplyLevel = 3;
+			break;
+
+		case EPlaygroundGameDifficulty::VeryHard:
+			AbilityApplyLevel = 4;
+			break;
+
+		default:
+			break;
+		}
+	}
 	//UAssetManager 데이터 비동기 로드
 	//로드가 끝나면 엔진이 미리 등록해 둔 콜백 함수 호출 
 	UAssetManager::GetStreamableManager().RequestAsyncLoad(
 		CharacterStartUpData.ToSoftObjectPath(),
 		//로드가 완료되었을 때 실행될 콜백 함수(람다) 정의
 		FStreamableDelegate::CreateLambda(
-			[this]()
+			[this, AbilityApplyLevel]()
 			{
 				//로드된 데이터 에셋 가져오기
 				if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
 				{
 					//GiveToAbilitySystemComponent에 로드된 데이터 전달
 					//이를 통해 초기 데이터 전달
-					LoadedData->GiveToAbilitySystemComponent(PlaygroundAbilitySystemComponent);
+					LoadedData->GiveToAbilitySystemComponent(PlaygroundAbilitySystemComponent, AbilityApplyLevel);
 				}
 			}
 		)

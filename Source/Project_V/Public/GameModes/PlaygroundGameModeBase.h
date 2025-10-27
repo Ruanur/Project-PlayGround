@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "PlayergroundTypes/PlaygroundEnumTypes.h"
 #include "PlaygroundGameModeBase.generated.h"
 
 /**
@@ -16,4 +17,11 @@ class PROJECT_V_API APlaygroundGameModeBase : public AGameModeBase
 	
 public:
 	APlaygroundGameModeBase();
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Settings")
+	EPlaygroundGameDifficulty CurrentGameDifficulty;
+
+public:
+	FORCEINLINE EPlaygroundGameDifficulty GetCurrentGameDifficulty() const { return CurrentGameDifficulty; }
 };
