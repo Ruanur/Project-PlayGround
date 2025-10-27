@@ -207,3 +207,16 @@ void APlaygroundSurvivalGameMode::OnEnemyDestroyed(AActor* DestroyedActor)
 		SetCurrentSurvivalGameModeState(EPlaygroundSurvivalGameModeState::WaveCompleted);
 	}
 }
+
+void APlaygroundSurvivalGameMode::RegisterSpawnedEnemies(const TArray<APlaygroundEnemyCharacter*>& InEnemiesToRegister)
+{
+	for (APlaygroundEnemyCharacter* SpawnedEnemy : InEnemiesToRegister)
+	{
+		if (SpawnedEnemy)
+		{
+			CurrentSpawnedEnemiesCounter++;
+
+			SpawnedEnemy->OnDestroyed.AddUniqueDynamic(this, &ThisClass::OnEnemyDestroyed);
+		}
+	}
+}
