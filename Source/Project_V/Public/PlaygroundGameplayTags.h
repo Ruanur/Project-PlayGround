@@ -105,6 +105,7 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_HitReact_Back);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_Invincible);
 
-
-
+	/* Game Data Tags */
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameData_Level_SurvivalGameModeMap);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameData_Level_MainMenuMap);
 }

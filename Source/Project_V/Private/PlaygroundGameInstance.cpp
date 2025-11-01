@@ -3,3 +3,17 @@
 
 #include "PlaygroundGameInstance.h"
 
+TSoftObjectPtr<UWorld> UPlaygroundGameInstance::GetGameLevelByTag(FGameplayTag InTag)
+{
+	for (const FPlaygroundGameLevelSet& GameLevelSet : GameLevelSets)
+	{
+		if (!GameLevelSet.IsValid()) continue;
+
+		if (GameLevelSet.LevelTag == InTag)
+		{
+			return GameLevelSet.Level;
+		}
+	}
+
+	return TSoftObjectPtr<UWorld>();
+}
