@@ -9,6 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "PlaygroundGameplayTags.h"
 #include "PlayergroundTypes/PlaygroundCountDownAction.h"
+#include "PlaygroundGameInstance.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -189,5 +190,18 @@ void UPlaygroundFunctionLibrary::CountDown(const UObject* WorldContextObject, fl
 			FoundAction->CancelAction();
 		}
 	}
+}
+
+UPlaygroundGameInstance* UPlaygroundFunctionLibrary::GetPlaygroundGameInstance(const UObject* WorldContextObject)
+{
+	if (GEngine)
+	{
+		if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+		{
+			World->GetGameInstance<UPlaygroundGameInstance>();
+		}
+	}
+
+	return nullptr;
 }
 

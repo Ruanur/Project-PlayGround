@@ -10,6 +10,7 @@
 class UPlaygroundAbilitySystemComponent;
 class UPawnCombatComponent;
 struct FScalableFloat;
+class UPlaygroundGameInstance;
 /**
  * 
  */
@@ -56,4 +57,7 @@ public:
 	static void CountDown(const UObject* WorldContextObject, float TotalTime, float UpdateInterval, 
 		float& OutRemainingTime, EPlaygroundCountDownActionInput CountDownInput, 
 		UPARAM(DisplayName = "Output") EPlaygroundCountDownActionOutput& CountDownOutput, FLatentActionInfo LatentInfo);
+
+	UFUNCTION(BlueprintPure, Category = "Playground|FunctionLibrary", meta = (WorldContext = "WorldContextObject"))
+	static UPlaygroundGameInstance* GetPlaygroundGameInstance(const UObject* WorldContextObject);
 };
