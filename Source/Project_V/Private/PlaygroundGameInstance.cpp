@@ -3,7 +3,7 @@
 
 #include "PlaygroundGameInstance.h"
 
-TSoftObjectPtr<UWorld> UPlaygroundGameInstance::GetGameLevelByTag(FGameplayTag InTag)
+TSoftObjectPtr<UWorld> UPlaygroundGameInstance::GetGameLevelByTag(FGameplayTag InTag) const
 {
 	for (const FPlaygroundGameLevelSet& GameLevelSet : GameLevelSets)
 	{
