@@ -45,3 +45,10 @@ enum class EPlaygroundGameDifficulty : uint8
 	Hard,
 	VeryHard
 };
+
+UENUM(BlueprintType)
+enum class EPlaygroundInputMode : uint8
+{
+	GameOnly,
+	UIOnly
+};

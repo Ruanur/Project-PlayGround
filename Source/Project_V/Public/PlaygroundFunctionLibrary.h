@@ -60,4 +60,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Playground|FunctionLibrary", meta = (WorldContext = "WorldContextObject"))
 	static UPlaygroundGameInstance* GetPlaygroundGameInstance(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Playground|FunctionLibrary", meta = (WorldContext = "WorldContextObject"))
+	static void ToggleInputMode(EPlaygroundInputMode InInputMode, const UObject* WorldContextObject);
 };

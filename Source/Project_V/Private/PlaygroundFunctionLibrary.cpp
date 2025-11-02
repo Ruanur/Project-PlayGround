@@ -205,3 +205,37 @@ UPlaygroundGameInstance* UPlaygroundFunctionLibrary::GetPlaygroundGameInstance(c
 	return nullptr;
 }
 
+void UPlaygroundFunctionLibrary::ToggleInputMode(EPlaygroundInputMode InInputMode, const UObject* WorldContextObject)
+{
+	APlayerController* PlayerController = nullptr;
+
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		PlayerController = World->GetFirstPlayerController();
+	}
+
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	FInputModeGameOnly GameOnlyMode;
+	FInputModeUIOnly UIOnlyMode;
+
+	switch (InInputMode)
+	{
+	case EPlaygroundInputMode::GameOnly:
+		PlayerController->SetInputMode(GameOnlyMode);
+		PlayerController->bShowMouseCursor = false;
+
+		break;
+
+	case EPlaygroundInputMode::UIOnly:
+		PlayerController->SetInputMode(UIOnlyMode);
+		PlayerController->bShowMouseCursor = true;
+		break;
+	default:
+		break;
+	}
+}
+
