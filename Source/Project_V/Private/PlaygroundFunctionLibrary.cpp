@@ -198,7 +198,7 @@ UPlaygroundGameInstance* UPlaygroundFunctionLibrary::GetPlaygroundGameInstance(c
 	{
 		if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 		{
-			World->GetGameInstance<UPlaygroundGameInstance>();
+			return World->GetGameInstance<UPlaygroundGameInstance>();
 		}
 	}
 
