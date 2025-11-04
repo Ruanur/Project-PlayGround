@@ -7,8 +7,21 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/TargetPoint.h"
 #include "NavigationSystem.h"
+#include "PlaygroundFunctionLibrary.h"
 
 #include "PlaygroundDebugHelper.h"
+
+void APlaygroundSurvivalGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	EPlaygroundGameDifficulty SavedGameDifficulty;
+
+	if (UPlaygroundFunctionLibrary::TryLoadSavedGameDifficulty(SavedGameDifficulty))
+	{
+		CurrentGameDifficulty = SavedGameDifficulty;
+	}
+}
 
 void APlaygroundSurvivalGameMode::BeginPlay()
 {

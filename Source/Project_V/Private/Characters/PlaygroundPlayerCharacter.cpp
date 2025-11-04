@@ -90,18 +90,22 @@ void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
 				{
 				case EPlaygroundGameDifficulty::Easy:
 					AbilityApplyLevel = 4;
+					Debug::Print(TEXT("Current Difficulty: Easy"));
 					break;
 
 				case EPlaygroundGameDifficulty::Normal:
 					AbilityApplyLevel = 3;
+					Debug::Print(TEXT("Current Difficulty: Normal"));
 					break;
 
 				case EPlaygroundGameDifficulty::Hard:
 					AbilityApplyLevel = 2;
+					Debug::Print(TEXT("Current Difficulty: Hard"));
 					break;
 
 				case EPlaygroundGameDifficulty::VeryHard:
 					AbilityApplyLevel = 1;
+					Debug::Print(TEXT("Current Difficulty: Very Hard"));
 					break;
 
 				default:
