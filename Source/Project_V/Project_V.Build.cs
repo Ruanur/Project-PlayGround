@@ -19,7 +19,8 @@ public class Project_V : ModuleRules
             "AnimGraphRuntime",
 			"MotionWarping",
             "Niagara",
-            "NavigationSystem"});
+            "NavigationSystem",
+            "MoviePlayer"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
