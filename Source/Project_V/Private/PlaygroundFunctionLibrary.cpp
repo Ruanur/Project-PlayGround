@@ -10,6 +10,8 @@
 #include "PlaygroundGameplayTags.h"
 #include "PlayergroundTypes/PlaygroundCountDownAction.h"
 #include "PlaygroundGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+#include "SaveGame/PlaygroundSaveGame.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -237,5 +239,38 @@ void UPlaygroundFunctionLibrary::ToggleInputMode(EPlaygroundInputMode InInputMod
 	default:
 		break;
 	}
+}
+
+void UPlaygroundFunctionLibrary::SaveCurrentGameDifficulty(EPlaygroundGameDifficulty InDifficultyToSave)
+{
+	USaveGame* SaveGameObject = UGameplayStatics::CreateSaveGameObject(UPlaygroundSaveGame::StaticClass());
+
+	if (UPlaygroundSaveGame* PlaygroundSaveGameObject = Cast<UPlaygroundSaveGame>(SaveGameObject))
+	{
+		PlaygroundSaveGameObject->SavedCurrentGameDifficulty = InDifficultyToSave;
+
+		const bool bWasSaved = UGameplayStatics::SaveGameToSlot(PlaygroundSaveGameObject, PlaygroundGameplayTags::GameData_SaveGame_Slot_1.GetTag().ToString(), 0);
+
+		Debug::Print(bWasSaved ? TEXT("Difficulty Saved") : TEXT("Difficulty Not Saved"));
+	}
+}
+
+bool UPlaygroundFunctionLibrary::TryLoadSavedGameDifficulty(EPlaygroundGameDifficulty& OutSavedDifficutly)
+{
+	if (UGameplayStatics::DoesSaveGameExist(PlaygroundGameplayTags::GameData_SaveGame_Slot_1.GetTag().ToString(), 0))
+	{
+		USaveGame* SaveGameObject = UGameplayStatics::LoadGameFromSlot(PlaygroundGameplayTags::GameData_SaveGame_Slot_1.GetTag().ToString(), 0);
+
+		if (UPlaygroundSaveGame* PlaygroundSaveGameObject = Cast<UPlaygroundSaveGame>(SaveGameObject))
+		{
+			OutSavedDifficutly  = PlaygroundSaveGameObject->SavedCurrentGameDifficulty;
+
+			Debug::Print(TEXT("Loading Successful"), FColor::Green);
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
