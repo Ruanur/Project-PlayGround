@@ -23,7 +23,6 @@ struct FPlaygroundGameLevelSet
 		return LevelTag.IsValid() && !Level.IsNull();
 	}
 
-
 };
 
 /**
