@@ -108,6 +108,7 @@ namespace PlaygroundGameplayTags
 	/* Game Data Tags */
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameData_Level_SurvivalGameModeMap);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameData_Level_MainMenuMap);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameData_Level_HubMap);
 
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameData_SaveGame_Slot_1);
 }
