@@ -41,7 +41,7 @@ void UPlayground_InteractionObject::InteractObject()
 		true
 	);
 
-	//확인 요망
+	//상호작용 시 BP_ObjectInteracted(블루프린트 함수) 전달
 	if (bHit)
 	{
 		if (APlaygroundObjectBase* TargetObject = Cast<APlaygroundObjectBase>(HitResult.GetActor()))
