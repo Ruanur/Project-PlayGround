@@ -139,6 +139,7 @@ void APlaygroundPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Play
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_SwitchTarget, ETriggerEvent::Completed, this, &ThisClass::Input_SwitchTargetCompleted);
 
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_PickUp_Stones, ETriggerEvent::Started, this, &ThisClass::Input_PickUpStonesStarted);
+	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Interact_Object, ETriggerEvent::Started, this, &ThisClass::Input_InteractionObjectStarted);
 
 	PlaygroundInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &ThisClass::Input_AbilityInputPressed, &ThisClass::Input_AbilityInputReleased);
 }
@@ -214,6 +215,17 @@ void APlaygroundPlayerCharacter::Input_PickUpStonesStarted(const FInputActionVal
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 		this,
 		PlaygroundGameplayTags::Player_Event_ConsumeStones,
+		Data
+	);
+}
+
+void APlaygroundPlayerCharacter::Input_InteractionObjectStarted(const FInputActionValue& InputActionValue)
+{
+	FGameplayEventData Data;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		this,
+		PlaygroundGameplayTags::Player_Event_InteractObject,
 		Data
 	);
 }

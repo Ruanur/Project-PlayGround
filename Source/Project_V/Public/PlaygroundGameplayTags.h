@@ -20,6 +20,7 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_SpecialWeaponAbility_Light);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_SpecialWeaponAbility_Heavy);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_PickUp_Stones);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Interact_Object);
 
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_MustBeHeld);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_MustBeHeld_Block);
@@ -41,6 +42,7 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_SpecialWeaponAbility_Light);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_SpecialWeaponAbility_Heavy);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_PickUp_Stones);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Interact_Object);
 
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Cooldown_SpecialWeaponAbility_Light);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Cooldown_SpecialWeaponAbility_Heavy);
@@ -59,6 +61,7 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_ActivateRange);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_AOE);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_ConsumeStones);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_InteractObject);
 
 
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Status_JumpToFinisher);

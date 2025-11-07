@@ -1,0 +1,41 @@
+// Copyright 2025. Jinsol Co. All rights reserved
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "AbilitySystem/Abilities/PlaygroundPlayerGameplayAbility.h"
+#include "Playground_InteractionObject.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class PROJECT_V_API UPlayground_InteractionObject : public UPlaygroundPlayerGameplayAbility
+{
+	GENERATED_BODY()
+
+protected:
+	// ~Begin UGameplayAbility Interface
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+	// ~End UGameplayAbility Interface
+
+	UFUNCTION(BlueprintCallable)
+	void InteractObject();
+
+private:
+	//박스 트레이스 거리
+	UPROPERTY(EditDefaultsOnly)
+	float BoxTraceDistance = 50.f;
+
+	//감지 영역 크기
+	UPROPERTY(EditDefaultsOnly)
+	FVector TraceBoxSize = FVector(100.f);
+
+	//
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TEnumAsByte<EObjectTypeQuery>> InteractableTraceChannel;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bDrawDebugShape = false;
+};

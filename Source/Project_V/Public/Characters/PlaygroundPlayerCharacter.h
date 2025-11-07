@@ -92,6 +92,7 @@ private:
 	void Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue);
 
 	void Input_PickUpStonesStarted(const FInputActionValue& InputActionValue);
+	void Input_InteractionObjectStarted(const FInputActionValue& InputActionValue);
 
 	//어빌리티 입력 (누름)
 	void Input_AbilityInputPressed(FGameplayTag InInputTag);
