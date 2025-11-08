@@ -20,9 +20,11 @@
 
 void UPlayerGameplayAbility_TargetLock::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	TryLockOnTarget();
-	InitTargetLockMovement();
-	InitTargetLockMappingContext();
+	if (TryLockOnTarget())
+	{
+		InitTargetLockMovement();
+		InitTargetLockMappingContext();
+	}
 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
@@ -95,29 +97,30 @@ void UPlayerGameplayAbility_TargetLock::SwitchTarget(const FGameplayTag& InSwitc
 	}
 }
 
-void UPlayerGameplayAbility_TargetLock::TryLockOnTarget()
+bool UPlayerGameplayAbility_TargetLock::TryLockOnTarget()
 {
 	GetAvailableActorsToLock();
 
 	if (AvailableActorsToLock.IsEmpty())
 	{
 		CancelTargetLockAbility();
-		return;
+		return false;
 	}
 
 	CurrentLockedActor = GetNearestTargetFromAvailableActors(AvailableActorsToLock);
 
-	if (CurrentLockedActor)
+	if (IsValid(CurrentLockedActor))
 	{
 		DrawTargetLockWidget();
-		
 		SetTargetLockWidgetPosition();
 	}
 	else
 	{
 		CancelTargetLockAbility();
-
+		return false;
 	}
+
+	return true;
 }
 
 void UPlayerGameplayAbility_TargetLock::GetAvailableActorsToLock()
@@ -165,6 +168,7 @@ void UPlayerGameplayAbility_TargetLock::GetAvailableActorsAroundTarget(TArray<AA
 	if (!CurrentLockedActor || AvailableActorsToLock.IsEmpty())
 	{
 		CancelTargetLockAbility();
+		Debug::Print(TEXT("Can't Find Target"));
 		return;
 	}
 

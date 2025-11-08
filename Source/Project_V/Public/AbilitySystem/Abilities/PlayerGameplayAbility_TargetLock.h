@@ -29,7 +29,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SwitchTarget(const FGameplayTag& InSwitchDirectionTag);
 private:
-	void TryLockOnTarget();
+	bool TryLockOnTarget();
 	void GetAvailableActorsToLock();
 	AActor* GetNearestTargetFromAvailableActors(const TArray<AActor*>& InAvailableActors);
 
