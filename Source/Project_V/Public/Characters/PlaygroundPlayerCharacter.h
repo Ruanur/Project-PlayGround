@@ -43,6 +43,12 @@ public:
 	virtual UPlayerUIComponent* GetPlayerUIComponent() const override;
 	//~ End IPawnUIInterface Interface.
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	float LookSensitivityYaw = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	float LookSensitivityPitch = 1.0f;
+
 protected:
 	//플레이어가 Controller에 소유될 때 호출
 	//~ Begin APawn Interface.

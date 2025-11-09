@@ -176,8 +176,7 @@ void APlaygroundPlayerCharacter::Input_Look(const FInputActionValue& InputAction
 {
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 	//마우스 감도
-	const float LookSensitivityYaw = 1.0f;
-	const float LookSensitivityPitch = 1.0f;
+
 	if (LookAxisVector.X != 0.f)
 	{
 		AddControllerYawInput(LookAxisVector.X * LookSensitivityYaw);
