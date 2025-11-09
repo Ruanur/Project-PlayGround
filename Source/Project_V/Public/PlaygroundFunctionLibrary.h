@@ -69,4 +69,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Playground|FunctionLibrary")
 	static bool TryLoadSavedGameDifficulty(EPlaygroundGameDifficulty& OutSavedDifficutly);
+
+	UFUNCTION(BlueprintCallable, Category = "Playground|FunctionLibrary")
+	static void SaveCurrentLookSensitivity(float InYaw, float InPitch);
+
+	UFUNCTION(BlueprintCallable, Category = "Playground|FunctionLibrary")
+	static bool TryLoadSavedLookSensitivity(float& OutYaw, float& OutPitch);
+
 };

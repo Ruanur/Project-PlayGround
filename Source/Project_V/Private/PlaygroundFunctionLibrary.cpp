@@ -265,7 +265,45 @@ bool UPlaygroundFunctionLibrary::TryLoadSavedGameDifficulty(EPlaygroundGameDiffi
 		{
 			OutSavedDifficutly  = PlaygroundSaveGameObject->SavedCurrentGameDifficulty;
 
-			Debug::Print(TEXT("Loading Successful"), FColor::Green);
+			//Debug::Print(TEXT("Loading Successful"), FColor::Green);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void UPlaygroundFunctionLibrary::SaveCurrentLookSensitivity(float InYaw, float InPitch)
+{
+	USaveGame* SaveGameObject = UGameplayStatics::CreateSaveGameObject(UPlaygroundSaveGame::StaticClass());
+
+	if (UPlaygroundSaveGame* PlaygroundSaveGameObject = Cast<UPlaygroundSaveGame>(SaveGameObject))
+	{
+		PlaygroundSaveGameObject->SavedLookSensitivityYaw = InYaw;
+		PlaygroundSaveGameObject->SavedLookSensitivityPitch = InPitch;
+
+		const bool bWasSaved = UGameplayStatics::SaveGameToSlot(
+			PlaygroundSaveGameObject,
+			PlaygroundGameplayTags::GameData_SaveGame_Slot_2.GetTag().ToString(),
+			0
+		);
+
+		Debug::Print(bWasSaved ? TEXT("Look Sensitivity Saved") : TEXT("Look Sensitivity Not Saved"));
+	}
+}
+
+bool UPlaygroundFunctionLibrary::TryLoadSavedLookSensitivity(float& OutYaw, float& OutPitch)
+{
+	if (UGameplayStatics::DoesSaveGameExist(PlaygroundGameplayTags::GameData_SaveGame_Slot_2.GetTag().ToString(), 0))
+	{
+		USaveGame* SaveGameObject = UGameplayStatics::LoadGameFromSlot(
+			PlaygroundGameplayTags::GameData_SaveGame_Slot_2.GetTag().ToString(),0);
+
+		if (UPlaygroundSaveGame* PlaygroundSaveGameObject = Cast<UPlaygroundSaveGame>(SaveGameObject))
+		{
+			OutYaw = PlaygroundSaveGameObject->SavedLookSensitivityYaw;
+			OutPitch = PlaygroundSaveGameObject->SavedLookSensitivityPitch;
 
 			return true;
 		}

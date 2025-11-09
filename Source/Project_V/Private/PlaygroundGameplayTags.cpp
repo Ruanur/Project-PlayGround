@@ -109,4 +109,5 @@ namespace PlaygroundGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(GameData_Level_HubMap, "GameData.Level.HubMap");
 
 	UE_DEFINE_GAMEPLAY_TAG(GameData_SaveGame_Slot_1, "GameData.SaveGame.Slot.1");
+	UE_DEFINE_GAMEPLAY_TAG(GameData_SaveGame_Slot_2, "GameData.SaveGame.Slot.2");
 }

@@ -19,4 +19,10 @@ class PROJECT_V_API UPlaygroundSaveGame : public USaveGame
 public:
 	UPROPERTY(BlueprintReadOnly)
 	EPlaygroundGameDifficulty SavedCurrentGameDifficulty;
+
+	UPROPERTY(BlueprintReadWrite)
+	float SavedLookSensitivityYaw = 1.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float SavedLookSensitivityPitch = 1.0f;
 };
