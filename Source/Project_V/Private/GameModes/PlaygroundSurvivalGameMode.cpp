@@ -34,6 +34,8 @@ void APlaygroundSurvivalGameMode::BeginPlay()
 	TotalWavesToSpawn = EnemyWaveSpawnerDataTable->GetRowNames().Num();
 
 	PreLoadNextWaveEnemies();
+
+	StartWaveCountDown(RemainingTime);
 }
 
 void APlaygroundSurvivalGameMode::Tick(float DeltaTime)
@@ -200,6 +202,32 @@ int32 APlaygroundSurvivalGameMode::TrySpawnWaveEnemies()
 bool APlaygroundSurvivalGameMode::ShouldKeepSpawnEnemies() const
 {
 	return TotalSpawnedEnemiesThisWaveCounter < GetCurrentWaveSpawnerTableRow()->TotalEnemyToSpawnThisWave;
+}
+
+void APlaygroundSurvivalGameMode::StartWaveCountDown(float Duration)
+{
+	RemainingTime = Duration;
+	GetWorldTimerManager().SetTimer(WaveCountDownTimerHandle, this, &APlaygroundSurvivalGameMode::HandleWaveCountDownTick, 1.0f, true);
+}
+
+void APlaygroundSurvivalGameMode::HandleWaveCountDownTick()
+{
+	RemainingTime -= 1.f;
+
+	if (RemainingTime <= 0.f)
+	{
+		FinishWaveCountDown();
+	}
+}
+
+void APlaygroundSurvivalGameMode::FinishWaveCountDown()
+{
+	GetWorldTimerManager().ClearTimer(WaveCountDownTimerHandle);
+	RemainingTime = 0.f;
+
+	SetCurrentSurvivalGameModeState(EPlaygroundSurvivalGameModeState::SpawningNewWave);
+
+	Debug::Print(TEXT("CountDown Finished"));
 }
 
 void APlaygroundSurvivalGameMode::OnEnemyDestroyed(AActor* DestroyedActor)

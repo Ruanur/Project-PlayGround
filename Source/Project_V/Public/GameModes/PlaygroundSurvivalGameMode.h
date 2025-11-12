@@ -68,6 +68,21 @@ private:
 	int32 TrySpawnWaveEnemies();
 	bool ShouldKeepSpawnEnemies() const;
 
+
+	//카운트다운 함수 (제한 시간)
+	FTimerHandle WaveCountDownTimerHandle;
+
+	void StartWaveCountDown(float Duration);
+	void HandleWaveCountDownTick();
+	void FinishWaveCountDown();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Survival|Timer", meta = (AllowPrivateAccess = "true"))
+	float TotalTime = 300.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Survival|Timer", meta = (AllowPrivateAccess = "true"))
+	float RemainingTime = 300.f;
+
+
 	UFUNCTION()
 	void OnEnemyDestroyed(AActor* DestroyedActor);
 
@@ -113,4 +128,10 @@ private:
 public:
 	UFUNCTION(BlueprintCallable)
 	void RegisterSpawnedEnemies(const TArray<APlaygroundEnemyCharacter*>& InEnemiesToRegister);
-};
+
+	UFUNCTION(BlueprintPure)
+	float GetRemainingTime() const { return RemainingTime; }
+
+	UFUNCTION(BlueprintPure)
+	float GetTotalTime() const { return TotalTime; }
+}; 
