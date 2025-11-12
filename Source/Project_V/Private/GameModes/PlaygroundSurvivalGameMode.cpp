@@ -7,7 +7,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/TargetPoint.h"
 #include "NavigationSystem.h"
+#include "AbilitySystem/PlaygroundAttributeSet.h"
+#include "AbilitySystemInterface.h"
+#include "AbilitySystemComponent.h"
 #include "PlaygroundFunctionLibrary.h"
+#include "PlaygroundGameplayTags.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -225,9 +229,16 @@ void APlaygroundSurvivalGameMode::FinishWaveCountDown()
 	GetWorldTimerManager().ClearTimer(WaveCountDownTimerHandle);
 	RemainingTime = 0.f;
 
-	SetCurrentSurvivalGameModeState(EPlaygroundSurvivalGameModeState::SpawningNewWave);
+	SetCurrentSurvivalGameModeState(EPlaygroundSurvivalGameModeState::TimeOut);
 
 	Debug::Print(TEXT("CountDown Finished"));
+	
+	//Å¸ÀÓ¾Æ¿ô »ç¸Á Ã³¸®
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (!PlayerController) return;
+
+	APawn* PlayerPawn = PlayerController->GetPawn();
+	UPlaygroundFunctionLibrary::AddGameplayTagToActorIfNone(PlayerPawn, PlaygroundGameplayTags::Shared_Status_Dead);
 }
 
 void APlaygroundSurvivalGameMode::OnEnemyDestroyed(AActor* DestroyedActor)

@@ -16,7 +16,8 @@ enum class EPlaygroundSurvivalGameModeState : uint8
 	InProgress,
 	WaveCompleted,
 	AllWavesDone,
-	PlayerDied
+	PlayerDied,
+	TimeOut
 };
 
 USTRUCT(BlueprintType)
