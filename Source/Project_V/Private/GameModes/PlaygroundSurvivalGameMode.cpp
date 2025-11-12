@@ -238,6 +238,8 @@ void APlaygroundSurvivalGameMode::FinishWaveCountDown()
 	if (!PlayerController) return;
 
 	APawn* PlayerPawn = PlayerController->GetPawn();
+	if (!PlayerPawn) return;
+
 	UPlaygroundFunctionLibrary::AddGameplayTagToActorIfNone(PlayerPawn, PlaygroundGameplayTags::Shared_Status_Dead);
 }
 
@@ -270,5 +272,22 @@ void APlaygroundSurvivalGameMode::RegisterSpawnedEnemies(const TArray<APlaygroun
 
 			SpawnedEnemy->OnDestroyed.AddUniqueDynamic(this, &ThisClass::OnEnemyDestroyed);
 		}
+	}
+}
+
+void APlaygroundSurvivalGameMode::PauseWaveCountDown()
+{
+	if (bIsWaveCountDownPaused)
+	{
+		Debug::Print(TEXT("already running Timer"));
+		return; 
+	}
+
+	if (GetWorldTimerManager().IsTimerActive(WaveCountDownTimerHandle))
+	{
+		GetWorldTimerManager().PauseTimer(WaveCountDownTimerHandle);
+		bIsWaveCountDownPaused = true;
+
+		Debug::Print(TEXT("Wave CountDown Paused"));
 	}
 }

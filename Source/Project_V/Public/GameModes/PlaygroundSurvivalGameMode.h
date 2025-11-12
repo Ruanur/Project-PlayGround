@@ -61,6 +61,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	//타이머 상태
+	bool bIsWaveCountDownPaused = false;
+
 private:
 	void SetCurrentSurvivalGameModeState(EPlaygroundSurvivalGameModeState InState);
 	bool HasFinishedAllWaves() const;
@@ -135,4 +138,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	float GetTotalTime() const { return TotalTime; }
+
+	UFUNCTION(BlueprintCallable, Category = "Survival|Timer")
+	void PauseWaveCountDown();
 }; 
