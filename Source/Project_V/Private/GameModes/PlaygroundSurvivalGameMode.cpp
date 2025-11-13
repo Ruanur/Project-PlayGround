@@ -249,6 +249,8 @@ void APlaygroundSurvivalGameMode::OnEnemyDestroyed(AActor* DestroyedActor)
 
 	Debug::Print(FString::Printf(TEXT("CurrentSpawnedEnemiesCounter: %i, TotalSpawnedEnemiesThisWaveCounter: %i"), CurrentSpawnedEnemiesCounter, TotalSpawnedEnemiesThisWaveCounter));
 
+	NotifyEnemyDied();
+
 	if (ShouldKeepSpawnEnemies())
 	{
 		CurrentSpawnedEnemiesCounter += TrySpawnWaveEnemies();
@@ -290,4 +292,50 @@ void APlaygroundSurvivalGameMode::PauseWaveCountDown()
 
 		Debug::Print(TEXT("Wave CountDown Paused"));
 	}
+}
+
+int32 APlaygroundSurvivalGameMode::GetTotalEnemiesAcrossAllWaves() const
+{
+	if (!EnemyWaveSpawnerDataTable)
+	{
+		Debug::Print(TEXT("EnemyWaveSpawnerDataTable Is NULL"));
+		return 0;
+	}
+
+	TArray<FPlaygroundEnemyWaveSpawnerTableRow*> AllRows;
+	EnemyWaveSpawnerDataTable->GetAllRows<FPlaygroundEnemyWaveSpawnerTableRow>(TEXT("GetTotalEnemiesAcrossAllWaves"), AllRows);
+
+	int32 TotalEnemies = 0;
+
+	for (const FPlaygroundEnemyWaveSpawnerTableRow* Row : AllRows)
+	{
+		if (Row)
+		{
+			TotalEnemies += Row->TotalEnemyToSpawnThisWave;
+		}
+	}
+
+	return TotalEnemies;
+}
+
+float APlaygroundSurvivalGameMode::GetEnemyProgressPercent() const
+{
+	Debug::Print(TEXT("Called Second Function"));
+	if (TotalEnemiesAcrossAllWaves <= 0) return 0.f;
+
+	float Progress = 1.f - (float)RemainingTime / (float)TotalEnemiesAcrossAllWaves;
+	Debug::Print(TEXT("Number: %f"), Progress);
+	return Progress; 
+}
+
+void APlaygroundSurvivalGameMode::NotifyEnemyDied()
+{
+	Debug::Print(TEXT("Called This Function"));
+	if (RemainingEnemies > 0)
+	{
+		RemainingEnemies--;
+	}
+
+	Debug::Print(TEXT("Number: %i"), RemainingEnemies);
+	GetEnemyProgressPercent();
 }

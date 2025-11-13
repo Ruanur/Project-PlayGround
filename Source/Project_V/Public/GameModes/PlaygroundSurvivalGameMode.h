@@ -105,10 +105,10 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "WaveDefinition", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentWaveCount = 1;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Survival|Wave", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentSpawnedEnemiesCounter = 0;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Survival|Wave", meta = (AllowPrivateAccess = "true"))
 	int32 TotalSpawnedEnemiesThisWaveCounter = 0;
 
 	UPROPERTY()
@@ -141,4 +141,21 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Survival|Timer")
 	void PauseWaveCountDown();
+
+	//총 몬스터 스폰 수 반환
+	UFUNCTION(BlueprintCallable, Category = "Survival|Wave")
+	int32 GetTotalEnemiesAcrossAllWaves() const;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Enemy Progress")
+	int32 TotalEnemiesAcrossAllWaves = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Enemy Progress")
+	int32 RemainingEnemies = 0;
+
+	UFUNCTION(BlueprintCallable, Category = "Enemy Progress")
+	float GetEnemyProgressPercent() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Enemy Progress")
+	void NotifyEnemyDied();
+
 }; 
