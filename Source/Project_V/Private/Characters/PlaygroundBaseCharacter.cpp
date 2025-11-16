@@ -9,10 +9,12 @@
 // Sets default values
 APlaygroundBaseCharacter::APlaygroundBaseCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	// Set this character to call Tick() every frame.  
+	// You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
+	//µ¥Ä® ¼ö½Å False
 	GetMesh()->bReceivesDecals = false;
 
 	PlaygroundAbilitySystemComponent = CreateDefaultSubobject<UPlaygroundAbilitySystemComponent>(TEXT("PlaygroundAbilitySystemComponent"));

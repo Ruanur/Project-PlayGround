@@ -36,6 +36,8 @@ APlaygroundPlayerCharacter::APlaygroundPlayerCharacter()
 	//bUsePawnControlRotation: 컨트롤러 회전을 따라 카메라 회전
 	//TODO : 줌 인, 줌 아웃 확장
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+
+	//캡슐 컴포넌트에 부착, 충돌체 기준이라 위치 안정적, 흔들림 없음
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 400.f;
 	CameraBoom->SocketOffset = FVector(0.f, 55.f, 105.f);
