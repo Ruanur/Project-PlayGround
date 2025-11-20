@@ -29,9 +29,8 @@ void APlaygroundStoneBase::OnPickUpCollisionSphereBeginOverlap(UPrimitiveCompone
 {
 	if (APlaygroundPlayerCharacter* OverrlappedPlayerCharacter = Cast<APlaygroundPlayerCharacter>(OtherActor))
 	{
+		//플레이어 태그 활성화 시도
 		OverrlappedPlayerCharacter->GetPlaygroundAbilitySystemComponent()->TryActivateAbilityByTag(PlaygroundGameplayTags::Player_Ability_PickUp_Stones);
-
-
 	}
 }
 

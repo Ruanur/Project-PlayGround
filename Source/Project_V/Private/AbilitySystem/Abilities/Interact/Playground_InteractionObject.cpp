@@ -26,7 +26,8 @@ void UPlayground_InteractionObject::InteractObject()
 	//APlaygroundObjectBase* ObjectsBase = nullptr;
 	FHitResult HitResult;
 
-	//위치 조정 필요
+	//Interaction PickStone에서도 BoxTrace 함수 호출됨 
+	//중복 호출, 리팩토링 필요
 	bool bHit = UKismetSystemLibrary::BoxTraceSingleForObjects(
 		GetPlayerCharacterFromActorInfo(),
 		GetPlayerCharacterFromActorInfo()->GetActorLocation(),
@@ -50,5 +51,7 @@ void UPlayground_InteractionObject::InteractObject()
 		}
 	}
 }
+
+
 
 

@@ -2,11 +2,17 @@
 
 
 #include "Controllers/PlayGroundPlayerController.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "PlaygroundDebugHelper.h"
 
 APlayGroundPlayerController::APlayGroundPlayerController()
 {
 	PlayerTeamID = FGenericTeamId(0);
+
+
 }
+
 
 FGenericTeamId APlayGroundPlayerController::GetGenericTeamId() const
 {

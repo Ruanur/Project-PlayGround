@@ -8,10 +8,10 @@ APlaygroundPickUpBase::APlaygroundPickUpBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	PickUpCollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Pick Up Interaction"));
-	SetRootComponent(PickUpCollisionSphere);
-	PickUpCollisionSphere->InitSphereRadius(50.f);
-	PickUpCollisionSphere->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnPickUpCollisionSphereBeginOverlap);
+	InteractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Pick Up Interaction"));
+	SetRootComponent(InteractionSphere);
+	InteractionSphere->InitSphereRadius(50.f);
+	InteractionSphere->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnPickUpCollisionSphereBeginOverlap);
 }
 
 void APlaygroundPickUpBase::OnPickUpCollisionSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

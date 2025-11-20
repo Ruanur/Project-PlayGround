@@ -27,6 +27,8 @@ void UPlayerGameplayAbility_PickStone::CollectStones()
 
 	TArray<FHitResult> TraceHits;
 
+	//Interaction Object에서도 BoxTrace 함수 호출됨 
+	//중복 호출, 리팩토링 필요
 	UKismetSystemLibrary::BoxTraceMultiForObjects(
 		GetPlayerCharacterFromActorInfo(),
 		GetPlayerCharacterFromActorInfo()->GetActorLocation(),

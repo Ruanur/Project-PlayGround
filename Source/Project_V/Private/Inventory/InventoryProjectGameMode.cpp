@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "InventoryProjectGameMode.h"
-#include "InventoryProjectCharacter.h"
+#include "Inventory/InventoryProjectGameMode.h"
+#include "Inventory/InventoryProjectCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AInventoryProjectGameMode::AInventoryProjectGameMode()

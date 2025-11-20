@@ -20,7 +20,8 @@ public class Project_V : ModuleRules
 			"MotionWarping",
             "Niagara",
             "NavigationSystem",
-            "MoviePlayer"});
+            "MoviePlayer",
+			"Inventory"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
