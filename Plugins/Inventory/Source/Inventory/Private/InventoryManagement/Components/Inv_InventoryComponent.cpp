@@ -183,12 +183,29 @@ void UInv_InventoryComponent::BeginPlay()
 void UInv_InventoryComponent::ConstructInventory()
 {
 	OwningController = Cast<APlayerController>(GetOwner());
-	checkf(OwningController.IsValid(), TEXT("Inventory Component should have a Player Controller as Owner."))
+	//checkf(OwningController.IsValid(), TEXT("Inventory Component should have a Player Controller as Owner."))
+	//if (!OwningController->IsLocalController()) return;
+		// 1) Owner가 PlayerCharacter라면 PlayerController 검색
+	if (!OwningController.IsValid())
+	{
+		APawn* OwnerPawn = Cast<APawn>(GetOwner());
+		if (IsValid(OwnerPawn))
+		{
+			OwningController = Cast<APlayerController>(OwnerPawn->GetController());
+		}
+	}
+
+	// 2) 그래도 없으면 에러
+	checkf(OwningController.IsValid(), TEXT("Inventory Component requires a PlayerController (either as owner or owning the pawn)."));
+
 	if (!OwningController->IsLocalController()) return;
 
+	// 3) Inventory UI 생성
 	InventoryMenu = CreateWidget<UInv_InventoryBase>(OwningController.Get(), InventoryMenuClass);
 	InventoryMenu->AddToViewport();
 	CloseInventoryMenu();
+
+
 }
 
 void UInv_InventoryComponent::OpenInventoryMenu()
