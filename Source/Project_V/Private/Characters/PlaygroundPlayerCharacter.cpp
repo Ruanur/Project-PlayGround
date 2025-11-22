@@ -16,6 +16,7 @@
 #include "Components/UI/PlayerUIComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameModes/PlaygroundGameModeBase.h"
+#include "Inventory/Playground_InvComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -72,6 +73,7 @@ UPlayerUIComponent* APlaygroundPlayerCharacter::GetPlayerUIComponent() const
 {
 	return PlayerUIComponent;
 }
+
 
 //플레이어가 Controller에 의해 소유될 때 호출
 void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
@@ -142,13 +144,25 @@ void APlaygroundPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Play
 
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_PickUp_Stones, ETriggerEvent::Started, this, &ThisClass::Input_PickUpStonesStarted);
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Interact_Object, ETriggerEvent::Started, this, &ThisClass::Input_InteractionObjectStarted);
+	//PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Inventory, ETriggerEvent::Started, this, &ThisClass::Input_Inventory);
 
 	PlaygroundInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &ThisClass::Input_AbilityInputPressed, &ThisClass::Input_AbilityInputReleased);
+	
+	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	EnhancedInputComponent->BindAction(ToggleInventroyAction, ETriggerEvent::Started, this, &ThisClass::InventoryToggle);
 }
 
 void APlaygroundPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InventoryComponent = FindComponentByClass<UPlayground_InvComponent>();
+}
+
+void APlaygroundPlayerCharacter::InventoryToggle()
+{
+	if (!InventoryComponent.IsValid()) return;
+	InventoryComponent->ToggleInventoryMenu();
 }
 
 void APlaygroundPlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
@@ -230,6 +244,12 @@ void APlaygroundPlayerCharacter::Input_InteractionObjectStarted(const FInputActi
 		Data
 	);
 }
+
+//void APlaygroundPlayerCharacter::Input_Inventory(const FInputActionValue& InputActionValue)
+//{
+//	Debug::Print(TEXT("Arrived Inventory"));
+//	InventoryToggle();
+//}
 
 
 //입력 이벤트 전달_ASC

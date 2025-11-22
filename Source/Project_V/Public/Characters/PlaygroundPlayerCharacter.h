@@ -11,9 +11,11 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UDataAsset_InputConfig;
-struct FInputActionValue;
 class UPlayerCombatComponent;
 class UPlayerUIComponent;
+class UPlayground_InvComponent;
+class UInputAction;
+struct FInputActionValue;
 
 /**
  * 플레이어 캐릭터 (APlaygroundBaseCharacter 상속)
@@ -49,6 +51,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float LookSensitivityPitch = 1.0f;
 
+	UFUNCTION(Blueprintable)
+	void InventoryToggle();
 protected:
 	//플레이어가 Controller에 소유될 때 호출
 	//~ Begin APawn Interface.
@@ -59,7 +63,8 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void BeginPlay() override;
-	
+
+
 private:
 //pragma region <> : 확장/축소 코드블록
 #pragma region Components
@@ -79,6 +84,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"));
 	UPlayerUIComponent* PlayerUIComponent;
 
+	TWeakObjectPtr<UPlayground_InvComponent> InventoryComponent;
 #pragma endregion
 
 #pragma region Inputs
@@ -100,12 +106,16 @@ private:
 
 	void Input_PickUpStonesStarted(const FInputActionValue& InputActionValue);
 	void Input_InteractionObjectStarted(const FInputActionValue& InputActionValue);
+	void Input_Inventory(const FInputActionValue& InputActionValue);
 
 	//어빌리티 입력 (누름)
 	void Input_AbilityInputPressed(FGameplayTag InInputTag);
 
 	//어빌리티 입력 (뗌)
 	void Input_AbilityInputReleased(FGameplayTag InInputTag);
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UInputAction> ToggleInventroyAction;
 
 #pragma endregion
 
