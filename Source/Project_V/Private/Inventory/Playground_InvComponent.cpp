@@ -4,6 +4,7 @@
 #include "Inventory/Playground_InvComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/PlaygroundWidgeBase.h"
+#include "Widgets/Inventory/InventoryBase/Inv_InventoryBase.h"
 #include "PlaygroundDebugHelper.h"
 
 // Sets default values for this component's properties
@@ -53,7 +54,7 @@ void UPlayground_InvComponent::ConstructInventory()
 		return;
 	}
 
-	InventoryMenu = CreateWidget<UPlaygroundWidgeBase>(OwningController.Get(), InventoryMenuClass);
+	InventoryMenu = CreateWidget<UUserWidget>(OwningController.Get(), InventoryMenuClass);
 	if (InventoryMenu)
 	{
 		InventoryMenu->AddToViewport();

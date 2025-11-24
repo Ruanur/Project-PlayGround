@@ -51,7 +51,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float LookSensitivityPitch = 1.0f;
 
-	UFUNCTION(Blueprintable)
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void InventoryToggle();
 protected:
 	//플레이어가 Controller에 소유될 때 호출

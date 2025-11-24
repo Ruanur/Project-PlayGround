@@ -7,6 +7,7 @@
 #include "Playground_InvComponent.generated.h"
 
 class UPlaygroundWidgeBase;
+class UUserWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable)
 class PROJECT_V_API UPlayground_InvComponent : public UActorComponent
@@ -28,10 +29,10 @@ private:
 	void ConstructInventory();
 
 	UPROPERTY()
-	TObjectPtr<UPlaygroundWidgeBase> InventoryMenu;
+	TObjectPtr<UUserWidget> InventoryMenu;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
-	TSubclassOf<UPlaygroundWidgeBase> InventoryMenuClass;
+	TSubclassOf<UUserWidget> InventoryMenuClass;
 
 	bool bInventoryMenuOpen;
 	void OpenInventory();
