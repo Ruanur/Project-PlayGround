@@ -16,7 +16,7 @@
 #include "Components/UI/PlayerUIComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameModes/PlaygroundGameModeBase.h"
-#include "Inventory/Playground_InvComponent.h"
+#include "Inventory/Playground_InventoryComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -156,7 +156,7 @@ void APlaygroundPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InventoryComponent = FindComponentByClass<UPlayground_InvComponent>();
+	InventoryComponent = FindComponentByClass<UPlayground_InventoryComponent>();
 }
 
 void APlaygroundPlayerCharacter::InventoryToggle()

@@ -13,7 +13,7 @@ class UCameraComponent;
 class UDataAsset_InputConfig;
 class UPlayerCombatComponent;
 class UPlayerUIComponent;
-class UPlayground_InvComponent;
+class UPlayground_InventoryComponent;
 class UInputAction;
 struct FInputActionValue;
 
@@ -84,7 +84,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"));
 	UPlayerUIComponent* PlayerUIComponent;
 
-	TWeakObjectPtr<UPlayground_InvComponent> InventoryComponent;
+	TWeakObjectPtr<UPlayground_InventoryComponent> InventoryComponent;
 #pragma endregion
 
 #pragma region Inputs

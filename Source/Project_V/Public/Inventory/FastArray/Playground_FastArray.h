@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Net/Serialization/FastArraySerializer.h"
+
 #include "Playground_FastArray.generated.h"
 
-class UPlayground_InventoryItem;
 class UPlayground_InventoryComponent;
+class UPlayground_InventoryItem;
 class UPlayground_ItemComponent;
 
 //인벤토리 단일 항목
@@ -42,7 +43,7 @@ struct FPlayground_InventoryFastArray : public FFastArraySerializer
 	void PG_PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
 
 	//End of FFastArraySerializer contract
-	bool NewDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams)
+	bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams)
 	{
 		return FastArrayDeltaSerialize<FPlayground_InventoryEntry, FPlayground_InventoryFastArray>(Entries, DeltaParams, *this);
 	}
@@ -68,6 +69,7 @@ template<>
 struct TStructOpsTypeTraits<FPlayground_InventoryFastArray> : public TStructOpsTypeTraitsBase2<FPlayground_InventoryFastArray>
 {
 	enum { WithNetDeltaSerializer = true };
+ 
 };
 
 
