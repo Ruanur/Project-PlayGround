@@ -17,6 +17,7 @@ TArray<UInv_InventoryItem*> FInv_InventoryFastArray::GetAllItems() const
 	return Results;
 }
 
+
 void FInv_InventoryFastArray::PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize)
 {
 	UInv_InventoryComponent* IC = Cast<UInv_InventoryComponent>(OwnerComponent);

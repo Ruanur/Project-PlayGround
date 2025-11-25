@@ -14,7 +14,8 @@
 				"GameplayAbilities",
 				"UMG",
 				"AIModule",
-				"Inventory"
+				"Inventory",
+				"CoreUObject"
 			]
 		}
 	],

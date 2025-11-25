@@ -21,7 +21,8 @@ public class Project_V : ModuleRules
             "Niagara",
             "NavigationSystem",
             "MoviePlayer",
-			"Inventory"});
+			"Inventory",
+			"NetCore"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
