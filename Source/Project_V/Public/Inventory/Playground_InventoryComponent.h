@@ -6,11 +6,12 @@
 #include "Components/ActorComponent.h"
 #include "Playground_InventoryComponent.generated.h"
 
-class UPlaygroundWidgeBase;
+class UPlayground_ItemComponent;
 class UPlayground_InventoryItem;
-class UUserWidget;
+class UPlaygroundWidgeBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryItemChange, UPlayground_InventoryItem*, Item);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNoRoomInInventory);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), Blueprintable)
 class PROJECT_V_API UPlayground_InventoryComponent : public UActorComponent
@@ -20,11 +21,16 @@ class PROJECT_V_API UPlayground_InventoryComponent : public UActorComponent
 public:
 	UPlayground_InventoryComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	//Unable to find 'class', 'delegate', 'enum', or 'struct' with name 'UPlayground_ItemComponent
+	//Çü º¯È¯, AActor -> UActorComponent
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Inventory")
+	void TryAddItem(UPlayground_ItemComponent* ItemComponent);
+
 	void ToggleInventoryMenu();
 
 	FInventoryItemChange OnItemAdded;
 	FInventoryItemChange OnItemRemoved;
+	FNoRoomInInventory NoRoomInInventory;
 
 protected:
 	virtual void BeginPlay() override;
@@ -35,10 +41,10 @@ private:
 	void ConstructInventory();
 
 	UPROPERTY()
-	TObjectPtr<UUserWidget> InventoryMenu;
+	TObjectPtr<UPlaygroundWidgeBase> InventoryMenu;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
-	TSubclassOf<UUserWidget> InventoryMenuClass;
+	TSubclassOf<UPlaygroundWidgeBase> InventoryMenuClass;
 
 	bool bInventoryMenuOpen;
 	void OpenInventory();

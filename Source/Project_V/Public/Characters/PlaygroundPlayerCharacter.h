@@ -15,7 +15,9 @@ class UPlayerCombatComponent;
 class UPlayerUIComponent;
 class UPlayground_InventoryComponent;
 class UInputAction;
+class UPlayground_HUDWidget;
 struct FInputActionValue;
+
 
 /**
  * 플레이어 캐릭터 (APlaygroundBaseCharacter 상속)
@@ -67,6 +69,13 @@ protected:
 
 private:
 //pragma region <> : 확장/축소 코드블록
+	void PG_CreateHUDWidget();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+	TSubclassOf<UPlayground_HUDWidget> HUDWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UPlayground_HUDWidget> HUDWidget;
 #pragma region Components
 	
 	//3인칭 카메라를 제어하기 위한 스프링 암
@@ -119,6 +128,12 @@ private:
 
 #pragma endregion
 
+#pragma region Inventory
+
+	void PG_PrimaryInteract();
+	TWeakObjectPtr<AActor> ThisActor;
+
+#pragma endregion
 public:
 	FORCEINLINE UPlayerCombatComponent* GetPlayerCombatComponent() const { return PlayerCombatComponent; }
 

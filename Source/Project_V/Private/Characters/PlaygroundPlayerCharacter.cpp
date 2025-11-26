@@ -17,6 +17,9 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameModes/PlaygroundGameModeBase.h"
 #include "Inventory/Playground_InventoryComponent.h"
+#include "Items/Drops/Playground_ItemComponent.h"
+#include "Widgets/HUD/Playground_HUDWidget.h"
+#include "Controllers/PlayGroundPlayerController.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -157,6 +160,30 @@ void APlaygroundPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	InventoryComponent = FindComponentByClass<UPlayground_InventoryComponent>();
+	PG_CreateHUDWidget();
+}
+
+void APlaygroundPlayerCharacter::PG_CreateHUDWidget()
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) return;
+
+	HUDWidget = CreateWidget<UPlayground_HUDWidget>(PC, HUDWidgetClass);
+	if (IsValid(HUDWidget))
+	{
+		HUDWidget->AddToViewport();
+	}
+
+}
+
+void APlaygroundPlayerCharacter::PG_PrimaryInteract()
+{
+	if (!ThisActor.IsValid()) return;
+
+	UPlayground_ItemComponent* ItemComp = ThisActor->FindComponentByClass<UPlayground_ItemComponent>();
+	if (!IsValid(ItemComp) || !InventoryComponent.IsValid()) return;
+
+	InventoryComponent->TryAddItem(ItemComp);
 }
 
 void APlaygroundPlayerCharacter::InventoryToggle()
@@ -262,3 +289,5 @@ void APlaygroundPlayerCharacter::Input_AbilityInputReleased(FGameplayTag InInput
 {
 	PlaygroundAbilitySystemComponent->OnAbilityInputReleased(InInputTag);
 }
+
+

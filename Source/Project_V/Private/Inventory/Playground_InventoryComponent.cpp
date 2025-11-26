@@ -16,6 +16,14 @@ UPlayground_InventoryComponent::UPlayground_InventoryComponent()
 	// ...
 }
 
+
+void UPlayground_InventoryComponent::TryAddItem(UPlayground_ItemComponent* ItemComponent)
+{
+	//NoRoomInInventory Broadcast, 정상 작동
+	NoRoomInInventory.Broadcast();
+	Debug::Print(TEXT("Try Add Item Called"));
+}
+
 void UPlayground_InventoryComponent::ToggleInventoryMenu()
 {
 	if (bInventoryMenuOpen)
@@ -53,7 +61,7 @@ void UPlayground_InventoryComponent::ConstructInventory()
 		return;
 	}
 
-	InventoryMenu = CreateWidget<UUserWidget>(OwningController.Get(), InventoryMenuClass);
+	InventoryMenu = CreateWidget<UPlaygroundWidgeBase>(OwningController.Get(), InventoryMenuClass);
 	if (InventoryMenu)
 	{
 		InventoryMenu->AddToViewport();

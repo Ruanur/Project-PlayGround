@@ -3,24 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Components/ActorComponent.h"
 #include "Playground_ItemComponent.generated.h"
 
-UCLASS()
-class PROJECT_V_API AMyActor : public AActor
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), Blueprintable)
+class PROJECT_V_API UPlayground_ItemComponent : public UActorComponent
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AMyActor();
+
+public:
+	UPlayground_ItemComponent();
+
+	FString GetPickUpMessage() const { return PickupMessage; }
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+private:
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	FString PickupMessage;
 };
