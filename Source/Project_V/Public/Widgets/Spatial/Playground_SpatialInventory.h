@@ -21,6 +21,8 @@ class PROJECT_V_API UPlayground_SpatialInventory : public UPlaygroundWidgeBase
 public:
 	virtual void NativeOnInitialized() override;
 
+	virtual FPlayground_SlotAvailabilityResult HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const override;
+	
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UWidgetSwitcher> Switcher;

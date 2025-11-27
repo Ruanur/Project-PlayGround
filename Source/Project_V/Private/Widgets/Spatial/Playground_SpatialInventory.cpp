@@ -17,6 +17,11 @@ void UPlayground_SpatialInventory::NativeOnInitialized()
 	PG_ShowEquippables();
 }
 
+FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const
+{
+	return FPlayground_SlotAvailabilityResult();
+}
+
 void UPlayground_SpatialInventory::PG_ShowEquippables()
 {
 	SetActiveGrid(Grid_Equippables, Button_Equippables);

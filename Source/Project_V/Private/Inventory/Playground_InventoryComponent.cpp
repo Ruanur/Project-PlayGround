@@ -19,9 +19,14 @@ UPlayground_InventoryComponent::UPlayground_InventoryComponent()
 
 void UPlayground_InventoryComponent::TryAddItem(UPlayground_ItemComponent* ItemComponent)
 {
-	//NoRoomInInventory Broadcast, 정상 작동
-	NoRoomInInventory.Broadcast();
-	Debug::Print(TEXT("Try Add Item Called"));
+	FPlayground_SlotAvailabilityResult Result = InventoryMenu->HasRoomForItem(ItemComponent);
+
+	//인벤토리 공간 없을 때 호출, 인벤토리가 꽉 참!
+	if (Result.TotalRoomToFill == 0)
+	{
+		NoRoomInInventory.Broadcast();
+	}
+	//TODO: 인벤토리에 아이템 추가 기능 
 }
 
 void UPlayground_InventoryComponent::ToggleInventoryMenu()

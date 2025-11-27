@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Types/Playground_GridTypes.h"
 #include "PlaygroundWidgeBase.generated.h"
 
 class UPlayerUIComponent;
 class UEnemyUIComponent;
+class UPlayground_ItemComponent;
 
 /**
  * 
@@ -28,4 +30,6 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	void InitEnemyCreatedWidget(AActor* OwningEnemyActor);
+
+	virtual FPlayground_SlotAvailabilityResult HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const { return FPlayground_SlotAvailabilityResult(); }
 };
