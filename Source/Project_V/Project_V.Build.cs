@@ -22,7 +22,8 @@ public class Project_V : ModuleRules
             "NavigationSystem",
             "MoviePlayer",
 			"Inventory",
-			"NetCore"});
+			"NetCore",
+			"StructUtils"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

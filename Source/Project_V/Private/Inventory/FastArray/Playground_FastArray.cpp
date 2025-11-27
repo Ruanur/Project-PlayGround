@@ -4,6 +4,7 @@
 #include "Inventory/FastArray/Playground_FastArray.h"
 #include "Items/Drops/Playground_InventoryItem.h"
 #include "Inventory/Playground_InventoryComponent.h"
+#include "Items/Drops/Playground_ItemComponent.h"
 
 TArray<UPlayground_InventoryItem*> FPlayground_InventoryFastArray::PG_GetAllItems() const
 {
@@ -42,8 +43,18 @@ void FPlayground_InventoryFastArray::PG_PostReplicatedAdd(const TArrayView<int32
 
 UPlayground_InventoryItem* FPlayground_InventoryFastArray::AddEntry(UPlayground_ItemComponent* ItemComponent)
 {
-	// TODO : Implement once ItemComponent is more complete
-	return nullptr;
+	check(OwnerComponent);
+	AActor* OwningActor = OwnerComponent->GetOwner();
+	check(OwningActor->HasAuthority());
+	UPlayground_InventoryComponent* IC = Cast<UPlayground_InventoryComponent>(OwnerComponent);
+
+	FPlayground_InventoryEntry& NewEntry = Entries.AddDefaulted_GetRef();
+	NewEntry.Item = ItemComponent->GetItemManifest().Manifest(OwningActor);
+
+	IC->AddRepSubObject(NewEntry.Item);
+	MarkItemDirty(NewEntry);
+
+	return NewEntry.Item;
 }
 
 UPlayground_InventoryItem* FPlayground_InventoryFastArray::AddEntry(UPlayground_InventoryItem* Item)

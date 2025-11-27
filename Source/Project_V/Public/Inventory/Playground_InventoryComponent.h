@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Inventory/FastArray/Playground_FastArray.h"
 #include "Playground_InventoryComponent.generated.h"
 
 class UPlayground_ItemComponent;
@@ -20,13 +21,22 @@ class PROJECT_V_API UPlayground_InventoryComponent : public UActorComponent
 
 public:
 	UPlayground_InventoryComponent();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	//Unable to find 'class', 'delegate', 'enum', or 'struct' with name 'UPlayground_ItemComponent
 	//Çü º¯È¯, AActor -> UActorComponent
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Inventory")
 	void TryAddItem(UPlayground_ItemComponent* ItemComponent);
 
+	UFUNCTION(Server, Reliable)
+	void Server_AddNewItem(UPlayground_ItemComponent* ItemComponent, int32 StackCount);
+
+	UFUNCTION(Server, Reliable)
+	void Server_AddStacksToItem(UPlayground_ItemComponent* ItemComponent, int32 StackCount, int32 Remainder);
+
+
 	void ToggleInventoryMenu();
+	void AddRepSubObject(UObject* SubObj);
 
 	FInventoryItemChange OnItemAdded;
 	FInventoryItemChange OnItemRemoved;
@@ -39,6 +49,9 @@ private:
 	TWeakObjectPtr<APlayerController> OwningController;
 
 	void ConstructInventory();
+
+	UPROPERTY(Replicated)
+	FPlayground_InventoryFastArray InventoryList;
 
 	UPROPERTY()
 	TObjectPtr<UPlaygroundWidgeBase> InventoryMenu;

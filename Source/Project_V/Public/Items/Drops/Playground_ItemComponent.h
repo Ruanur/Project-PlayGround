@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Items/Drops/Manifest/Playground_ItemManifest.h"
 #include "Playground_ItemComponent.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), Blueprintable)
@@ -13,12 +14,18 @@ class PROJECT_V_API UPlayground_ItemComponent : public UActorComponent
 
 public:
 	UPlayground_ItemComponent();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	FPlayground_ItemManifest GetItemManifest() const { return ItemManifest; }
 
 	FString GetPickUpMessage() const { return PickupMessage; }
 
 protected:
 
 private:
+	UPROPERTY(EditAnywhere, Replicated, Category = "Inventory")
+	FPlayground_ItemManifest ItemManifest;
+
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	FString PickupMessage;
 };

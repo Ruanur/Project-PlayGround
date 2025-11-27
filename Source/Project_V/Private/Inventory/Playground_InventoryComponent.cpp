@@ -4,6 +4,8 @@
 #include "Inventory/Playground_InventoryComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/PlaygroundWidgeBase.h"
+#include "Net/UnrealNetwork.h"
+
 #include "PlaygroundDebugHelper.h"
 
 // Sets default values for this component's properties
@@ -12,8 +14,17 @@ UPlayground_InventoryComponent::UPlayground_InventoryComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
+	SetIsReplicatedByDefault(true);
+	bReplicateUsingRegisteredSubObjectList = true;
+	bInventoryMenuOpen = false;
 	// ...
+}
+
+void UPlayground_InventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, InventoryList);
 }
 
 
@@ -26,7 +37,30 @@ void UPlayground_InventoryComponent::TryAddItem(UPlayground_ItemComponent* ItemC
 	{
 		NoRoomInInventory.Broadcast();
 	}
-	//TODO: 인벤토리에 아이템 추가 기능 
+	
+	if (Result.Item.IsValid() && Result.bStackable)
+	{
+		// Add Stacks to an Item that already exisits in the Inventory, We only want to update the stack count
+		// not create a new item of this type.
+		Server_AddStacksToItem(ItemComponent, Result.TotalRoomToFill, Result.Remainder);
+	}
+	else if (Result.TotalRoomToFill > 0)
+	{
+		// This item type doesn't exist in the inventory. Create a new one and update all pertinent slots.
+		Server_AddNewItem(ItemComponent, Result.bStackable ? Result.TotalRoomToFill : 0);
+	}
+}
+
+void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlayground_ItemComponent* ItemComponent, int32 StackCount)
+{
+	UPlayground_InventoryItem* NewItem = InventoryList.AddEntry(ItemComponent);
+
+	// Tell the Item Component to Destory its owning actor.
+}
+
+void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlayground_ItemComponent* ItemComponent, int32 StackCount, int32 Remainder)
+{
+
 }
 
 void UPlayground_InventoryComponent::ToggleInventoryMenu()
@@ -42,6 +76,16 @@ void UPlayground_InventoryComponent::ToggleInventoryMenu()
 		OpenInventory();
 	}
 }
+
+void UPlayground_InventoryComponent::AddRepSubObject(UObject* SubObj)
+{
+	if (IsUsingRegisteredSubObjectList() && IsReadyForReplication() && IsValid(SubObj))
+	{
+		AddReplicatedSubObject(SubObj);
+	}
+}
+
+
 
 // Called when the game starts
 void UPlayground_InventoryComponent::BeginPlay()
