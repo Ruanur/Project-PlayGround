@@ -19,7 +19,9 @@ void UPlayground_SpatialInventory::NativeOnInitialized()
 
 FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const
 {
-	return FPlayground_SlotAvailabilityResult();
+	FPlayground_SlotAvailabilityResult Result;
+	Result.TotalRoomToFill = 1; 
+	return Result;
 }
 
 void UPlayground_SpatialInventory::PG_ShowEquippables()

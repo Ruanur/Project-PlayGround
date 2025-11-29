@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Types/Playground_GridTypes.h"
+#include "Items/Drops/Playground_InventoryItem.h"
 #include "Playground_InventoryGrid.generated.h"
 
 
 class UCanvasPanel;
 class UPlayground_GridSlot;
+class UPlayground_InventoryComponent;
 
 /**
  * 
@@ -24,7 +26,11 @@ public:
 
 	EPlayground_ItemCategory GetItemCategory() const { return ItemCategory; }
 
+	UFUNCTION()
+	void AddItem(UPlayground_InventoryItem* Item);
 private:
+	TWeakObjectPtr<UPlayground_InventoryComponent> InventoryComponent;
+
 	void ConstructGrid();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
@@ -47,4 +53,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	float TileSize;
+
+	bool MatchesCategory(const UPlayground_InventoryItem* Item) const;
 };

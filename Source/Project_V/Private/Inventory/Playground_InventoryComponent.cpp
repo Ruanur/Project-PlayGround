@@ -9,7 +9,7 @@
 #include "PlaygroundDebugHelper.h"
 
 // Sets default values for this component's properties
-UPlayground_InventoryComponent::UPlayground_InventoryComponent()
+UPlayground_InventoryComponent::UPlayground_InventoryComponent() : InventoryList(this)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -55,7 +55,13 @@ void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlaygroun
 {
 	UPlayground_InventoryItem* NewItem = InventoryList.AddEntry(ItemComponent);
 
+	if (GetOwner()->GetNetMode() == NM_ListenServer || GetOwner()->GetNetMode() == NM_Standalone)
+	{
+		OnItemAdded.Broadcast(NewItem);
+	}
+
 	// Tell the Item Component to Destory its owning actor.
+
 }
 
 void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlayground_ItemComponent* ItemComponent, int32 StackCount, int32 Remainder)
