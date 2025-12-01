@@ -39,6 +39,13 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 {
 	FPlayground_SlotAvailabilityResult Result;
 	Result.TotalRoomToFill = 1;
+
+	FPlayground_SlotAvailability SlotAvailability;
+	SlotAvailability.AmountToFill = 1;
+	SlotAvailability.Index = 0;
+
+	Result.SlotAvailabilities.Add(MoveTemp(SlotAvailability));
+
 	return Result;
 }
 
@@ -47,11 +54,19 @@ void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)
 	if (!MatchesCategory(Item)) return;
 	
 	FPlayground_SlotAvailabilityResult Result = HasRoomForItem(Item);
-
-	//Create a widget to show the item icon and add it to the correct spot on the grid
+	AddItemToIndices(Result, Item); 
 	//Debug::Print(TEXT("InventoryGrid::AddItemComplated"));
+
+	
 }
 
+void UPlayground_InventoryGrid::AddItemToIndices(const FPlayground_SlotAvailabilityResult& Result, UPlayground_InventoryItem* NewItem)
+{
+	// Get Grid Fragment so we know how many grid spaces the item takes.
+	// Get Image Fragment so ew have the icon do display
+	// Create a widget to add to the grid
+	// Store the new widget in a container
+}
 
 void UPlayground_InventoryGrid::ConstructGrid()
 {

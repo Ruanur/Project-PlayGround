@@ -29,7 +29,6 @@ public:
 
 	EPlayground_ItemCategory GetItemCategory() const { return ItemCategory; }
 	FPlayground_SlotAvailabilityResult HasRoomForItem(const UPlayground_ItemComponent* ItemComponent);
-	
 
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
@@ -39,6 +38,7 @@ private:
 	void ConstructGrid();
 	FPlayground_SlotAvailabilityResult HasRoomForItem(const UPlayground_InventoryItem* Item);
 	FPlayground_SlotAvailabilityResult HasRoomForItem(const FPlayground_ItemManifest& Manifest);
+	void AddItemToIndices(const FPlayground_SlotAvailabilityResult& Result, UPlayground_InventoryItem* NewItem);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory;
