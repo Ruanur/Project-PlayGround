@@ -9,9 +9,12 @@
 #include "Playground_InventoryGrid.generated.h"
 
 
+class UPlayground_ItemComponent;
 class UCanvasPanel;
 class UPlayground_GridSlot;
+struct FPlayground_ItemManifest;
 class UPlayground_InventoryComponent;
+
 
 /**
  * 
@@ -25,6 +28,8 @@ public:
 	virtual void NativeOnInitialized() override;
 
 	EPlayground_ItemCategory GetItemCategory() const { return ItemCategory; }
+	FPlayground_SlotAvailabilityResult HasRoomForItem(const UPlayground_ItemComponent* ItemComponent);
+	
 
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
@@ -32,6 +37,8 @@ private:
 	TWeakObjectPtr<UPlayground_InventoryComponent> InventoryComponent;
 
 	void ConstructGrid();
+	FPlayground_SlotAvailabilityResult HasRoomForItem(const UPlayground_InventoryItem* Item);
+	FPlayground_SlotAvailabilityResult HasRoomForItem(const FPlayground_ItemManifest& Manifest);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory;

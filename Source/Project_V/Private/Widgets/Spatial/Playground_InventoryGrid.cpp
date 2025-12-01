@@ -9,6 +9,8 @@
 #include "Widgets/Utils/Playground_WidgetUtils.h"
 #include "Inventory/Utils/Playground_InventoryStatics.h"
 #include "Inventory/Playground_InventoryComponent.h"
+#include "Items/Drops/Playground_ItemComponent.h"
+#include "Items/Drops/Manifest/Playground_ItemManifest.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -23,11 +25,31 @@ void UPlayground_InventoryGrid::NativeOnInitialized()
 	InventoryComponent->OnItemAdded.AddDynamic(this, &ThisClass::AddItem);
 }
 
+FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const UPlayground_ItemComponent* ItemComponent)
+{
+	return HasRoomForItem(ItemComponent->GetItemManifest());
+}
+
+FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const UPlayground_InventoryItem* Item)
+{
+	return HasRoomForItem(Item->GetItemManifest());
+}
+
+FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const FPlayground_ItemManifest& Manifest)
+{
+	FPlayground_SlotAvailabilityResult Result;
+	Result.TotalRoomToFill = 1;
+	return Result;
+}
+
 void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)
 {
 	if (!MatchesCategory(Item)) return;
+	
+	FPlayground_SlotAvailabilityResult Result = HasRoomForItem(Item);
 
-	Debug::Print(TEXT("InventoryGrid::AddItemComplated"));
+	//Create a widget to show the item icon and add it to the correct spot on the grid
+	//Debug::Print(TEXT("InventoryGrid::AddItemComplated"));
 }
 
 
@@ -53,6 +75,7 @@ void UPlayground_InventoryGrid::ConstructGrid()
 		}
 	}
 }
+
 
 bool UPlayground_InventoryGrid::MatchesCategory(const UPlayground_InventoryItem* Item) const
 {

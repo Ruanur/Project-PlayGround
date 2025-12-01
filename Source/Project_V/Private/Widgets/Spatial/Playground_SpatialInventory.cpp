@@ -2,10 +2,13 @@
 
 
 #include "Widgets/Spatial/Playground_SpatialInventory.h"
+#include "Items/Drops/Playground_ItemComponent.h"
 #include "Components/Button.h"
 #include "Components/WidgetSwitcher.h"
 #include "Widgets/Spatial/Playground_InventoryGrid.h"
+#include "Inventory/Utils/Playground_InventoryStatics.h"
 
+#include "PlaygroundDebugHelper.h"
 void UPlayground_SpatialInventory::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -19,9 +22,19 @@ void UPlayground_SpatialInventory::NativeOnInitialized()
 
 FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const
 {
-	FPlayground_SlotAvailabilityResult Result;
-	Result.TotalRoomToFill = 1; 
-	return Result;
+	switch (UPlayground_InventoryStatics::GetItemCategoryFromItemComp(ItemComponent))
+	{
+	case EPlayground_ItemCategory::Equippable:
+		return Grid_Equippables->HasRoomForItem(ItemComponent);
+	case EPlayground_ItemCategory::Consumable:
+		return Grid_Consumables->HasRoomForItem(ItemComponent);
+	case EPlayground_ItemCategory::Craftable:
+		return Grid_Craftables->HasRoomForItem(ItemComponent);
+	default:
+		Debug::Print(TEXT("Invalid Items, ItemComponent doesn't have"));
+		return FPlayground_SlotAvailabilityResult();
+	}
+
 }
 
 void UPlayground_SpatialInventory::PG_ShowEquippables()
