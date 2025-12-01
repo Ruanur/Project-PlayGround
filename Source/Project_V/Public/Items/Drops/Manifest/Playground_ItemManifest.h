@@ -8,10 +8,12 @@
 #include "GameplayTagContainer.h"
 
 #include "Playground_ItemManifest.generated.h"
+
 /**
  * 
  */
 class UPlayground_InventoryItem;
+struct FPlayground_ItemFragment;
 
 USTRUCT()
 struct PROJECT_V_API FPlayground_ItemManifest
@@ -23,6 +25,9 @@ struct PROJECT_V_API FPlayground_ItemManifest
 	FGameplayTag GetItemType() const { return ItemType; }
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (ExcludeBaseStruct))
+	TArray<TInstancedStruct<FPlayground_ItemFragment>> Fragments;
+
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory{ EPlayground_ItemCategory::None };
 
