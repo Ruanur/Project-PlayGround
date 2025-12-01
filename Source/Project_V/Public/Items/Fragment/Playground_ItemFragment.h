@@ -48,6 +48,19 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	float GridPadding{ 0.f };
+};
 
+USTRUCT(BlueprintType)
+struct FPlayground_ImageFragment : public FPlayground_ItemFragment
+{
+	GENERATED_BODY()
 
+	UTexture2D* GetIcon() const { return Icon; }
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TObjectPtr<UTexture2D> Icon{ nullptr };
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	FVector2D IconDimensions{ 44.f, 44.f };
 };
