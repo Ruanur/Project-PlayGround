@@ -11,8 +11,11 @@
 #include "Inventory/Playground_InventoryComponent.h"
 #include "Items/Drops/Playground_ItemComponent.h"
 #include "Items/Drops/Manifest/Playground_ItemManifest.h"
+#include "Items/Fragment/Playground_ItemFragment.h"
+#include "Items/Fragment/Playground_FragmentTags.h"
 
 #include "PlaygroundDebugHelper.h"
+
 
 void UPlayground_InventoryGrid::NativeOnInitialized()
 {
@@ -62,8 +65,13 @@ void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)
 
 void UPlayground_InventoryGrid::AddItemToIndices(const FPlayground_SlotAvailabilityResult& Result, UPlayground_InventoryItem* NewItem)
 {
-	// Get Grid Fragment so we know how many grid spaces the item takes.
+	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(NewItem, FragmentTags::GridFragment);
+	const FPlayground_ImageFragment* ImageFragment = GetFragment<FPlayground_ImageFragment>(NewItem, FragmentTags::IconFragment);
+	if (!GridFragment || !ImageFragment) return;
+	
+
 	// Get Image Fragment so ew have the icon do display
+	// 
 	// Create a widget to add to the grid
 	// Store the new widget in a container
 }
