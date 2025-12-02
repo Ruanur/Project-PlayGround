@@ -13,8 +13,10 @@
 #include "Items/Drops/Manifest/Playground_ItemManifest.h"
 #include "Items/Fragment/Playground_ItemFragment.h"
 #include "Items/Fragment/Playground_FragmentTags.h"
+#include "Widgets/SlottedItems/Playground_SlottedItem.h"
 
 #include "PlaygroundDebugHelper.h"
+
 
 
 void UPlayground_InventoryGrid::NativeOnInitialized()
@@ -65,16 +67,65 @@ void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)
 
 void UPlayground_InventoryGrid::AddItemToIndices(const FPlayground_SlotAvailabilityResult& Result, UPlayground_InventoryItem* NewItem)
 {
-	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(NewItem, FragmentTags::GridFragment);
-	const FPlayground_ImageFragment* ImageFragment = GetFragment<FPlayground_ImageFragment>(NewItem, FragmentTags::IconFragment);
-	if (!GridFragment || !ImageFragment) return;
-	
+	for (const auto& Availability : Result.SlotAvailabilities)
+	{
+		AddItemAtIndex(NewItem, Availability.Index, Result.bStackable, Availability.AmountToFill);
+	}
 
-	// Get Image Fragment so ew have the icon do display
-	// 
 	// Create a widget to add to the grid
 	// Store the new widget in a container
 }
+
+void UPlayground_InventoryGrid::AddItemAtIndex(UPlayground_InventoryItem* Item, const int32 Index, const bool bStackable, const int32 StackAmount)
+{
+	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(Item, FragmentTags::GridFragment);
+	const FPlayground_ImageFragment* ImageFragment = GetFragment<FPlayground_ImageFragment>(Item, FragmentTags::IconFragment);
+	if (!GridFragment || !ImageFragment) return;
+
+	UPlayground_SlottedItem* SlottedItem = CreateSlottedItem(Item, bStackable, StackAmount, GridFragment, ImageFragment, Index);
+
+	AddSlottedItemToCanvas(Index, GridFragment, SlottedItem);
+
+	SlottedItems.Add(Index, SlottedItem);
+
+}
+
+UPlayground_SlottedItem* UPlayground_InventoryGrid::CreateSlottedItem(UPlayground_InventoryItem* Item, const bool bStackable, const int32 StackAmount, const FPlayground_GridFragment* GridFragment, const FPlayground_ImageFragment* ImageFragment, const int32 Index)
+{
+	UPlayground_SlottedItem* SlottedItem = CreateWidget<UPlayground_SlottedItem>(GetOwningPlayer(), SlottedItemClass);
+	SlottedItem->SetInventoryItem(Item);
+	SetSlottedItemImage(SlottedItem, GridFragment, ImageFragment);
+	SlottedItem->SetGridIndex(Index);
+
+	return SlottedItem;
+}
+
+void UPlayground_InventoryGrid::AddSlottedItemToCanvas(const int32 Index, const FPlayground_GridFragment* GridFragment, UPlayground_SlottedItem* SlottedItem) const
+{
+	CanvasPanel->AddChild(SlottedItem);
+	UCanvasPanelSlot* CanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(SlottedItem);
+	CanvasSlot->SetSize(GetDrawSize(GridFragment));
+	const FVector2D DrawPos = UPlayground_WidgetUtils::PG_GetPositionFromIndex(Index, Columns) * TileSize;
+	const FVector2D DrawPosWithPadding = DrawPos + FVector2D(GridFragment->GetGridPadding());
+	CanvasSlot->SetPosition(DrawPosWithPadding);
+}
+
+FVector2D UPlayground_InventoryGrid::GetDrawSize(const FPlayground_GridFragment* GridFragment) const
+{
+	const float IconTileWidth = TileSize - GridFragment->GetGridPadding() * 2;
+	return GridFragment->GetGridSize() * IconTileWidth;
+}
+
+void UPlayground_InventoryGrid::SetSlottedItemImage(const UPlayground_SlottedItem* SlottedItem, const FPlayground_GridFragment* GridFragment, const FPlayground_ImageFragment* ImageFragment) const
+{
+	FSlateBrush Brush;
+	Brush.SetResourceObject(ImageFragment->GetIcon());
+	Brush.DrawAs = ESlateBrushDrawType::Image;
+	Brush.ImageSize = GetDrawSize(GridFragment);
+	SlottedItem->SetImageBrush(Brush);
+}
+
+
 
 void UPlayground_InventoryGrid::ConstructGrid()
 {
@@ -104,3 +155,5 @@ bool UPlayground_InventoryGrid::MatchesCategory(const UPlayground_InventoryItem*
 {
 	return Item->GetItemManifest().GetItemCategory() == ItemCategory;
 }
+
+

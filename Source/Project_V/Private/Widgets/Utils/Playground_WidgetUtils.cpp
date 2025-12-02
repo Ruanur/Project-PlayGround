@@ -7,3 +7,8 @@ int32 UPlayground_WidgetUtils::PG_GetIndexFromPosition(const FIntPoint& Position
 {
 	return Position.X + Position.Y * Columns;
 }
+
+FIntPoint UPlayground_WidgetUtils::PG_GetPositionFromIndex(const int32 Index, const int32 Columns)
+{
+	return FIntPoint(Index % Columns, Index / Columns);
+}

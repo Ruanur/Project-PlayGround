@@ -23,7 +23,9 @@ public class Project_V : ModuleRules
             "MoviePlayer",
 			"Inventory",
 			"NetCore",
-			"StructUtils"});
+			"StructUtils",
+			"Slate",
+			"SlateCore"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

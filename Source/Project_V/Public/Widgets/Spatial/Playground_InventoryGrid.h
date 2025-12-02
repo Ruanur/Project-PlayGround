@@ -6,15 +6,19 @@
 #include "Blueprint/UserWidget.h"
 #include "Types/Playground_GridTypes.h"
 #include "Items/Drops/Playground_InventoryItem.h"
+#include "Items/Fragment/Playground_ItemFragment.h"
+
 #include "Playground_InventoryGrid.generated.h"
+
 
 
 class UPlayground_ItemComponent;
 class UCanvasPanel;
 class UPlayground_GridSlot;
 struct FPlayground_ItemManifest;
+struct FPlayground_GridFragment;
 class UPlayground_InventoryComponent;
-
+class UPlayground_SlottedItem;
 
 /**
  * 
@@ -39,6 +43,17 @@ private:
 	FPlayground_SlotAvailabilityResult HasRoomForItem(const UPlayground_InventoryItem* Item);
 	FPlayground_SlotAvailabilityResult HasRoomForItem(const FPlayground_ItemManifest& Manifest);
 	void AddItemToIndices(const FPlayground_SlotAvailabilityResult& Result, UPlayground_InventoryItem* NewItem);
+	bool MatchesCategory(const UPlayground_InventoryItem* Item) const;
+	FVector2D GetDrawSize(const FPlayground_GridFragment* GridFragment) const;
+	void SetSlottedItemImage(const UPlayground_SlottedItem* SlottedItem, const FPlayground_GridFragment* GridFragment, const FPlayground_ImageFragment* ImageFragment) const;
+	void AddItemAtIndex(UPlayground_InventoryItem* Item, const int32 Index, const bool bStackable, const int32 StackAmount);
+	UPlayground_SlottedItem* CreateSlottedItem(UPlayground_InventoryItem* Item, 
+		const bool bStackable, 
+		const int32 StackAmount, 
+		const FPlayground_GridFragment* GridFragment, 
+		const FPlayground_ImageFragment* ImageFragment, 
+		const int32 Index);
+	void AddSlottedItemToCanvas(const int32 Index, const FPlayground_GridFragment* GridFragment, UPlayground_SlottedItem* SlottedItem) const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory;
@@ -53,6 +68,12 @@ private:
 	TObjectPtr<UCanvasPanel> CanvasPanel;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UPlayground_SlottedItem> SlottedItemClass;
+
+	UPROPERTY()
+	TMap<int32, TObjectPtr<UPlayground_SlottedItem>> SlottedItems;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
 	int32 Rows;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
@@ -60,6 +81,4 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	float TileSize;
-
-	bool MatchesCategory(const UPlayground_InventoryItem* Item) const;
 };

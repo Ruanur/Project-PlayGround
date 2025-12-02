@@ -16,5 +16,5 @@ class PROJECT_V_API UPlayground_WidgetUtils : public UBlueprintFunctionLibrary
 
 public:
 	static int32 PG_GetIndexFromPosition(const FIntPoint& Position, const int32 Columns);
-	
+	static FIntPoint PG_GetPositionFromIndex(const int32 Index, const int32 Columns);
 };
