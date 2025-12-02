@@ -54,6 +54,7 @@ private:
 		const FPlayground_ImageFragment* ImageFragment, 
 		const int32 Index);
 	void AddSlottedItemToCanvas(const int32 Index, const FPlayground_GridFragment* GridFragment, UPlayground_SlottedItem* SlottedItem) const;
+	void UpdateGridSlots(UPlayground_InventoryItem* NewItem, const int32 Index);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory;

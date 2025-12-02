@@ -70,6 +70,7 @@ void UPlayground_InventoryGrid::AddItemToIndices(const FPlayground_SlotAvailabil
 	for (const auto& Availability : Result.SlotAvailabilities)
 	{
 		AddItemAtIndex(NewItem, Availability.Index, Result.bStackable, Availability.AmountToFill);
+		UpdateGridSlots(NewItem, Availability.Index);
 	}
 
 	// Create a widget to add to the grid
@@ -108,6 +109,14 @@ void UPlayground_InventoryGrid::AddSlottedItemToCanvas(const int32 Index, const 
 	const FVector2D DrawPos = UPlayground_WidgetUtils::PG_GetPositionFromIndex(Index, Columns) * TileSize;
 	const FVector2D DrawPosWithPadding = DrawPos + FVector2D(GridFragment->GetGridPadding());
 	CanvasSlot->SetPosition(DrawPosWithPadding);
+}
+
+void UPlayground_InventoryGrid::UpdateGridSlots(UPlayground_InventoryItem* NewItem, const int32 Index)
+{
+	check(GridSlots.IsValidIndex(Index));
+
+	UPlayground_GridSlot* GridSlot = GridSlots[Index];
+	GridSlot->PG_SetOccupiedTexture();
 }
 
 FVector2D UPlayground_InventoryGrid::GetDrawSize(const FPlayground_GridFragment* GridFragment) const
