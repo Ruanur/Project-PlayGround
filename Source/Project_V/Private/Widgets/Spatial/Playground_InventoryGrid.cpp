@@ -43,13 +43,19 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const FPlayground_ItemManifest& Manifest)
 {
 	FPlayground_SlotAvailabilityResult Result;
-	Result.TotalRoomToFill = 1;
+	Result.TotalRoomToFill = 7;
+	Result.bStackable = true;
 
 	FPlayground_SlotAvailability SlotAvailability;
-	SlotAvailability.AmountToFill = 1;
+	SlotAvailability.AmountToFill = 2;
 	SlotAvailability.Index = 0;
-
 	Result.SlotAvailabilities.Add(MoveTemp(SlotAvailability));
+	
+	FPlayground_SlotAvailability SlotAvailability2;
+	SlotAvailability2.AmountToFill = 5;
+	SlotAvailability2.Index = 1;
+	Result.SlotAvailabilities.Add(MoveTemp(SlotAvailability2));
+	
 
 	return Result;
 }
@@ -97,6 +103,9 @@ UPlayground_SlottedItem* UPlayground_InventoryGrid::CreateSlottedItem(UPlaygroun
 	SlottedItem->SetInventoryItem(Item);
 	SetSlottedItemImage(SlottedItem, GridFragment, ImageFragment);
 	SlottedItem->SetGridIndex(Index);
+	SlottedItem->SetIsStackable(bStackable);
+	const int32 StackUpdateAmount = bStackable ? StackAmount : 0;
+	SlottedItem->PG_UpdateStackCount(StackUpdateAmount);
 
 	return SlottedItem;
 }
