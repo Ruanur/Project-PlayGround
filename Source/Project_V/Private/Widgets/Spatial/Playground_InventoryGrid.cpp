@@ -115,8 +115,16 @@ void UPlayground_InventoryGrid::UpdateGridSlots(UPlayground_InventoryItem* NewIt
 {
 	check(GridSlots.IsValidIndex(Index));
 
-	UPlayground_GridSlot* GridSlot = GridSlots[Index];
-	GridSlot->PG_SetOccupiedTexture();
+	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(NewItem, FragmentTags::GridFragment);
+	if (!GridFragment) return;
+
+	const FIntPoint Dimension = GridFragment ? GridFragment->GetGridSize() : FIntPoint(1, 1);
+
+
+	UPlayground_InventoryStatics::ForEach2D(GridSlots, Index ,Dimension, Columns, [](UPlayground_GridSlot* GridSlot)
+	{
+		GridSlot->PG_SetOccupiedTexture();
+	});
 }
 
 FVector2D UPlayground_InventoryGrid::GetDrawSize(const FPlayground_GridFragment* GridFragment) const
