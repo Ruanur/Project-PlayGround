@@ -76,7 +76,7 @@ void UPlayground_InventoryGrid::AddItemToIndices(const FPlayground_SlotAvailabil
 	for (const auto& Availability : Result.SlotAvailabilities)
 	{
 		AddItemAtIndex(NewItem, Availability.Index, Result.bStackable, Availability.AmountToFill);
-		UpdateGridSlots(NewItem, Availability.Index);
+		UpdateGridSlots(NewItem, Availability.Index, Result.bStackable, Availability.AmountToFill);
 	}
 
 	// Create a widget to add to the grid
@@ -120,20 +120,26 @@ void UPlayground_InventoryGrid::AddSlottedItemToCanvas(const int32 Index, const 
 	CanvasSlot->SetPosition(DrawPosWithPadding);
 }
 
-void UPlayground_InventoryGrid::UpdateGridSlots(UPlayground_InventoryItem* NewItem, const int32 Index)
+void UPlayground_InventoryGrid::UpdateGridSlots(UPlayground_InventoryItem* NewItem, const int32 Index, bool bStackableItem, const int32 StackAmount)
 {
 	check(GridSlots.IsValidIndex(Index));
 
-	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(NewItem, FragmentTags::GridFragment);
-	if (!GridFragment) return;
+	if (bStackableItem)
+	{
+		GridSlots[Index]->SetStackCount(StackAmount);
+	}
 
+	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(NewItem, FragmentTags::GridFragment);
 	const FIntPoint Dimension = GridFragment ? GridFragment->GetGridSize() : FIntPoint(1, 1);
 
 
-	UPlayground_InventoryStatics::ForEach2D(GridSlots, Index ,Dimension, Columns, [](UPlayground_GridSlot* GridSlot)
-	{
-		GridSlot->PG_SetOccupiedTexture();
-	});
+	UPlayground_InventoryStatics::ForEach2D(GridSlots, Index ,Dimension, Columns, [&](UPlayground_GridSlot* GridSlot)
+		{
+			GridSlot->SetInventoryItem(NewItem);
+			GridSlot->SetUpperLeftIndex(Index);
+			GridSlot->PG_SetOccupiedTexture();
+			GridSlot->SetAvailable(false);
+		});
 }
 
 FVector2D UPlayground_InventoryGrid::GetDrawSize(const FPlayground_GridFragment* GridFragment) const

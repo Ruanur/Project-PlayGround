@@ -2,8 +2,15 @@
 
 
 #include "Widgets/GridSlots/Playground_GridSlot.h"
+#include "Items/Drops/Playground_InventoryItem.h"
 
 #include "Components/Image.h"
+
+void UPlayground_GridSlot::SetInventoryItem(UPlayground_InventoryItem* Item)
+{
+	InventoryItem = Item;
+}
+
 
 void UPlayground_GridSlot::PG_SetOccupiedTexture()
 {
