@@ -43,19 +43,48 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const FPlayground_ItemManifest& Manifest)
 {
 	FPlayground_SlotAvailabilityResult Result;
-	Result.TotalRoomToFill = 7;
-	Result.bStackable = true;
+	
 
-	FPlayground_SlotAvailability SlotAvailability;
-	SlotAvailability.AmountToFill = 2;
-	SlotAvailability.Index = 0;
-	Result.SlotAvailabilities.Add(MoveTemp(SlotAvailability));
+
+
+	// Determine how many stacks to add.
+	// For each Grid Slot:
+	// If we don't have anymore to fill, break out of the loop early.
+	// Is this index claimed yet?
+	// Can the item fit here? (i.e. is it out of grid bounds?)
+	// Is there room at this index? (i.e. are there other items in the way?)
+	// Check any other important conditions - ForEach2D over a 2D range
+		// Index claimed?
+		// Has valid item?
+		// Is this item the same type as the item we're trying to add?
+		// If so, is this a stackable item?
+		// If stackable, is this slot at the max stack size already?
+	// How much to fill?
+	// Update the amount left to fill
+	// How much is the Remainder?
 	
-	FPlayground_SlotAvailability SlotAvailability2;
-	SlotAvailability2.AmountToFill = 5;
-	SlotAvailability2.Index = 1;
-	Result.SlotAvailabilities.Add(MoveTemp(SlotAvailability2));
-	
+	// Determine if the item is stackable.
+	// 아이템이 겹쳐지는지 (즉, 스택) 확인
+	const FPlayground_StackableFragment* StackableFragment = Manifest.GetFragmentOfType<FPlayground_StackableFragment>();
+	Result.bStackable = StackableFragment != nullptr;
+
+	// 추가해야할 스택 수 계산
+	// 각 그리드 슬롯 순회
+	// 더 채울 아이템이 없다면 반복문 종료
+	// 이 인덱스(슬롯)가 이미 사용 중인지 확인
+	// 아이템이 이 위치에 배치될 수 있는지 확인. (그리드 범위를 벗어나지 않는다.)
+
+	// 이 인덱스에 공간이 있는지 확인 (이때, 다른 아이템과 겹치지 않는다.)
+	// 기타 필요한 조건들을 확인한다. - 2D 범위를 ForEach2D로 검사.
+	// - 인덱스가 이미 점유되었는가?
+	// - 유효한 아이템이 있는가?
+	// - 현재 슬롯의 아이템이 추가하려는 아이템과 같은 종류인가?
+	// - 같은 종류라면, 스택 가능한 타입인가?
+	// - 스택 가능한 경우, 이미 최대 스택 수에 도달했는가?
+
+	// 이번 슬롯에 얼마나 채울 수 있는지 계산한다. 
+	// 남은 채울 양을 업데이트. 
+	// 채우고 난 뒤 남는(채우지 못한) 수량을 계산
 
 	return Result;
 }
