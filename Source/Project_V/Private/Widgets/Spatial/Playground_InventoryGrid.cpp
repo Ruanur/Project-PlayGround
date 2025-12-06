@@ -88,26 +88,16 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 
 		// Can the item fit here? (i.e. is it out of grid bounds?)
 		// 아이템이 이 위치에 배치될 수 있는지 확인. (그리드 범위를 벗어나지 않는다.)
-
-		if (!HasRoomAtIndex(GridSlot, GetitemDimensions(Manifest)))
+		TSet<int32> TentativelyClaimed;
+		if (!HasRoomAtIndex(GridSlot, GetitemDimensions(Manifest), CheckedIndices, TentativelyClaimed))
 		{
 			continue;
 		}
 
-		// Is there room at this index? (i.e. are there other items in the way?)
-		// 이 인덱스에 공간이 있는지 확인 (이때, 다른 아이템과 겹치지 않는다.)
-		// Check any other important conditions - ForEach2D over a 2D range
-		// 기타 필요한 조건들을 확인한다. - 2D 범위를 ForEach2D로 검사.
-		// Index claimed?
-		// - 인덱스가 이미 점유되었는가?
-		// Has valid item?
-		// - 유효한 아이템이 있는가?
-		// Is this item the same type as the item we're trying to add?
-		// - 현재 슬롯의 아이템이 추가하려는 아이템과 같은 종류인가?
-		// If so, is this a stackable item?
-		// - 같은 종류라면, 스택 가능한 타입인가?
-		// If stackable, is this slot at the max stack size already?
-		// - 스택 가능한 경우, 이미 최대 스택 수에 도달했는가?
+		CheckedIndices.Append(TentativelyClaimed);
+
+
+
 		// How much to fill?
 		// 이번 슬롯에 얼마나 채울 수 있는지 계산한다. 
 		// Update the amount left to fill
@@ -119,16 +109,44 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 	return Result;
 }
 
-bool UPlayground_InventoryGrid::HasRoomAtIndex(const UPlayground_GridSlot* GridSlot, const FIntPoint& Dimensions)
+bool UPlayground_InventoryGrid::HasRoomAtIndex(const UPlayground_GridSlot* GridSlot,
+												const FIntPoint& Dimensions,
+												const TSet<int32>& CheckedIndices,
+												TSet<int32>& OutTentativelyClaimed)
 {
+	// Is there room at this index? (i.e. are there other items in the way?)
+	// 이 인덱스에 공간이 있는지 확인 (이때, 다른 아이템과 겹치지 않는다.)
 	bool bHasRoomAtIndex = true;
-
-	UPlayground_InventoryStatics::ForEach2D(GridSlots, GridSlot->GetIndex(), Dimensions, Columns, []()
+	UPlayground_InventoryStatics::ForEach2D(GridSlots, GridSlot->GetIndex(), Dimensions, Columns, [&](const UPlayground_GridSlot* SubGridSlot)
+	{
+		if (CheckSlotConstraints(SubGridSlot))
 		{
-
-		});
+				OutTentativelyClaimed.Add(SubGridSlot->GetIndex());
+		}
+		else
+		{
+			bHasRoomAtIndex = false;
+		}
+	});
 
 	return bHasRoomAtIndex;
+}
+
+bool UPlayground_InventoryGrid::CheckSlotConstraints(const UPlayground_GridSlot* SubGridSlot) const
+{
+	// Check any other important conditions - ForEach2D over a 2D range
+	// 기타 필요한 조건들을 확인한다. - 2D 범위를 ForEach2D로 검사.
+	// Index claimed?
+	// - 인덱스가 이미 점유되었는가?
+	// Has valid item?
+	// - 유효한 아이템이 있는가?
+	// Is this item the same type as the item we're trying to add?
+	// - 현재 슬롯의 아이템이 추가하려는 아이템과 같은 종류인가?
+	// If so, is this a stackable item?
+	// - 같은 종류라면, 스택 가능한 타입인가?
+	// If stackable, is this slot at the max stack size already?
+	// - 스택 가능한 경우, 이미 최대 스택 수에 도달했는가?
+	return false;
 }
 
 FIntPoint UPlayground_InventoryGrid::GetitemDimensions(const FPlayground_ItemManifest& Manifest) const
