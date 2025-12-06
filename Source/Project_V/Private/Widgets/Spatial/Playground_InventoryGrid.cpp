@@ -47,8 +47,8 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 
 
 
-	// Determine how many stacks to add.
-	// For each Grid Slot:
+
+	
 	// If we don't have anymore to fill, break out of the loop early.
 	// Is this index claimed yet?
 	// Can the item fit here? (i.e. is it out of grid bounds?)
@@ -68,25 +68,73 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 	const FPlayground_StackableFragment* StackableFragment = Manifest.GetFragmentOfType<FPlayground_StackableFragment>();
 	Result.bStackable = StackableFragment != nullptr;
 
+	// Determine how many stacks to add.
 	// 추가해야할 스택 수 계산
+	const int32 MaxStackSize = StackableFragment ? StackableFragment->GetMaxStackSize() : 1;
+	int32 AmountToFill = StackableFragment ? StackableFragment->GetStackCount() : 1;
+
+	TSet<int32> CheckedIndices;
 	// 각 그리드 슬롯 순회
-	// 더 채울 아이템이 없다면 반복문 종료
-	// 이 인덱스(슬롯)가 이미 사용 중인지 확인
-	// 아이템이 이 위치에 배치될 수 있는지 확인. (그리드 범위를 벗어나지 않는다.)
+	// For each Grid Slot:
+	for (const auto& GridSlot : GridSlots)
+	{
+		// If we don't have anymore to fill, break out of the loop early.
+		// 더 채울 아이템이 없다면 반복문 종료
+		if (AmountToFill == 0) break;
 
-	// 이 인덱스에 공간이 있는지 확인 (이때, 다른 아이템과 겹치지 않는다.)
-	// 기타 필요한 조건들을 확인한다. - 2D 범위를 ForEach2D로 검사.
-	// - 인덱스가 이미 점유되었는가?
-	// - 유효한 아이템이 있는가?
-	// - 현재 슬롯의 아이템이 추가하려는 아이템과 같은 종류인가?
-	// - 같은 종류라면, 스택 가능한 타입인가?
-	// - 스택 가능한 경우, 이미 최대 스택 수에 도달했는가?
+		// Is this index claimed yet?
+		// 이 인덱스(슬롯)가 이미 사용 중인지 확인
+		if (IsIndexClaimed(CheckedIndices, GridSlot->GetIndex())) continue;
 
-	// 이번 슬롯에 얼마나 채울 수 있는지 계산한다. 
-	// 남은 채울 양을 업데이트. 
+		// Can the item fit here? (i.e. is it out of grid bounds?)
+		// 아이템이 이 위치에 배치될 수 있는지 확인. (그리드 범위를 벗어나지 않는다.)
+
+		if (!HasRoomAtIndex(GridSlot, GetitemDimensions(Manifest)))
+		{
+			continue;
+		}
+
+		// Is there room at this index? (i.e. are there other items in the way?)
+		// 이 인덱스에 공간이 있는지 확인 (이때, 다른 아이템과 겹치지 않는다.)
+		// Check any other important conditions - ForEach2D over a 2D range
+		// 기타 필요한 조건들을 확인한다. - 2D 범위를 ForEach2D로 검사.
+		// Index claimed?
+		// - 인덱스가 이미 점유되었는가?
+		// Has valid item?
+		// - 유효한 아이템이 있는가?
+		// Is this item the same type as the item we're trying to add?
+		// - 현재 슬롯의 아이템이 추가하려는 아이템과 같은 종류인가?
+		// If so, is this a stackable item?
+		// - 같은 종류라면, 스택 가능한 타입인가?
+		// If stackable, is this slot at the max stack size already?
+		// - 스택 가능한 경우, 이미 최대 스택 수에 도달했는가?
+		// How much to fill?
+		// 이번 슬롯에 얼마나 채울 수 있는지 계산한다. 
+		// Update the amount left to fill
+		// 남은 채울 양을 업데이트. 
+	}
+	// How much is the Remainder?
 	// 채우고 난 뒤 남는(채우지 못한) 수량을 계산
 
 	return Result;
+}
+
+bool UPlayground_InventoryGrid::HasRoomAtIndex(const UPlayground_GridSlot* GridSlot, const FIntPoint& Dimensions)
+{
+	bool bHasRoomAtIndex = true;
+
+	UPlayground_InventoryStatics::ForEach2D(GridSlots, GridSlot->GetIndex(), Dimensions, Columns, []()
+		{
+
+		});
+
+	return bHasRoomAtIndex;
+}
+
+FIntPoint UPlayground_InventoryGrid::GetitemDimensions(const FPlayground_ItemManifest& Manifest) const
+{
+	const FPlayground_GridFragment* GridFragment = Manifest.GetFragmentOfType<FPlayground_GridFragment>();
+	return GridFragment ? GridFragment->GetGridSize() : FIntPoint(1, 1);
 }
 
 void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)
@@ -175,6 +223,11 @@ FVector2D UPlayground_InventoryGrid::GetDrawSize(const FPlayground_GridFragment*
 {
 	const float IconTileWidth = TileSize - GridFragment->GetGridPadding() * 2;
 	return GridFragment->GetGridSize() * IconTileWidth;
+}
+
+bool UPlayground_InventoryGrid::IsIndexClaimed(const TSet<int32>& CheckedIndices, const int32 Index) const
+{
+	return CheckedIndices.Contains(Index);
 }
 
 void UPlayground_InventoryGrid::SetSlottedItemImage(const UPlayground_SlottedItem* SlottedItem, const FPlayground_GridFragment* GridFragment, const FPlayground_ImageFragment* ImageFragment) const
