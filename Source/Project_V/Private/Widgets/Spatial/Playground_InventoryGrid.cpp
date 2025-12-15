@@ -234,7 +234,23 @@ int32 UPlayground_InventoryGrid::GetStackAmount(const UPlayground_GridSlot* Grid
 
 void UPlayground_InventoryGrid::AddStacks(const FPlayground_SlotAvailabilityResult& Result)
 {
+	if (!MatchesCategory(Result.Item.Get())) return;
 
+	for (const auto& Availability : Result.SlotAvailabilities)
+	{
+		if (Availability.bItemAtIndex)
+		{
+			const auto& GridSlot = GridSlots[Availability.Index];
+			const auto& SlottedItem = SlottedItems.FindChecked(Availability.Index);
+			SlottedItem->PG_UpdateStackCount(GridSlot->GetStackCount() + Availability.AmountToFill);
+			GridSlot->SetStackCount(GridSlot->GetStackCount() + Availability.AmountToFill);
+		}
+		else
+		{
+			AddItemAtIndex(Result.Item.Get(), Availability.Index, Result.bStackable, Availability.AmountToFill);
+			UpdateGridSlots(Result.Item.Get(), Availability.Index, Result.bStackable, Availability.AmountToFill);
+		}
+	}
 }
 
 void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)
@@ -267,7 +283,6 @@ void UPlayground_InventoryGrid::AddItemAtIndex(UPlayground_InventoryItem* Item, 
 	if (!GridFragment || !ImageFragment) return;
 
 	UPlayground_SlottedItem* SlottedItem = CreateSlottedItem(Item, bStackable, StackAmount, GridFragment, ImageFragment, Index);
-
 	AddSlottedItemToCanvas(Index, GridFragment, SlottedItem);
 
 	SlottedItems.Add(Index, SlottedItem);
