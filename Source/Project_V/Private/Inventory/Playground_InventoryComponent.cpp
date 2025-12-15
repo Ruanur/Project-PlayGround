@@ -7,8 +7,10 @@
 #include "Items/Drops/Playground_ItemComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Items/Drops/Playground_InventoryItem.h"
+#include "Items/Fragment/Playground_ItemFragment.h"
 
 #include "PlaygroundDebugHelper.h"
+
 
 // Sets default values for this component's properties
 UPlayground_InventoryComponent::UPlayground_InventoryComponent() : InventoryList(this)
@@ -67,6 +69,7 @@ void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlaygroun
 	}
 
 	// Tell the Item Component to Destory its owning actor.
+	ItemComponent->PickedUp();
 
 }
 
@@ -80,6 +83,14 @@ void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlay
 
 	// TODO : Destroy the item if the Remainder is zero
 	// Otherwise, update the stack count for the item pickup
+	if (Remainder == 0)
+	{
+		ItemComponent->PickedUp();
+	}
+	else if (FPlayground_StackableFragment* StackableFragment = ItemComponent->GetItemManifest().GetFragmentOfTypeMutable<FPlayground_StackableFragment>())
+	{
+		StackableFragment->SetStackCount(Remainder);
+	}
 }
 
 void UPlayground_InventoryComponent::ToggleInventoryMenu()

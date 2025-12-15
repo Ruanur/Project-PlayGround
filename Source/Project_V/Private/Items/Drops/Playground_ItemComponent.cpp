@@ -1,4 +1,3 @@
-// Copyright 2025. Jinsol Co. All rights reserved
 
 
 #include "Items/Drops/Playground_ItemComponent.h"
@@ -15,4 +14,10 @@ void UPlayground_ItemComponent::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, ItemManifest);
+}
+
+void UPlayground_ItemComponent::PickedUp()
+{
+	OnPickedUp();
+	GetOwner()->Destroy();
 }

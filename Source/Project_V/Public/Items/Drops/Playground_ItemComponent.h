@@ -19,8 +19,12 @@ public:
 	FPlayground_ItemManifest GetItemManifest() const { return ItemManifest; }
 
 	FString GetPickUpMessage() const { return PickupMessage; }
+	void PickedUp();
 
 protected:
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Inventory")
+	void OnPickedUp();
 
 private:
 	UPROPERTY(EditAnywhere, Replicated, Category = "Inventory")
