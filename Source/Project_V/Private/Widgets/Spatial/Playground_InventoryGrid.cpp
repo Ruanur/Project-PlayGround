@@ -28,6 +28,7 @@ void UPlayground_InventoryGrid::NativeOnInitialized()
 
 	InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
 	InventoryComponent->OnItemAdded.AddDynamic(this, &ThisClass::AddItem);
+	InventoryComponent->OnStackChange.AddDynamic(this, &ThisClass::AddStacks);
 }
 
 FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const UPlayground_ItemComponent* ItemComponent)
@@ -229,6 +230,11 @@ int32 UPlayground_InventoryGrid::GetStackAmount(const UPlayground_GridSlot* Grid
 	}
 
 	return CurrentSlotStackCount;
+}
+
+void UPlayground_InventoryGrid::AddStacks(const FPlayground_SlotAvailabilityResult& Result)
+{
+
 }
 
 void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)

@@ -49,6 +49,7 @@ void UPlayground_InventoryComponent::TryAddItem(UPlayground_ItemComponent* ItemC
 	{
 		// Add Stacks to an Item that already exisits in the Inventory, We only want to update the stack count
 		// not create a new item of this type.
+		OnStackChange.Broadcast(Result);
 		Server_AddStacksToItem(ItemComponent, Result.TotalRoomToFill, Result.Remainder);
 	}
 	else if (Result.TotalRoomToFill > 0)

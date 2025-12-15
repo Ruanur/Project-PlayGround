@@ -77,6 +77,9 @@ private:
 	int32 DetermineFillAmountForSlot(const bool bStackable, const int32 MaxStackSize, const int32 AmountFill, const UPlayground_GridSlot* GridSlot) const;
 	int32 GetStackAmount(const UPlayground_GridSlot* GridSlot) const;
 
+	UFUNCTION()
+	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory;
 

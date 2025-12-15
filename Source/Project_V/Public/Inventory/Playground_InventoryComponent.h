@@ -13,6 +13,7 @@ class UPlaygroundWidgeBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryItemChange, UPlayground_InventoryItem*, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNoRoomInInventory);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStackChange, const FPlayground_SlotAvailabilityResult&, Result);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), Blueprintable)
 class PROJECT_V_API UPlayground_InventoryComponent : public UActorComponent
@@ -41,6 +42,7 @@ public:
 	FInventoryItemChange OnItemAdded;
 	FInventoryItemChange OnItemRemoved;
 	FNoRoomInInventory NoRoomInInventory;
+	FStackChange OnStackChange;
 
 protected:
 	virtual void BeginPlay() override;
