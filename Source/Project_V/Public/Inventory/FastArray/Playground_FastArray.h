@@ -7,6 +7,7 @@
 
 #include "Playground_FastArray.generated.h"
 
+struct FGameplayTag;
 class UPlayground_InventoryComponent;
 class UPlayground_InventoryItem;
 class UPlayground_ItemComponent;
@@ -51,7 +52,7 @@ struct FPlayground_InventoryFastArray : public FFastArraySerializer
 	UPlayground_InventoryItem* AddEntry(UPlayground_ItemComponent* ItemComponent);
 	UPlayground_InventoryItem* AddEntry(UPlayground_InventoryItem* Item);
 	void RemoveEntry(UPlayground_InventoryItem* Item);
-
+	UPlayground_InventoryItem* FindFirstItemByType(const FGameplayTag& ItemType);
 
 private:
 	friend UPlayground_InventoryComponent;

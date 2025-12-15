@@ -44,24 +44,6 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 {
 	FPlayground_SlotAvailabilityResult Result;
 	
-
-
-
-
-	
-	// If we don't have anymore to fill, break out of the loop early.
-	// Is this index claimed yet?
-	// Can the item fit here? (i.e. is it out of grid bounds?)
-	// Is there room at this index? (i.e. are there other items in the way?)
-	// Check any other important conditions - ForEach2D over a 2D range
-		// Index claimed?
-		// Has valid item?
-		// Is this item the same type as the item we're trying to add?
-		// If so, is this a stackable item?
-		// If stackable, is this slot at the max stack size already?
-	// How much to fill?
-	// Update the amount left to fill
-	// How much is the Remainder?
 	
 	// Determine if the item is stackable.
 	// 아이템이 겹쳐지는지 (즉, 스택) 확인
@@ -86,25 +68,46 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 		// 이 인덱스(슬롯)가 이미 사용 중인지 확인
 		if (IsIndexClaimed(CheckedIndices, GridSlot->GetIndex())) continue;
 
+		// Is the Item in grid Bounds?
+		if (!IsInGridBounds(GridSlot->GetIndex(), GetitemDimensions(Manifest))) continue;
+
 		// Can the item fit here? (i.e. is it out of grid bounds?)
 		// 아이템이 이 위치에 배치될 수 있는지 확인. (그리드 범위를 벗어나지 않는다.)
 		TSet<int32> TentativelyClaimed;
-		if (!HasRoomAtIndex(GridSlot, GetitemDimensions(Manifest), CheckedIndices, TentativelyClaimed))
+		if (!HasRoomAtIndex(GridSlot, GetitemDimensions(Manifest), CheckedIndices, TentativelyClaimed, Manifest.GetItemType(), MaxStackSize))
 		{
 			continue;
 		}
 
-		CheckedIndices.Append(TentativelyClaimed);
-
-
 
 		// How much to fill?
 		// 이번 슬롯에 얼마나 채울 수 있는지 계산한다. 
+		const int32 AmountToFillInSlot = DetermineFillAmountForSlot(Result.bStackable, MaxStackSize, AmountToFill, GridSlot);
+		if (AmountToFillInSlot == 0) continue;
+
+
+		CheckedIndices.Append(TentativelyClaimed);
+
 		// Update the amount left to fill
 		// 남은 채울 양을 업데이트. 
+		Result.TotalRoomToFill += AmountToFillInSlot;
+		Result.SlotAvailabilities.Emplace(
+			FPlayground_SlotAvailability{
+				HasValidItem(GridSlot) ? GridSlot->GetUpperLeftIndex() : GridSlot->GetIndex(),
+				Result.bStackable ? AmountToFillInSlot : 0,
+				HasValidItem(GridSlot)
+			}
+		);
+
+		AmountToFill -= AmountToFillInSlot;
+
+		// How much is the Remainder?
+		// 채우고 난 뒤 남는(채우지 못한) 수량을 계산
+		Result.Remainder = AmountToFill;
+
+		if (AmountToFill == 0) return Result;
 	}
-	// How much is the Remainder?
-	// 채우고 난 뒤 남는(채우지 못한) 수량을 계산
+	
 
 	return Result;
 }
@@ -112,14 +115,16 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 bool UPlayground_InventoryGrid::HasRoomAtIndex(const UPlayground_GridSlot* GridSlot,
 												const FIntPoint& Dimensions,
 												const TSet<int32>& CheckedIndices,
-												TSet<int32>& OutTentativelyClaimed)
+												TSet<int32>& OutTentativelyClaimed,
+												const FGameplayTag& ItemType,
+												const int32 MaxStackSize)
 {
 	// Is there room at this index? (i.e. are there other items in the way?)
 	// 이 인덱스에 공간이 있는지 확인 (이때, 다른 아이템과 겹치지 않는다.)
 	bool bHasRoomAtIndex = true;
 	UPlayground_InventoryStatics::ForEach2D(GridSlots, GridSlot->GetIndex(), Dimensions, Columns, [&](const UPlayground_GridSlot* SubGridSlot)
 	{
-		if (CheckSlotConstraints(SubGridSlot))
+		if (CheckSlotConstraints(GridSlot, SubGridSlot, CheckedIndices, OutTentativelyClaimed, ItemType, MaxStackSize))
 		{
 				OutTentativelyClaimed.Add(SubGridSlot->GetIndex());
 		}
@@ -132,27 +137,98 @@ bool UPlayground_InventoryGrid::HasRoomAtIndex(const UPlayground_GridSlot* GridS
 	return bHasRoomAtIndex;
 }
 
-bool UPlayground_InventoryGrid::CheckSlotConstraints(const UPlayground_GridSlot* SubGridSlot) const
+bool UPlayground_InventoryGrid::CheckSlotConstraints(const UPlayground_GridSlot* GridSlot,
+													const UPlayground_GridSlot* SubGridSlot,
+													const TSet<int32>& CheckedIndices, 
+													TSet<int32>& OutTentativelyClaimed,
+													const FGameplayTag& ItemType,
+													const int32 MaxStackSize) const
 {
 	// Check any other important conditions - ForEach2D over a 2D range
 	// 기타 필요한 조건들을 확인한다. - 2D 범위를 ForEach2D로 검사.
 	// Index claimed?
 	// - 인덱스가 이미 점유되었는가?
+	if (IsIndexClaimed(CheckedIndices, SubGridSlot->GetIndex())) return false;
+
 	// Has valid item?
 	// - 유효한 아이템이 있는가?
-	// Is this item the same type as the item we're trying to add?
-	// - 현재 슬롯의 아이템이 추가하려는 아이템과 같은 종류인가?
+	if (!HasValidItem(SubGridSlot))
+	{
+		OutTentativelyClaimed.Add(SubGridSlot->GetIndex());
+		return true;
+	}
+
+	// Is this Grid Slot an upper left slot?
+	// 이 그리드 슬롯이 아이템의 좌상단(Upper Left) 슬롯인가?
+	if (!IsUpperLeftSlot(GridSlot, SubGridSlot)) return false;
+
+	
 	// If so, is this a stackable item?
 	// - 같은 종류라면, 스택 가능한 타입인가?
+	const UPlayground_InventoryItem* SubItem = SubGridSlot->GetInventoryItem().Get();
+	if (!SubItem->IsStackable()) return false;
+
+	// Is this item the same type as the item we're trying to add?
+	// - 현재 슬롯의 아이템이 추가하려는 아이템과 같은 종류인가?
+	if (!DoesItemTypeMatch(SubItem, ItemType)) return false;
+
 	// If stackable, is this slot at the max stack size already?
 	// - 스택 가능한 경우, 이미 최대 스택 수에 도달했는가?
-	return false;
+	if (GridSlot->GetStackCount() >= MaxStackSize) return false;
+
+	return true;
 }
 
 FIntPoint UPlayground_InventoryGrid::GetitemDimensions(const FPlayground_ItemManifest& Manifest) const
 {
 	const FPlayground_GridFragment* GridFragment = Manifest.GetFragmentOfType<FPlayground_GridFragment>();
 	return GridFragment ? GridFragment->GetGridSize() : FIntPoint(1, 1);
+}
+
+bool UPlayground_InventoryGrid::HasValidItem(const UPlayground_GridSlot* GridSlot) const
+{
+	return GridSlot->GetInventoryItem().IsValid();
+}
+
+bool UPlayground_InventoryGrid::IsUpperLeftSlot(const UPlayground_GridSlot* GridSlot, const UPlayground_GridSlot* SubGridSlot) const
+{
+	return SubGridSlot->GetUpperLeftIndex() == GridSlot->GetIndex();
+}
+
+bool UPlayground_InventoryGrid::DoesItemTypeMatch(const UPlayground_InventoryItem* SubItem, const FGameplayTag& ItemType) const
+{
+	return SubItem->GetItemManifest().GetItemType().MatchesTagExact(ItemType);
+}
+
+bool UPlayground_InventoryGrid::IsInGridBounds(const int32 StartIndex, const FIntPoint& ItemDimensions) const
+{
+	if (StartIndex < 0 || StartIndex >= GridSlots.Num()) return false;
+	
+	const int32 EndColumn = (StartIndex % Columns) + ItemDimensions.X;
+	const int32 EndRow = (StartIndex / Columns) + ItemDimensions.Y;
+	return EndColumn <= Columns && EndRow <= Rows;
+}
+
+int32 UPlayground_InventoryGrid::DetermineFillAmountForSlot(const bool bStackable, const int32 MaxStackSize, const int32 AmountFill, const UPlayground_GridSlot* GridSlot) const
+{
+	// Calculate room in the Slot
+	const int32 RoomInSlot = MaxStackSize - GetStackAmount(GridSlot);
+
+	// if Stackable, need the minimum between AmountFill and RoomInSlot
+	return bStackable ? FMath::Min(AmountFill, RoomInSlot) : 1;
+}
+
+int32 UPlayground_InventoryGrid::GetStackAmount(const UPlayground_GridSlot* GridSlot) const
+{
+	int32 CurrentSlotStackCount = GridSlot->GetStackCount();
+	// If we are at a slot that doesn't hold the stack count. we must get the actual stack count
+	if (const int32 UpperLeftIndex = GridSlot->GetUpperLeftIndex(); UpperLeftIndex != INDEX_NONE)
+	{
+		UPlayground_GridSlot* UpperLeftGridSlot = GridSlots[UpperLeftIndex];
+		CurrentSlotStackCount = UpperLeftGridSlot->GetStackCount();
+	}
+
+	return CurrentSlotStackCount;
 }
 
 void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)

@@ -4,7 +4,9 @@
 #include "Inventory/Playground_InventoryComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Widgets/PlaygroundWidgeBase.h"
+#include "Items/Drops/Playground_ItemComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Items/Drops/Playground_InventoryItem.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -32,6 +34,9 @@ void UPlayground_InventoryComponent::TryAddItem(UPlayground_ItemComponent* ItemC
 {
 	FPlayground_SlotAvailabilityResult Result = InventoryMenu->HasRoomForItem(ItemComponent);
 
+	UPlayground_InventoryItem* FoundItem = InventoryList.FindFirstItemByType(ItemComponent->GetItemManifest().GetItemType());
+	Result.Item = FoundItem;
+
 	//인벤토리 공간 없을 때 호출, 인벤토리가 꽉 참!
 	if (Result.TotalRoomToFill == 0)
 	{
@@ -54,6 +59,7 @@ void UPlayground_InventoryComponent::TryAddItem(UPlayground_ItemComponent* ItemC
 void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlayground_ItemComponent* ItemComponent, int32 StackCount)
 {
 	UPlayground_InventoryItem* NewItem = InventoryList.AddEntry(ItemComponent);
+	NewItem->SetTotalStackCount(StackCount);
 
 	if (GetOwner()->GetNetMode() == NM_ListenServer || GetOwner()->GetNetMode() == NM_Standalone)
 	{
@@ -66,7 +72,14 @@ void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlaygroun
 
 void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlayground_ItemComponent* ItemComponent, int32 StackCount, int32 Remainder)
 {
+	const FGameplayTag& ItemType = IsValid(ItemComponent) ? ItemComponent->GetItemManifest().GetItemType() : FGameplayTag::EmptyTag;
+	UPlayground_InventoryItem* Item = InventoryList.FindFirstItemByType(ItemType);
+	if (!IsValid(Item)) return;
 
+	Item->SetTotalStackCount(Item->GetTotalStackCount() + StackCount);
+
+	// TODO : Destroy the item if the Remainder is zero
+	// Otherwise, update the stack count for the item pickup
 }
 
 void UPlayground_InventoryComponent::ToggleInventoryMenu()

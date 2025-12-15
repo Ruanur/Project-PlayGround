@@ -22,10 +22,17 @@ public:
 	void SetItemManifest(const FPlayground_ItemManifest& Manifest);
 	const FPlayground_ItemManifest& GetItemManifest() const { return ItemManifest.Get<FPlayground_ItemManifest>(); }
 	FPlayground_ItemManifest& GetItemManifestMutable() { return ItemManifest.GetMutable<FPlayground_ItemManifest>(); }
+	bool IsStackable() const;
+	int32 GetTotalStackCount() const { return TotalStackCount; }
+	void SetTotalStackCount(int32 Count) { TotalStackCount = Count; }
+
 private:
 
 	UPROPERTY(VisibleAnywhere, meta = (BaseStruct = "/Script/Inventory.Playground_ItemManifest"), Replicated)
 	FInstancedStruct ItemManifest;
+
+	UPROPERTY(Replicated)
+	int32 TotalStackCount{ 0 };
 };
 
 template <typename FragmentType>
