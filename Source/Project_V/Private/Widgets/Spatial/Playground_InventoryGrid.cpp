@@ -253,6 +253,11 @@ void UPlayground_InventoryGrid::AddStacks(const FPlayground_SlotAvailabilityResu
 	}
 }
 
+void UPlayground_InventoryGrid::PG_OnSlottedItemClicked(int32 GridIndex, const FPointerEvent& MouseEvent)
+{
+	Debug::Print(TEXT("Clicked on item at index %d"), GridIndex);
+}
+
 void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)
 {
 	if (!MatchesCategory(Item)) return;
@@ -298,6 +303,7 @@ UPlayground_SlottedItem* UPlayground_InventoryGrid::CreateSlottedItem(UPlaygroun
 	SlottedItem->SetIsStackable(bStackable);
 	const int32 StackUpdateAmount = bStackable ? StackAmount : 0;
 	SlottedItem->PG_UpdateStackCount(StackUpdateAmount);
+	SlottedItem->OnSlottedItemClicked.AddDynamic(this, &ThisClass::PG_OnSlottedItemClicked);
 
 	return SlottedItem;
 }

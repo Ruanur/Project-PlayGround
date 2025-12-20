@@ -80,6 +80,9 @@ private:
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);
 
+	UFUNCTION()
+	void PG_OnSlottedItemClicked(int32 GridIndex, const FPointerEvent& MouseEvent);
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory;
 

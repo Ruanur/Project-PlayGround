@@ -9,6 +9,8 @@
 class UImage;
 class UPlayground_InventoryItem;
 class UTextBlock;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSlottedItemClicked, int32, GridIndex, const FPointerEvent&, MouseEvent);
 /**
  * 
  */
@@ -18,6 +20,8 @@ class PROJECT_V_API UPlayground_SlottedItem : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+
 	bool IsStackable() const { return bIsStackable; }
 	void SetIsStackable(bool bStackable) { bIsStackable = bStackable; }
 	UImage* GetImageIcon() const { return Image_Icon; }
@@ -30,6 +34,7 @@ public:
 	void SetImageBrush(const FSlateBrush& Brush) const;
 	void PG_UpdateStackCount(int32 StackCount);
 
+	FSlottedItemClicked OnSlottedItemClicked;
 private:
 
 	UPROPERTY(meta = (BindWidget))
