@@ -79,6 +79,8 @@ private:
 	int32 GetStackAmount(const UPlayground_GridSlot* GridSlot) const;
 	bool IsRightClick(const FPointerEvent& MouseEvent) const;
 	bool IsLeftClick(const FPointerEvent& MouseEvent) const;
+	void PickUp(UPlayground_InventoryItem* ClickedInventoryItem, const int32 GridIndex);
+	void AssignHoverItem(UPlayground_InventoryItem* InventoryItem);
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);

@@ -243,6 +243,39 @@ bool UPlayground_InventoryGrid::IsLeftClick(const FPointerEvent& MouseEvent) con
 	return MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton;
 }
 
+void UPlayground_InventoryGrid::PickUp(UPlayground_InventoryItem* ClickedInventoryItem, const int32 GridIndex)
+{
+	// Assign the hover item
+	AssignHoverItem(ClickedInventoryItem);
+	// Remove clicked item from the grid
+}
+
+void UPlayground_InventoryGrid::AssignHoverItem(UPlayground_InventoryItem* InventoryItem)
+{
+	if (!IsValid(HoverItem))
+	{
+		HoverItem = CreateWidget<UPlayground_HoverItem>(GetOwningPlayer(), HoverItemClass);
+	}
+
+	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(InventoryItem, FragmentTags::GridFragment);
+	const FPlayground_ImageFragment* ImageFragment = GetFragment<FPlayground_ImageFragment>(InventoryItem, FragmentTags::IconFragment);
+	if (!GridFragment || !ImageFragment) return;
+
+	const FVector2D DrawSize = GetDrawSize(GridFragment);
+
+	FSlateBrush IconBrush;
+	IconBrush.SetResourceObject(ImageFragment->GetIcon());
+	IconBrush.DrawAs = ESlateBrushDrawType::Image;
+	IconBrush.ImageSize = DrawSize * UWidgetLayoutLibrary::GetViewportScale(this);
+
+	HoverItem->SetImageBrush(IconBrush);
+	HoverItem->SetGridDimensions(GridFragment->GetGridSize());
+	HoverItem->SetInventoryItem(InventoryItem);
+	HoverItem->SetIsStackable(InventoryItem->IsStackable());
+
+	GetOwningPlayer()->SetMouseCursorWidget(EMouseCursor::Default, HoverItem);
+}
+
 void UPlayground_InventoryGrid::AddStacks(const FPlayground_SlotAvailabilityResult& Result)
 {
 	if (!MatchesCategory(Result.Item.Get())) return;
@@ -272,6 +305,8 @@ void UPlayground_InventoryGrid::PG_OnSlottedItemClicked(int32 GridIndex, const F
 	if (!IsValid(HoverItem))
 	{
 		// TODO: PickUp - Assign the hover item, and remove the slotted item from the grid.
+		PickUp(ClickedInventoryItem, GridIndex);
+
 		
 	}
 }
