@@ -19,6 +19,7 @@ struct FPlayground_ItemManifest;
 struct FPlayground_GridFragment;
 class UPlayground_InventoryComponent;
 class UPlayground_SlottedItem;
+class UPlayground_HoverItem;
 struct FGameplayTag;
 
 /**
@@ -76,6 +77,8 @@ private:
 	bool IsInGridBounds(const int32 StartIndex, const FIntPoint& ItemDimensions) const;
 	int32 DetermineFillAmountForSlot(const bool bStackable, const int32 MaxStackSize, const int32 AmountFill, const UPlayground_GridSlot* GridSlot) const;
 	int32 GetStackAmount(const UPlayground_GridSlot* GridSlot) const;
+	bool IsRightClick(const FPointerEvent& MouseEvent) const;
+	bool IsLeftClick(const FPointerEvent& MouseEvent) const;
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);
@@ -109,4 +112,12 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	float TileSize;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UPlayground_HoverItem> HoverItemClass;
+
+	UPROPERTY()
+	TObjectPtr<UPlayground_HoverItem> HoverItem;
+
+
 };

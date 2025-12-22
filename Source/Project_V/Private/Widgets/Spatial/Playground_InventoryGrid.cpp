@@ -14,6 +14,7 @@
 #include "Items/Fragment/Playground_ItemFragment.h"
 #include "Items/Fragment/Playground_FragmentTags.h"
 #include "Widgets/SlottedItems/Playground_SlottedItem.h"
+#include "Widgets/HoverItem/Playground_HoverItem.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -232,6 +233,16 @@ int32 UPlayground_InventoryGrid::GetStackAmount(const UPlayground_GridSlot* Grid
 	return CurrentSlotStackCount;
 }
 
+bool UPlayground_InventoryGrid::IsRightClick(const FPointerEvent& MouseEvent) const
+{
+	return MouseEvent.GetEffectingButton() == EKeys::RightMouseButton;
+}
+
+bool UPlayground_InventoryGrid::IsLeftClick(const FPointerEvent& MouseEvent) const
+{
+	return MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton;
+}
+
 void UPlayground_InventoryGrid::AddStacks(const FPlayground_SlotAvailabilityResult& Result)
 {
 	if (!MatchesCategory(Result.Item.Get())) return;
@@ -255,7 +266,14 @@ void UPlayground_InventoryGrid::AddStacks(const FPlayground_SlotAvailabilityResu
 
 void UPlayground_InventoryGrid::PG_OnSlottedItemClicked(int32 GridIndex, const FPointerEvent& MouseEvent)
 {
-	Debug::Print(TEXT("Clicked on item at index %d"), GridIndex);
+	check(GridSlots.IsValidIndex(GridIndex));
+	UPlayground_InventoryItem* ClickedInventoryItem = GridSlots[GridIndex]->GetInventoryItem().Get();
+
+	if (!IsValid(HoverItem))
+	{
+		// TODO: PickUp - Assign the hover item, and remove the slotted item from the grid.
+		
+	}
 }
 
 void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)
