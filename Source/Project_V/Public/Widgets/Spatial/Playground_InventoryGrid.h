@@ -82,6 +82,7 @@ private:
 	void PickUp(UPlayground_InventoryItem* ClickedInventoryItem, const int32 GridIndex);
 	void AssignHoverItem(UPlayground_InventoryItem* InventoryItem);
 	void AssignHoverItem(UPlayground_InventoryItem* InventoryItem, const int32 GridIndex, const int32 PreviouseGridIndex);
+	void RemoveItemFromGrid(UPlayground_InventoryItem* InventoryItem, const int32 GridIndex);
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);
