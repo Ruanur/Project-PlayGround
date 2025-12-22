@@ -246,8 +246,18 @@ bool UPlayground_InventoryGrid::IsLeftClick(const FPointerEvent& MouseEvent) con
 void UPlayground_InventoryGrid::PickUp(UPlayground_InventoryItem* ClickedInventoryItem, const int32 GridIndex)
 {
 	// Assign the hover item
-	AssignHoverItem(ClickedInventoryItem);
+	AssignHoverItem(ClickedInventoryItem, GridIndex, GridIndex);
+
 	// Remove clicked item from the grid
+
+}
+
+void UPlayground_InventoryGrid::AssignHoverItem(UPlayground_InventoryItem* InventoryItem, const int32 GridIndex, const int32 PreviouseGridIndex)
+{
+	AssignHoverItem(InventoryItem);
+
+	HoverItem->SetPreviousGridIndex(PreviouseGridIndex);
+	HoverItem->UpdateStackCount(InventoryItem->IsStackable() ? GridSlots[GridIndex]->GetStackCount() : 0);
 }
 
 void UPlayground_InventoryGrid::AssignHoverItem(UPlayground_InventoryItem* InventoryItem)
@@ -275,6 +285,8 @@ void UPlayground_InventoryGrid::AssignHoverItem(UPlayground_InventoryItem* Inven
 
 	GetOwningPlayer()->SetMouseCursorWidget(EMouseCursor::Default, HoverItem);
 }
+
+
 
 void UPlayground_InventoryGrid::AddStacks(const FPlayground_SlotAvailabilityResult& Result)
 {
