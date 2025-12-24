@@ -46,3 +46,32 @@ struct FPlayground_SlotAvailabilityResult
 	bool bStackable{ false };
 	TArray<FPlayground_SlotAvailability> SlotAvailabilities;
 };
+
+UENUM(BlueprintType)
+enum class EPlayground_TileQuadrant : uint8
+{
+	TopLeft,
+	TopRight,
+	BottomLeft,
+	BottomRight,
+	None
+};
+
+struct FPlayground_TileParameters
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Inventory")
+	FIntPoint TileCoordinates{};
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Inventory")
+	int32 TileIndex{ INDEX_NONE };
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Inventory")
+	EPlayground_TileQuadrant TileQuadrant{ EPlayground_TileQuadrant::None };
+};
+
+inline bool operator == (const FPlayground_TileParameters& A, const FPlayground_TileParameters& B)
+{
+	return A.TileCoordinates == B.TileCoordinates && A.TileIndex == B.TileIndex && A.TileQuadrant == B.TileQuadrant;
+}

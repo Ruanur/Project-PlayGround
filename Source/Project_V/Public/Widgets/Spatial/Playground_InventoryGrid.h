@@ -123,5 +123,6 @@ private:
 	UPROPERTY()
 	TObjectPtr<UPlayground_HoverItem> HoverItem;
 
-
+	FPlayground_TileParameters TileParameters;
+	FPlayground_TileParameters LastTileParameters;
 };
