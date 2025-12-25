@@ -44,8 +44,29 @@ void UPlayground_InventoryGrid::NativeTick(const FGeometry& MyGeometry, float In
 
 void UPlayground_InventoryGrid::PG_UpdateTileParameters(const FVector2D& CanvasPosition, const FVector2D& MousePosition)
 {
-	// Calculate the tile quadrant
+
+	// if mouse not in canvas panel, return.
+	// Calculate the tile quadrant, tile index, and coordinates
+	const FIntPoint HoveredTileCoordinates = PG_CalculateHoveredCoordinates(CanvasPosition, MousePosition);
+
+	LastTileParameters = TileParameters;
+	TileParameters.TileCoordinates = HoveredTileCoordinates;
+	TileParameters.TileIndex = UPlayground_WidgetUtils::PG_GetIndexFromPosition(HoveredTileCoordinates, Columns);
+
+
+
+
+
 	// Handle highlight/unhighlight of the grid slots
+}
+
+FIntPoint UPlayground_InventoryGrid::PG_CalculateHoveredCoordinates(const FVector2D& CanvasPosition, const FVector2D& MousePosition) const
+{
+	return FIntPoint
+	{
+		static_cast<int32>(FMath::FloorToInt((MousePosition.X - CanvasPosition.X) / TileSize)),
+		static_cast<int32>(FMath::FloorToInt((MousePosition.Y - CanvasPosition.Y) / TileSize))
+	};
 }
 
 FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const UPlayground_ItemComponent* ItemComponent)
