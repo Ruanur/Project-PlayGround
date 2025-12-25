@@ -7,7 +7,6 @@
 #include "Types/Playground_GridTypes.h"
 #include "Items/Drops/Playground_InventoryItem.h"
 #include "Items/Fragment/Playground_ItemFragment.h"
-
 #include "Playground_InventoryGrid.generated.h"
 
 
@@ -32,6 +31,7 @@ class PROJECT_V_API UPlayground_InventoryGrid : public UUserWidget
 	
 public:
 	virtual void NativeOnInitialized() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	EPlayground_ItemCategory GetItemCategory() const { return ItemCategory; }
 	FPlayground_SlotAvailabilityResult HasRoomForItem(const UPlayground_ItemComponent* ItemComponent);
@@ -83,6 +83,7 @@ private:
 	void AssignHoverItem(UPlayground_InventoryItem* InventoryItem);
 	void AssignHoverItem(UPlayground_InventoryItem* InventoryItem, const int32 GridIndex, const int32 PreviouseGridIndex);
 	void RemoveItemFromGrid(UPlayground_InventoryItem* InventoryItem, const int32 GridIndex);
+	void PG_UpdateTileParameters(const FVector2D& CanvasPosition, const FVector2D& MousePosition);
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);

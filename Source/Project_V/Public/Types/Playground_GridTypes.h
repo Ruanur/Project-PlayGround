@@ -57,6 +57,7 @@ enum class EPlayground_TileQuadrant : uint8
 	None
 };
 
+USTRUCT(BlueprintType)
 struct FPlayground_TileParameters
 {
 	GENERATED_BODY()
@@ -71,7 +72,7 @@ struct FPlayground_TileParameters
 	EPlayground_TileQuadrant TileQuadrant{ EPlayground_TileQuadrant::None };
 };
 
-inline bool operator == (const FPlayground_TileParameters& A, const FPlayground_TileParameters& B)
+inline bool operator==(const FPlayground_TileParameters& A, const FPlayground_TileParameters& B)
 {
 	return A.TileCoordinates == B.TileCoordinates && A.TileIndex == B.TileIndex && A.TileQuadrant == B.TileQuadrant;
 }
