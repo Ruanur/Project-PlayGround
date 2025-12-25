@@ -86,6 +86,7 @@ private:
 	void PG_UpdateTileParameters(const FVector2D& CanvasPosition, const FVector2D& MousePosition);
 	FIntPoint PG_CalculateHoveredCoordinates(const FVector2D& CanvasPosition, const FVector2D& MousePosition) const;
 	EPlayground_TileQuadrant PG_CalculateTileQuadrant(const FVector2D& CanvasPosition, const FVector2D& MousePosition) const;
+	void OnTileParametersUpdated(const FPlayground_TileParameters& Parameters);
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);

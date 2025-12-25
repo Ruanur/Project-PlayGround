@@ -55,6 +55,21 @@ void UPlayground_InventoryGrid::PG_UpdateTileParameters(const FVector2D& CanvasP
 	TileParameters.TileQuadrant = PG_CalculateTileQuadrant(CanvasPosition, MousePosition);
 
 	// Handle highlight/unhighlight of the grid slots
+	OnTileParametersUpdated(TileParameters);
+}
+
+void UPlayground_InventoryGrid::OnTileParametersUpdated(const FPlayground_TileParameters& Parameters)
+{
+	if (!IsValid(HoverItem)) return;
+
+	// Get Hover Item's dimensions
+	// calculate the starting coordinate for highlighting
+	// check hover position
+		// in the grid bounds?
+		// any items in the way?
+		// if so, is there only one item in the way? (can we swap?)
+		
+
 }
 
 FIntPoint UPlayground_InventoryGrid::PG_CalculateHoveredCoordinates(const FVector2D& CanvasPosition, const FVector2D& MousePosition) const
