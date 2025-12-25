@@ -87,6 +87,7 @@ private:
 	FIntPoint PG_CalculateHoveredCoordinates(const FVector2D& CanvasPosition, const FVector2D& MousePosition) const;
 	EPlayground_TileQuadrant PG_CalculateTileQuadrant(const FVector2D& CanvasPosition, const FVector2D& MousePosition) const;
 	void OnTileParametersUpdated(const FPlayground_TileParameters& Parameters);
+	FIntPoint CalculateStartingCoordinate(const FIntPoint& Coordinate, const FIntPoint& Dimensions, const EPlayground_TileQuadrant Quadrant) const;
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);
