@@ -85,6 +85,7 @@ private:
 	void RemoveItemFromGrid(UPlayground_InventoryItem* InventoryItem, const int32 GridIndex);
 	void PG_UpdateTileParameters(const FVector2D& CanvasPosition, const FVector2D& MousePosition);
 	FIntPoint PG_CalculateHoveredCoordinates(const FVector2D& CanvasPosition, const FVector2D& MousePosition) const;
+	EPlayground_TileQuadrant PG_CalculateTileQuadrant(const FVector2D& CanvasPosition, const FVector2D& MousePosition) const;
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);

@@ -52,10 +52,7 @@ void UPlayground_InventoryGrid::PG_UpdateTileParameters(const FVector2D& CanvasP
 	LastTileParameters = TileParameters;
 	TileParameters.TileCoordinates = HoveredTileCoordinates;
 	TileParameters.TileIndex = UPlayground_WidgetUtils::PG_GetIndexFromPosition(HoveredTileCoordinates, Columns);
-
-
-
-
+	TileParameters.TileQuadrant = PG_CalculateTileQuadrant(CanvasPosition, MousePosition);
 
 	// Handle highlight/unhighlight of the grid slots
 }
@@ -67,6 +64,25 @@ FIntPoint UPlayground_InventoryGrid::PG_CalculateHoveredCoordinates(const FVecto
 		static_cast<int32>(FMath::FloorToInt((MousePosition.X - CanvasPosition.X) / TileSize)),
 		static_cast<int32>(FMath::FloorToInt((MousePosition.Y - CanvasPosition.Y) / TileSize))
 	};
+}
+
+EPlayground_TileQuadrant UPlayground_InventoryGrid::PG_CalculateTileQuadrant(const FVector2D& CanvasPosition, const FVector2D& MousePosition) const
+{
+	// calculate relative position within the current tile
+	const float TileLocalX = FMath::Fmod(MousePosition.X - CanvasPosition.X, TileSize);
+	const float TileLocalY = FMath::Fmod(MousePosition.Y - CanvasPosition.Y, TileSize);
+
+	// Determine which quadrant the mouse is in
+	const bool bIsTop = TileLocalY < TileSize / 2.f; // top is Y is in the upper half
+	const bool bIsLeft = TileLocalX < TileSize / 2.f; // Left if X is in the left half 
+
+	EPlayground_TileQuadrant HoveredTileQuadrant;
+	if (bIsTop && bIsLeft) HoveredTileQuadrant = EPlayground_TileQuadrant::TopLeft;
+	else if (bIsTop && !bIsLeft) HoveredTileQuadrant = EPlayground_TileQuadrant::TopRight;
+	else if (!bIsTop && bIsLeft) HoveredTileQuadrant = EPlayground_TileQuadrant::BottomLeft;
+	else if (!bIsTop && !bIsLeft) HoveredTileQuadrant = EPlayground_TileQuadrant::BottomRight;
+
+	return HoveredTileQuadrant;
 }
 
 FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const UPlayground_ItemComponent* ItemComponent)
