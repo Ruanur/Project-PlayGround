@@ -90,5 +90,4 @@ struct FPlayground_SpaceQueryResult
 
 	// Upper left index of the valid item, if there is one
 	int32 UpperLeftIndex{ INDEX_NONE };
-
 };

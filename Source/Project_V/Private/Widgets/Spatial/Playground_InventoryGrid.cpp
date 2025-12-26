@@ -75,15 +75,35 @@ void UPlayground_InventoryGrid::OnTileParametersUpdated(const FPlayground_TilePa
 
 }
 
-FPlayground_SpaceQueryResult UPlayground_InventoryGrid::CheckHoverPosition(const FIntPoint& Position, const FIntPoint& Dimensions) const
+FPlayground_SpaceQueryResult UPlayground_InventoryGrid::CheckHoverPosition(const FIntPoint& Position, const FIntPoint& Dimensions) 
 {
 	FPlayground_SpaceQueryResult Result;
 
 	// check hover position
-		// in the grid bounds?
-		// any items in the way?
-		// if so, is there only one item in the way? (can we swap?)
 
+	// in the grid bounds?
+	if (!IsInGridBounds(UPlayground_WidgetUtils::PG_GetIndexFromPosition(Position, Columns), Dimensions)) return Result;
+
+	Result.bHasSpace = true;
+
+	// If more than one of the indices is occupied with the same item, we need to see if they all have the same upper left index.
+	TSet<int32> OccupiedUpperLeftIndices;
+	UPlayground_InventoryStatics::ForEach2D(GridSlots, UPlayground_WidgetUtils::PG_GetIndexFromPosition(Position, Columns), Dimensions, Columns, [&](const UPlayground_GridSlot* GridSlot) 
+		{
+			if (GridSlot->GetInventoryItem().IsValid())
+			{
+				OccupiedUpperLeftIndices.Add(GridSlot->GetUpperLeftIndex());
+				Result.bHasSpace = false;
+			}
+		});
+
+	// if so, is there only one item in the way? (can we swap?)
+	if (OccupiedUpperLeftIndices.Num() == 1) // Single item at position - it's valid for swapping/combining
+	{
+		const int32 Index = *OccupiedUpperLeftIndices.CreateConstIterator();
+		Result.ValidItem = GridSlots[Index]->GetInventoryItem();
+		Result.UpperLeftIndex = GridSlots[Index]->GetUpperLeftIndex();
+	}
 
 	return Result;
 }
