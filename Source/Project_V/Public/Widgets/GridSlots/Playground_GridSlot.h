@@ -46,11 +46,11 @@ public:
 	void PG_SetGrayedOutTexture();
 
 private:
-	int32 TileIndex;
-	int32 StackCount;
+	int32 TileIndex{ INDEX_NONE };
+	int32 StackCount{0};
 	int32 UpperLeftIndex{ INDEX_NONE };
 	TWeakObjectPtr<UPlayground_InventoryItem> InventoryItem;
-	bool bAvailable;
+	bool bAvailable{true};
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> Image_GridSlot;

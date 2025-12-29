@@ -49,8 +49,9 @@ void UPlayground_InventoryGrid::NativeTick(const FGeometry& MyGeometry, float In
 
 void UPlayground_InventoryGrid::PG_UpdateTileParameters(const FVector2D& CanvasPosition, const FVector2D& MousePosition)
 {
-
 	// if mouse not in canvas panel, return.
+	if (!bMouseWithinCanvas) return;
+
 	// Calculate the tile quadrant, tile index, and coordinates
 	const FIntPoint HoveredTileCoordinates = PG_CalculateHoveredCoordinates(CanvasPosition, MousePosition);
 
@@ -78,6 +79,17 @@ void UPlayground_InventoryGrid::OnTileParametersUpdated(const FPlayground_TilePa
 
 	CurrentQueryResult = CheckHoverPosition(StartingCoordinate, Dimensions);
 
+	if (CurrentQueryResult.bHasSpace)
+	{
+		PG_HighlightSlots(ItemDropIndex, Dimensions);
+		return;
+	}
+	PG_UnHighlightSlots(LastHighlightedIndex, LastHighlightedDimensions);
+
+	if (CurrentQueryResult.ValidItem.IsValid())
+	{
+		// TODO: There's a single item in this space.  We can swap or add Stacks
+	}
 }
 
 FPlayground_SpaceQueryResult UPlayground_InventoryGrid::CheckHoverPosition(const FIntPoint& Position, const FIntPoint& Dimensions) 
@@ -120,9 +132,39 @@ bool UPlayground_InventoryGrid::PG_CursorExitedCanvas(const FVector2D& BoundaryP
 	if (!bMouseWithinCanvas && bLastMouseWithinCanvas)
 	{
 		// TODO: UnhighlightSlots()
+		PG_UnHighlightSlots(LastHighlightedIndex, LastHighlightedDimensions);
 		return true;
 	}
 	return false;
+}
+
+void UPlayground_InventoryGrid::PG_HighlightSlots(const int32 Index, const FIntPoint& Dimensions)
+{
+	if (!bMouseWithinCanvas) return;
+	PG_UnHighlightSlots(LastHighlightedIndex, LastHighlightedDimensions);
+
+	UPlayground_InventoryStatics::ForEach2D(GridSlots, Index, Dimensions, Columns, [&](UPlayground_GridSlot* GridSlot) 
+		{
+			GridSlot->PG_SetOccupiedTexture();
+		});
+
+	LastHighlightedDimensions = Dimensions;
+	LastHighlightedIndex = Index;
+}
+
+void UPlayground_InventoryGrid::PG_UnHighlightSlots(const int32 Index, const FIntPoint& Dimensions)
+{
+	UPlayground_InventoryStatics::ForEach2D(GridSlots, Index, Dimensions, Columns, [&](UPlayground_GridSlot* GridSlot)
+		{
+			if (GridSlot->IsAvailable())
+			{
+				GridSlot->PG_SetUnoccupiedTexture();
+			}
+			else
+			{
+				GridSlot->PG_SetOccupiedTexture();
+			}
+		});
 }
 
 FIntPoint UPlayground_InventoryGrid::CalculateStartingCoordinate(const FIntPoint& Coordinate, const FIntPoint& Dimensions, const EPlayground_TileQuadrant Quadrant) const
