@@ -89,6 +89,7 @@ private:
 	void OnTileParametersUpdated(const FPlayground_TileParameters& Parameters);
 	FIntPoint CalculateStartingCoordinate(const FIntPoint& Coordinate, const FIntPoint& Dimensions, const EPlayground_TileQuadrant Quadrant) const;
 	FPlayground_SpaceQueryResult CheckHoverPosition(const FIntPoint& Position, const FIntPoint& Dimensions);
+	bool PG_CursorExitedCanvas(const FVector2D& BoundaryPos, const FVector2D& BoundarySize, const FVector2D& Location);
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);
@@ -135,4 +136,6 @@ private:
 	// Index where an item would be placed if we click on the grid at a valid location
 	int32 ItemDropIndex{ INDEX_NONE };
 	FPlayground_SpaceQueryResult CurrentQueryResult;
+	bool bMouseWithinCanvas;
+	bool bLastMouseWithinCanvas;
 };

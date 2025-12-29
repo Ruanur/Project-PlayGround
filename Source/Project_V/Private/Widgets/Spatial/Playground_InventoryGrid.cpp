@@ -39,6 +39,11 @@ void UPlayground_InventoryGrid::NativeTick(const FGeometry& MyGeometry, float In
 	const FVector2D CanvasPosition = UPlayground_WidgetUtils::PG_GetWidgetPosition(CanvasPanel);
 	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetOwningPlayer());
 
+	if (PG_CursorExitedCanvas(CanvasPosition, UPlayground_WidgetUtils::PG_GetWidgetSize(CanvasPanel), MousePosition))
+	{
+		return;
+	}
+
 	PG_UpdateTileParameters(CanvasPosition, MousePosition);
 }
 
@@ -106,6 +111,18 @@ FPlayground_SpaceQueryResult UPlayground_InventoryGrid::CheckHoverPosition(const
 	}
 
 	return Result;
+}
+
+bool UPlayground_InventoryGrid::PG_CursorExitedCanvas(const FVector2D& BoundaryPos, const FVector2D& BoundarySize, const FVector2D& Location)
+{
+	bLastMouseWithinCanvas = bMouseWithinCanvas;
+	bMouseWithinCanvas = UPlayground_WidgetUtils::PG_IsWithinBounds(BoundaryPos, BoundarySize, Location);
+	if (!bMouseWithinCanvas && bLastMouseWithinCanvas)
+	{
+		// TODO: UnhighlightSlots()
+		return true;
+	}
+	return false;
 }
 
 FIntPoint UPlayground_InventoryGrid::CalculateStartingCoordinate(const FIntPoint& Coordinate, const FIntPoint& Dimensions, const EPlayground_TileQuadrant Quadrant) const
