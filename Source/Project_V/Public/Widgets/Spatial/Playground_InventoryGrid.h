@@ -20,6 +20,7 @@ class UPlayground_InventoryComponent;
 class UPlayground_SlottedItem;
 class UPlayground_HoverItem;
 struct FGameplayTag;
+enum class EPlayground_GridSlotState : uint8;
 
 /**
  * 
@@ -92,6 +93,7 @@ private:
 	bool PG_CursorExitedCanvas(const FVector2D& BoundaryPos, const FVector2D& BoundarySize, const FVector2D& Location);
 	void PG_HighlightSlots(const int32 Index, const FIntPoint& Dimensions);
 	void PG_UnHighlightSlots(const int32 Index, const FIntPoint& Dimensions);
+	void ChangeHoverType(const int32 Index, const FIntPoint& Dimensions, EPlayground_GridSlotState GridSlotState);
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);

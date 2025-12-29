@@ -86,9 +86,13 @@ void UPlayground_InventoryGrid::OnTileParametersUpdated(const FPlayground_TilePa
 	}
 	PG_UnHighlightSlots(LastHighlightedIndex, LastHighlightedDimensions);
 
-	if (CurrentQueryResult.ValidItem.IsValid())
+	if (CurrentQueryResult.ValidItem.IsValid() && GridSlots.IsValidIndex(CurrentQueryResult.UpperLeftIndex))
 	{
 		// TODO: There's a single item in this space.  We can swap or add Stacks
+		const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(CurrentQueryResult.ValidItem.Get(), FragmentTags::GridFragment);
+		if (!GridFragment) return;
+
+		ChangeHoverType(CurrentQueryResult.UpperLeftIndex, GridFragment->GetGridSize(), EPlayground_GridSlotState::GrayedOut);
 	}
 }
 
@@ -165,6 +169,32 @@ void UPlayground_InventoryGrid::PG_UnHighlightSlots(const int32 Index, const FIn
 				GridSlot->PG_SetOccupiedTexture();
 			}
 		});
+}
+
+void UPlayground_InventoryGrid::ChangeHoverType(const int32 Index, const FIntPoint& Dimensions, EPlayground_GridSlotState GridSlotState)
+{
+	PG_UnHighlightSlots(LastHighlightedIndex, LastHighlightedDimensions);
+	UPlayground_InventoryStatics::ForEach2D(GridSlots, Index, Dimensions, Columns, [State = GridSlotState](UPlayground_GridSlot* GridSlot)
+		{
+			switch (State)
+			{
+			case EPlayground_GridSlotState::Occupied:
+				GridSlot->PG_SetOccupiedTexture();
+				break;
+			case EPlayground_GridSlotState::Unoccupied:
+				GridSlot->PG_SetUnoccupiedTexture();
+				break;
+			case EPlayground_GridSlotState::GrayedOut:
+				GridSlot->PG_SetGrayedOutTexture();
+				break;
+			case EPlayground_GridSlotState::Selected:
+				GridSlot->PG_SetSelectedTexture();
+				break;
+			}
+		});
+
+	LastHighlightedIndex = Index;
+	LastHighlightedDimensions = Dimensions;
 }
 
 FIntPoint UPlayground_InventoryGrid::CalculateStartingCoordinate(const FIntPoint& Coordinate, const FIntPoint& Dimensions, const EPlayground_TileQuadrant Quadrant) const
