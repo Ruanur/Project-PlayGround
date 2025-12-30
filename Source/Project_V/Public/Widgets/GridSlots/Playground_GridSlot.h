@@ -10,6 +10,8 @@
 class UImage;
 class UPlayground_InventoryItem;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGridSlotEvent, int32, GridIndex, const FPointerEvent&, MouseEvent);
+
 UENUM(BlueprintType)
 enum class EPlayground_GridSlotState : uint8
 {
@@ -26,6 +28,10 @@ class PROJECT_V_API UPlayground_GridSlot : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	virtual void NativeOnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& MouseEvent) override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+
 	void SetTileIndex(int32 Index) { TileIndex = Index; }
 	int32 GetTileIndex() const { return TileIndex; }
 	EPlayground_GridSlotState GetGridSlotState() const { return GridSlotState; }
@@ -44,6 +50,10 @@ public:
 	void PG_SetUnoccupiedTexture();
 	void PG_SetSelectedTexture();
 	void PG_SetGrayedOutTexture();
+
+	FGridSlotEvent GridSlotClicked;
+	FGridSlotEvent GridSlotHovered;
+	FGridSlotEvent GridSlotUnHovered;
 
 private:
 	int32 TileIndex{ INDEX_NONE };
