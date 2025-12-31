@@ -12,8 +12,10 @@ void UPlayground_HoverItem::SetImageBrush(const FSlateBrush& Brush) const
 
 }
 
-void UPlayground_HoverItem::UpdateStackCount(const int32 Count) const
+void UPlayground_HoverItem::UpdateStackCount(const int32 Count)
 {
+	StackCount = Count;
+
 	if (Count > 0)
 	{
 		Text_StackCount->SetText(FText::AsNumber(Count));

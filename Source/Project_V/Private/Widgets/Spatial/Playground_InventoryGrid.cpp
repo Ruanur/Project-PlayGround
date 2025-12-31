@@ -723,7 +723,31 @@ void UPlayground_InventoryGrid::OnGridSlotClicked(int32 GridIndex, const FPointe
 	if (!GridSlot->GetInventoryItem().IsValid())
 	{
 		// TODO: Put item down at this index.
+		PG_PutDownOnIndex(ItemDropIndex);
 	}
+}
+
+void UPlayground_InventoryGrid::PG_PutDownOnIndex(const int32 Index)
+{
+	AddItemAtIndex(HoverItem->GetInventoryItem(), Index, HoverItem->IsStackable(), HoverItem->GetStackCount());
+	UpdateGridSlots(HoverItem->GetInventoryItem(), Index, HoverItem->IsStackable(), HoverItem->GetStackCount());
+	PG_ClearHoverItem();
+}
+
+void UPlayground_InventoryGrid::PG_ClearHoverItem()
+{
+	if (!IsValid(HoverItem)) return;
+
+	HoverItem->SetInventoryItem(nullptr);
+	HoverItem->SetIsStackable(false);
+	HoverItem->SetPreviousGridIndex(INDEX_NONE);
+	HoverItem->UpdateStackCount(0);
+	HoverItem->SetImageBrush(FSlateNoResource());
+
+	HoverItem->RemoveFromParent();
+	HoverItem = nullptr;
+
+	// TODO: Show Mouse Cursor
 }
 
 void UPlayground_InventoryGrid::OnGridSlotHovered(int32 GridIndex, const FPointerEvent& MouseEvent)

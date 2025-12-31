@@ -94,6 +94,8 @@ private:
 	void PG_HighlightSlots(const int32 Index, const FIntPoint& Dimensions);
 	void PG_UnHighlightSlots(const int32 Index, const FIntPoint& Dimensions);
 	void ChangeHoverType(const int32 Index, const FIntPoint& Dimensions, EPlayground_GridSlotState GridSlotState);
+	void PG_PutDownOnIndex(const int32 Index);
+	void PG_ClearHoverItem();
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);
