@@ -37,6 +37,10 @@ public:
 	EPlayground_ItemCategory GetItemCategory() const { return ItemCategory; }
 	FPlayground_SlotAvailabilityResult HasRoomForItem(const UPlayground_ItemComponent* ItemComponent);
 
+	void PG_ShowCursor();
+	void PG_HideCursor();
+
+
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
 private:
@@ -96,6 +100,21 @@ private:
 	void ChangeHoverType(const int32 Index, const FIntPoint& Dimensions, EPlayground_GridSlotState GridSlotState);
 	void PG_PutDownOnIndex(const int32 Index);
 	void PG_ClearHoverItem();
+	UUserWidget* PG_GetVisibleCursorWidget();
+	UUserWidget* PG_GetHiddenCursorWidget();
+
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UUserWidget> VisibleCursorWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UUserWidget> HiddenCursorWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UUserWidget> VisibleCursorWidget;
+
+	UPROPERTY()
+	TObjectPtr<UUserWidget> HiddenCursorWidget;
 
 	UFUNCTION()
 	void AddStacks(const FPlayground_SlotAvailabilityResult& Result);

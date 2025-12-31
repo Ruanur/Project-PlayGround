@@ -62,8 +62,12 @@ void UPlayground_SpatialInventory::DisableButton(UButton* Button)
 
 void UPlayground_SpatialInventory::SetActiveGrid(UPlayground_InventoryGrid* Grid, UButton* Button)
 {
-	DisableButton(Button);
+	if (ActiveGrid.IsValid()) ActiveGrid->PG_HideCursor();
 
+	ActiveGrid = Grid;
+	if (ActiveGrid.IsValid()) ActiveGrid->PG_ShowCursor();
+
+	DisableButton(Button);
 	Switcher->SetActiveWidget(Grid);
 }
 

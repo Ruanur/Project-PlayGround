@@ -53,8 +53,9 @@ private:
 
 	UFUNCTION()
 	void PG_ShowCraftables();
-	void DisableButton(UButton* Button);
 
+	void DisableButton(UButton* Button);
 	void SetActiveGrid(UPlayground_InventoryGrid* Grid, UButton* Button);
 	
+	TWeakObjectPtr<UPlayground_InventoryGrid> ActiveGrid ;
 };
