@@ -573,9 +573,17 @@ void UPlayground_InventoryGrid::PG_OnSlottedItemClicked(int32 GridIndex, const F
 	{
 		// TODO: PickUp - Assign the hover item, and remove the slotted item from the grid.
 		PickUp(ClickedInventoryItem, GridIndex);
-
-		
+		return;	
 	}
+
+
+	// Do the hovered item and cilcked inventory item share a type, and are they stackable?
+		// Should we swap their stack counts?
+		// Should we consume the hover item's stacks?
+		// Should we fill in the stacks of the clicked item? (and not consume the hover item)
+		// Is there no room in the clicked slot?
+	// Swap with the hover item.
+
 }
 
 void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)
