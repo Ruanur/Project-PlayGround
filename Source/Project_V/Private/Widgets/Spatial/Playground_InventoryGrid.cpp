@@ -591,6 +591,7 @@ void UPlayground_InventoryGrid::PG_OnSlottedItemClicked(int32 GridIndex, const F
 		if (PG_ShouldSwapStackCounts(RoomInClickedSlot, HoveredStackCount, MaxStackSize))
 		{
 			// TODO: Swap Stack Counts
+			PG_SwapStackCounts(ClickedStackCount, HoveredStackCount, GridIndex);
 		}
 		// Should we consume the hover item's stacks?
 		// Should we fill in the stacks of the clicked item? (and not consume the hover item)
@@ -822,6 +823,17 @@ void UPlayground_InventoryGrid::SwapWithHoverItem(UPlayground_InventoryItem* Cli
 bool UPlayground_InventoryGrid::PG_ShouldSwapStackCounts(const int32 RoomInClickedSlot, const int32 HoveredStackCount, const int32 MaxStackSize) const
 {
 	return RoomInClickedSlot == 0 && HoveredStackCount < MaxStackSize;
+}
+
+void UPlayground_InventoryGrid::PG_SwapStackCounts(const int32 ClickedStackCount, const int32 HoveredStackCount, const int32 Index)
+{
+	UPlayground_GridSlot* GridSlot = GridSlots[Index];
+	GridSlot->SetStackCount(HoveredStackCount);
+	
+	UPlayground_SlottedItem* ClickedSlottedItem = SlottedItems.FindChecked(Index);
+	ClickedSlottedItem->PG_UpdateStackCount(HoveredStackCount);
+
+	HoverItem->UpdateStackCount(ClickedStackCount);
 }
 
 
