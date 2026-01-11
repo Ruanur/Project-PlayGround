@@ -102,7 +102,8 @@ private:
 	void PG_ClearHoverItem();
 	UUserWidget* PG_GetVisibleCursorWidget();
 	UUserWidget* PG_GetHiddenCursorWidget();
-
+	bool IsSameStackable(const UPlayground_InventoryItem* ClickedInventoryItem) const;
+	void SwapWithHoverItem(UPlayground_InventoryItem* ClickedInventoryItem, const int32 GridIndex);
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UUserWidget> VisibleCursorWidgetClass;
