@@ -612,8 +612,11 @@ void UPlayground_InventoryGrid::PG_OnSlottedItemClicked(int32 GridIndex, const F
 
 		
 		
-		// Is there no room in the clicked slot?
-		return;
+		// Clicked Slot is already full - do nothing (maybe play a sound?)
+		if (RoomInClickedSlot == 0)
+		{
+			return;
+		}
 	}
 
 	// Swap with the hover item.
