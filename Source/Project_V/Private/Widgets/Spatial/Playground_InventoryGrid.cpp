@@ -593,7 +593,14 @@ void UPlayground_InventoryGrid::PG_OnSlottedItemClicked(int32 GridIndex, const F
 			// TODO: Swap Stack Counts
 			PG_SwapStackCounts(ClickedStackCount, HoveredStackCount, GridIndex);
 		}
-		// Should we consume the hover item's stacks?
+
+		// Should we consume the hover item's stacks? (Room in the clicked slot >= HoveredStackCount)
+		if (PG_ShouldConsumeHoverItemStacks(HoveredStackCount, RoomInClickedSlot))
+		{
+			// TODO: ComsumeHoverItemSlots
+			PG_ConsumeHoverItemStacks(ClickedStackCount, HoveredStackCount, GridIndex);
+		}
+
 		// Should we fill in the stacks of the clicked item? (and not consume the hover item)
 		// Is there no room in the clicked slot?
 		return;
@@ -834,6 +841,26 @@ void UPlayground_InventoryGrid::PG_SwapStackCounts(const int32 ClickedStackCount
 	ClickedSlottedItem->PG_UpdateStackCount(HoveredStackCount);
 
 	HoverItem->UpdateStackCount(ClickedStackCount);
+}
+
+bool UPlayground_InventoryGrid::PG_ShouldConsumeHoverItemStacks(const int32 HoveredStackCount, const int32 RoomInClickedSlot) const
+{
+	return RoomInClickedSlot >= HoveredStackCount;
+}
+
+void UPlayground_InventoryGrid::PG_ConsumeHoverItemStacks(const int32 ClickedStackCount, const int32 HoveredStackCount, const int32 Index)
+{
+	const int32 AmountToTransfer = HoveredStackCount;
+	const int32 NewClickedStackCount = ClickedStackCount + AmountToTransfer;
+
+	GridSlots[Index]->SetStackCount(NewClickedStackCount);
+	SlottedItems.FindChecked(Index)->PG_UpdateStackCount(NewClickedStackCount);
+	PG_ClearHoverItem();
+	PG_ShowCursor();
+
+	const FPlayground_GridFragment* GridFragment = GridSlots[Index]->GetInventoryItem()->GetItemManifest().GetFragmentOfType<FPlayground_GridFragment>();
+	const FIntPoint Dimensions = GridFragment ? GridFragment->GetGridSize() : FIntPoint(1, 1);
+	PG_HighlightSlots(Index, Dimensions);
 }
 
 

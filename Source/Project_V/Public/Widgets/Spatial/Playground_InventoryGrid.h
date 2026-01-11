@@ -106,6 +106,8 @@ private:
 	void SwapWithHoverItem(UPlayground_InventoryItem* ClickedInventoryItem, const int32 GridIndex);
 	bool PG_ShouldSwapStackCounts(const int32 RoomInClickedSlot, const int32 HoveredStackCount, const int32 MaxStackSize) const;
 	void PG_SwapStackCounts(const int32 ClickedStackCount, const int32 HoveredStackCount, const int32 Index);
+	bool PG_ShouldConsumeHoverItemStacks(const int32 HoveredStackCount, const int32 RoomInClickedSlot) const;
+	void PG_ConsumeHoverItemStacks(const int32 ClickedStackCount, const int32 HoveredStackCount, const int32 Index);
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UUserWidget> VisibleCursorWidgetClass;
