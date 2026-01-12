@@ -20,6 +20,8 @@ class PROJECT_V_API UPlayground_ItemPopUp : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	virtual void NativeOnInitialized() override;
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -39,4 +41,17 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USizeBox> SizeBox_Root;
+
+	UFUNCTION()
+	void PG_SplitButtonClicked();
+
+	UFUNCTION()
+	void PG_DropButtonClicked();
+
+	UFUNCTION()
+	void PG_ConsumeButtonClicked();
+
+	UFUNCTION()
+	void PG_SliderValueChanged(float Value);
+
 };
