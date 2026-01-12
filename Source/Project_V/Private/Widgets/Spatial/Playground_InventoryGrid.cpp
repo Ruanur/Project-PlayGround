@@ -570,12 +570,31 @@ void UPlayground_InventoryGrid::PG_OnSlottedItemClicked(int32 GridIndex, const F
 	check(GridSlots.IsValidIndex(GridIndex));
 	UPlayground_InventoryItem* ClickedInventoryItem = GridSlots[GridIndex]->GetInventoryItem().Get();
 
+	// ISSUE:
+	// Right-click behavior is currently dependent on HoverItem being valid.
+	// If HoverItem is null, this function returns early due to PickUp(),
+	// preventing the right-click popup from ever being created.
+	//
+	// As a result:
+	// - Right-clicking an item without holding another item does NOT show the popup.
+	// - The popup only appears when an item is already picked up (HoverItem is valid).
+	//
+	// This tightly couples input handling with inventory state,
+	// which leads to unintuitive UX and hard-to-maintain logic.
+	
+	// IMPROVEMENT:
+	// Right-click input should always be handled first,
+	// regardless of whether an item is currently being hovered or dragged.
+	//
+	// This ensures consistent and predictable popup behavior.
 	if (IsRightClick(MouseEvent))
 	{
-		Debug::Print(TEXT("Arrived RightClick"));
 		PG_CreateItemPopUp(GridIndex);
 		return;
 	}
+
+	// Left-Click behavior below
+	// If no Item is currently begin dragged, pick up the clicked item.
 
 	if (!IsValid(HoverItem))
 	{
