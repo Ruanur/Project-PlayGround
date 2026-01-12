@@ -26,12 +26,21 @@ class PROJECT_V_API UPlayground_ItemPopUp : public UUserWidget
 
 public:
 	virtual void NativeOnInitialized() override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
 	FPopUpMenuSplit OnSplit;
 	FPopUpMenuDrop OnDrop;
 	FPopUpMenuConsume OnConsume;
 
 	int32 PG_GetSplitAmount() const;
+
+	void PG_CollapseSplitButton() const;
+	void PG_CollapseConsumeButton() const;
+	void SetSliderParams(const float Max, const float Value) const;
+	FVector2D PG_GetBoxSize() const;
+	void SetGridIndex(int32 Index) { GridIndex = Index; }
+	int32 GetGridIndex() const { return GridIndex; }
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> Button_Split;
@@ -64,5 +73,6 @@ private:
 
 	UFUNCTION()
 	void PG_SliderValueChanged(float Value);
+
 
 };
