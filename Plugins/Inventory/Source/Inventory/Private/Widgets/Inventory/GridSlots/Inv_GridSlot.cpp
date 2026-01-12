@@ -37,6 +37,8 @@ void UInv_GridSlot::SetItemPopUp(UInv_ItemPopUp* PopUp)
 	ItemPopUp->OnNativeDestruct.AddUObject(this, &ThisClass::OnItemPopUpDestruct);
 }
 
+
+
 UInv_ItemPopUp* UInv_GridSlot::GetItemPopUp() const
 {
 	return ItemPopUp.Get();

@@ -3,8 +3,11 @@
 
 #include "Widgets/GridSlots/Playground_GridSlot.h"
 #include "Items/Drops/Playground_InventoryItem.h"
+#include "Widgets/ItemPopUp/Playground_ItemPopUp.h"
+
 
 #include "Components/Image.h"
+
 
 void UPlayground_GridSlot::NativeOnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
@@ -31,6 +34,17 @@ void UPlayground_GridSlot::SetInventoryItem(UPlayground_InventoryItem* Item)
 	InventoryItem = Item;
 }
 
+void UPlayground_GridSlot::SetItemPopUp(UPlayground_ItemPopUp* PopUp)
+{
+	ItemPopUp = PopUp;
+	ItemPopUp->SetGridIndex(GetIndex());
+	ItemPopUp->OnNativeDestruct.AddUObject(this, &ThisClass::PG_OnItemPopUpDestruct);
+}
+
+UPlayground_ItemPopUp* UPlayground_GridSlot::PG_GetItemPopUp() const
+{
+	return ItemPopUp.Get();
+}
 
 void UPlayground_GridSlot::PG_SetOccupiedTexture()
 {
@@ -54,4 +68,9 @@ void UPlayground_GridSlot::PG_SetGrayedOutTexture()
 {
 	GridSlotState = EPlayground_GridSlotState::GrayedOut;
 	Image_GridSlot->SetBrush(Brush_GrayedOut);
+}
+
+void UPlayground_GridSlot::PG_OnItemPopUpDestruct(UUserWidget* Menu)
+{
+	ItemPopUp.Reset();
 }

@@ -7,6 +7,7 @@
 #include "Playground_GridSlot.generated.h"
 
 
+class UPlayground_ItemPopUp;
 class UImage;
 class UPlayground_InventoryItem;
 
@@ -45,6 +46,8 @@ public:
 	void SetUpperLeftIndex(int32 Index) { UpperLeftIndex = Index; }
 	bool IsAvailable() const { return bAvailable; }
 	void SetAvailable(bool bIsAvailable) { bAvailable = bIsAvailable; }
+	void SetItemPopUp(UPlayground_ItemPopUp* PopUp);
+	UPlayground_ItemPopUp* PG_GetItemPopUp() const;
 
 	void PG_SetOccupiedTexture();
 	void PG_SetUnoccupiedTexture();
@@ -56,11 +59,12 @@ public:
 	FGridSlotEvent GridSlotUnHovered;
 
 private:
+	int32 StackCount{ 0 };
+	bool bAvailable{ true };
 	int32 TileIndex{ INDEX_NONE };
-	int32 StackCount{0};
 	int32 UpperLeftIndex{ INDEX_NONE };
 	TWeakObjectPtr<UPlayground_InventoryItem> InventoryItem;
-	bool bAvailable{true};
+	TWeakObjectPtr<UPlayground_ItemPopUp> ItemPopUp;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> Image_GridSlot;
@@ -79,5 +83,6 @@ private:
 
 	EPlayground_GridSlotState GridSlotState;
 
-
+	UFUNCTION()
+	void PG_OnItemPopUpDestruct(UUserWidget* Menu);
 };

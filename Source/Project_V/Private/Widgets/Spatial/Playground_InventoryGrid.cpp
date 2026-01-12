@@ -924,13 +924,17 @@ void UPlayground_InventoryGrid::PG_CreateItemPopUp(const int32 GridIndex)
 {
 	UPlayground_InventoryItem* RightClickedItem = GridSlots[GridIndex]->GetInventoryItem().Get();
 	if (!IsValid(RightClickedItem)) return;
+	if (IsValid(GridSlots[GridIndex]->PG_GetItemPopUp())) return;
 
 	ItemPopUp = CreateWidget<UPlayground_ItemPopUp>(this, ItemPopUpClass);
+	GridSlots[GridIndex]->SetItemPopUp(ItemPopUp);
 
 	OwningCanvasPanel->AddChild(ItemPopUp);
 	UCanvasPanelSlot* CanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(ItemPopUp);
 	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetOwningPlayer());
-	CanvasSlot->SetPosition(MousePosition);
+	
+	// SetPosition >> Position adjustment for the item popup
+	CanvasSlot->SetPosition(MousePosition - ItemPopUpOffset);
 	CanvasSlot->SetSize(ItemPopUp->PG_GetBoxSize());
 
 

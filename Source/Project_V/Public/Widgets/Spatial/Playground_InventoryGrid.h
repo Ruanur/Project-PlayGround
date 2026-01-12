@@ -182,6 +182,9 @@ private:
 	UPROPERTY()
 	TObjectPtr<UPlayground_HoverItem> HoverItem;
 
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	FVector2D ItemPopUpOffset;
+
 	FPlayground_TileParameters TileParameters;
 	FPlayground_TileParameters LastTileParameters;
 
