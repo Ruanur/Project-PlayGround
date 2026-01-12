@@ -17,6 +17,10 @@ void UPlayground_SpatialInventory::NativeOnInitialized()
 	Button_Consumables->OnClicked.AddDynamic(this, &ThisClass::PG_ShowConsumables);
 	Button_Craftables->OnClicked.AddDynamic(this, &ThisClass::PG_ShowCraftables);
 
+	Grid_Equippables->PG_SetOwningCanvas(CanvasPanel);
+	Grid_Consumables->PG_SetOwningCanvas(CanvasPanel);
+	Grid_Craftables->PG_SetOwningCanvas(CanvasPanel);
+
 	PG_ShowEquippables();
 }
 

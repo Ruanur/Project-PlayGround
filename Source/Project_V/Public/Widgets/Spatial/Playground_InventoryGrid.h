@@ -19,6 +19,7 @@ struct FPlayground_GridFragment;
 class UPlayground_InventoryComponent;
 class UPlayground_SlottedItem;
 class UPlayground_HoverItem;
+class UPlayground_ItemPopUp;
 struct FGameplayTag;
 enum class EPlayground_GridSlotState : uint8;
 
@@ -39,12 +40,15 @@ public:
 
 	void PG_ShowCursor();
 	void PG_HideCursor();
-
+	void PG_SetOwningCanvas(UCanvasPanel* OwningCanvas);
 
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
+
+
 private:
 	TWeakObjectPtr<UPlayground_InventoryComponent> InventoryComponent;
+	TWeakObjectPtr<UCanvasPanel> OwningCanvasPanel;
 
 	void ConstructGrid();
 	FPlayground_SlotAvailabilityResult HasRoomForItem(const UPlayground_InventoryItem* Item);
@@ -110,6 +114,13 @@ private:
 	void PG_ConsumeHoverItemStacks(const int32 ClickedStackCount, const int32 HoveredStackCount, const int32 Index);
 	bool ShouldFillInStack(const int32 RoomInCilckedSlot, const int32 HoveredStackCount) const;
 	void PG_FillInStack(const int32 FillAmount, const int32 Remainder, const int32 Index);
+	void PG_CreateItemPopUp(const int32 GridIndex);
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UPlayground_ItemPopUp> ItemPopUpClass;
+
+	UPROPERTY()
+	TObjectPtr<UPlayground_ItemPopUp> ItemPopUp;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UUserWidget> VisibleCursorWidgetClass;

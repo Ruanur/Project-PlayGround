@@ -15,6 +15,7 @@
 #include "Items/Fragment/Playground_FragmentTags.h"
 #include "Widgets/SlottedItems/Playground_SlottedItem.h"
 #include "Widgets/HoverItem/Playground_HoverItem.h"
+#include "Widgets/ItemPopUp/Playground_ItemPopUp.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -569,13 +570,19 @@ void UPlayground_InventoryGrid::PG_OnSlottedItemClicked(int32 GridIndex, const F
 	check(GridSlots.IsValidIndex(GridIndex));
 	UPlayground_InventoryItem* ClickedInventoryItem = GridSlots[GridIndex]->GetInventoryItem().Get();
 
+	if (IsRightClick(MouseEvent))
+	{
+		Debug::Print(TEXT("Arrived RightClick"));
+		PG_CreateItemPopUp(GridIndex);
+		return;
+	}
+
 	if (!IsValid(HoverItem))
 	{
 		// TODO: PickUp - Assign the hover item, and remove the slotted item from the grid.
 		PickUp(ClickedInventoryItem, GridIndex);
 		return;	
 	}
-
 
 	// Do the hovered item and cilcked inventory item share a type, and are they stackable?
 	if (IsSameStackable(ClickedInventoryItem))
@@ -894,6 +901,22 @@ void UPlayground_InventoryGrid::PG_FillInStack(const int32 FillAmount, const int
 	HoverItem->UpdateStackCount(Remainder);
 }
 
+void UPlayground_InventoryGrid::PG_CreateItemPopUp(const int32 GridIndex)
+{
+	UPlayground_InventoryItem* RightClickedItem = GridSlots[GridIndex]->GetInventoryItem().Get();
+	if (!IsValid(RightClickedItem)) return;
+
+	ItemPopUp = CreateWidget<UPlayground_ItemPopUp>(this, ItemPopUpClass);
+
+	OwningCanvasPanel->AddChild(ItemPopUp);
+	UCanvasPanelSlot* CanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(ItemPopUp);
+	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetOwningPlayer());
+	CanvasSlot->SetPosition(MousePosition);
+	CanvasSlot->SetSize(ItemPopUp->PG_GetBoxSize());
+
+
+}
+
 
 void UPlayground_InventoryGrid::PG_ShowCursor()
 {
@@ -907,6 +930,11 @@ void UPlayground_InventoryGrid::PG_HideCursor()
 	if (!IsValid(GetOwningPlayer())) return;
 
 	GetOwningPlayer()->SetMouseCursorWidget(EMouseCursor::Default, PG_GetHiddenCursorWidget());
+}
+
+void UPlayground_InventoryGrid::PG_SetOwningCanvas(UCanvasPanel* OwningCanvas)
+{
+	OwningCanvasPanel = OwningCanvas;
 }
 
 void UPlayground_InventoryGrid::OnGridSlotHovered(int32 GridIndex, const FPointerEvent& MouseEvent)

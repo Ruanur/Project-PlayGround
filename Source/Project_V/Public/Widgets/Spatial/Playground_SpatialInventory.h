@@ -9,6 +9,7 @@
 class UPlayground_InventoryGrid;
 class UWidgetSwitcher;
 class UButton;
+class UCanvasPanel;
 
 /**
  * 
@@ -24,6 +25,9 @@ public:
 	virtual FPlayground_SlotAvailabilityResult HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const override;
 	
 private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCanvasPanel> CanvasPanel;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UWidgetSwitcher> Switcher;
 
