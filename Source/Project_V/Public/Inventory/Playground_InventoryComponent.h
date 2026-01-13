@@ -35,9 +35,12 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_AddStacksToItem(UPlayground_ItemComponent* ItemComponent, int32 StackCount, int32 Remainder);
 
+	UFUNCTION(Server, Reliable)
+	void Server_DropItem(UPlayground_InventoryItem* Item, int32 StackCount);
 
 	void ToggleInventoryMenu();
 	void AddRepSubObject(UObject* SubObj);
+	void SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount);
 
 	FInventoryItemChange OnItemAdded;
 	FInventoryItemChange OnItemRemoved;

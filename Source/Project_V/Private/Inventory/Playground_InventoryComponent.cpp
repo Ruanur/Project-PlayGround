@@ -94,6 +94,27 @@ void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlay
 	}
 }
 
+void UPlayground_InventoryComponent::Server_DropItem_Implementation(UPlayground_InventoryItem* Item, int32 StackCount)
+{
+	const int32 NewStackCount = Item->GetTotalStackCount() - StackCount;
+	if (NewStackCount <= 0)
+	{
+		InventoryList.RemoveEntry(Item);
+	}
+	else
+	{
+		Item->SetTotalStackCount(NewStackCount);
+	}
+
+	SpawnDroppedItem(Item, StackCount);
+}
+
+void UPlayground_InventoryComponent::SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount)
+{
+	// TODO: Spawn the dropped item in the level
+
+}
+
 void UPlayground_InventoryComponent::ToggleInventoryMenu()
 {
 	if (bInventoryMenuOpen)
