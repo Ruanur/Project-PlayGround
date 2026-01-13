@@ -112,7 +112,17 @@ void UPlayground_InventoryComponent::Server_DropItem_Implementation(UPlayground_
 void UPlayground_InventoryComponent::SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount)
 {
 	// TODO: Spawn the dropped item in the level
+	const APawn* OwningPawn = OwningController->GetPawn();
+	FVector RotatedForward = OwningPawn->GetActorForwardVector();
 
+
+	// Drops Position
+	RotatedForward = RotatedForward.RotateAngleAxis(FMath::FRandRange(DropSpawnAngleMin, DropSpawnAngleMax), FVector::UpVector);
+	FVector SpawnLocation = OwningPawn->GetActorLocation() + RotatedForward * FMath::FRandRange(DropSpawnDistanceMin, DropSpawnDistanceMax);
+	SpawnLocation.Z -= RelativeSpawnElevation;
+	const FRotator SpawnRotation = FRotator::ZeroRotator;
+
+	// TODO : Have the Item Manifest spawn the Pickup Actor
 }
 
 void UPlayground_InventoryComponent::ToggleInventoryMenu()
