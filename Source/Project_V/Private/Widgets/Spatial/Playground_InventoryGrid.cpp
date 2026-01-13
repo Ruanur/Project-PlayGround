@@ -937,7 +937,28 @@ void UPlayground_InventoryGrid::PG_CreateItemPopUp(const int32 GridIndex)
 	CanvasSlot->SetPosition(MousePosition - ItemPopUpOffset);
 	CanvasSlot->SetSize(ItemPopUp->PG_GetBoxSize());
 
+	const int32 SliderMax = GridSlots[GridIndex]->GetStackCount() - 1;
+	if (RightClickedItem->IsStackable() && SliderMax > 0)
+	{
+		ItemPopUp->OnSplit.BindDynamic(this, &ThisClass::PG_OnPopUpMenuSplit);
+		ItemPopUp->SetSliderParams(SliderMax, FMath::Max(1, GridSlots[GridIndex]->GetStackCount() / 2));
+	}
+	else
+	{
+		ItemPopUp->PG_CollapseSplitButton();
+	}
 
+	ItemPopUp->OnDrop.BindDynamic(this, &ThisClass::PG_OnPopUpMenuDrop);
+
+	if (RightClickedItem->IsConsumable())
+	{
+		ItemPopUp->OnConsume.BindDynamic(this, &ThisClass::PG_OnPopUpMenuConsume);
+	}
+	else
+	{
+		ItemPopUp->PG_CollapseSplitButton();
+	}
+	
 }
 
 
@@ -980,6 +1001,18 @@ void UPlayground_InventoryGrid::OnGridSlotUnHovered(int32 GridIndex, const FPoin
 	{
 		GridSlot->PG_SetUnoccupiedTexture();
 	}
+}
+
+void UPlayground_InventoryGrid::PG_OnPopUpMenuSplit(int32 SplitAmount, int32 Index)
+{
+}
+
+void UPlayground_InventoryGrid::PG_OnPopUpMenuDrop(int32 Index)
+{
+}
+
+void UPlayground_InventoryGrid::PG_OnPopUpMenuConsume(int32 Index)
+{
 }
 
 bool UPlayground_InventoryGrid::MatchesCategory(const UPlayground_InventoryItem* Item) const

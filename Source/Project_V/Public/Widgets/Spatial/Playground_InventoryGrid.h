@@ -149,6 +149,15 @@ private:
 	UFUNCTION()
 	void OnGridSlotUnHovered(int32 GridIndex, const FPointerEvent& MouseEvent);
 
+	UFUNCTION()
+	void PG_OnPopUpMenuSplit(int32 SplitAmount, int32 Index);
+
+	UFUNCTION()
+	void PG_OnPopUpMenuDrop(int32 Index);
+
+	UFUNCTION()
+	void PG_OnPopUpMenuConsume(int32 Index);
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory;
 

@@ -23,6 +23,7 @@ public:
 	const FPlayground_ItemManifest& GetItemManifest() const { return ItemManifest.Get<FPlayground_ItemManifest>(); }
 	FPlayground_ItemManifest& GetItemManifestMutable() { return ItemManifest.GetMutable<FPlayground_ItemManifest>(); }
 	bool IsStackable() const;
+	bool IsConsumable() const;
 	int32 GetTotalStackCount() const { return TotalStackCount; }
 	void SetTotalStackCount(int32 Count) { TotalStackCount = Count; }
 
