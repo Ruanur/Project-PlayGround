@@ -961,6 +961,17 @@ void UPlayground_InventoryGrid::PG_CreateItemPopUp(const int32 GridIndex)
 	
 }
 
+void UPlayground_InventoryGrid::PG_DropItem()
+{
+	if (!IsValid(HoverItem)) return;
+	if (!IsValid(HoverItem->GetInventoryItem())) return;
+
+	// TODO: Tell the server to actually drop the item
+
+	PG_ClearHoverItem();
+	PG_ShowCursor();
+}
+
 
 void UPlayground_InventoryGrid::PG_ShowCursor()
 {
@@ -1023,7 +1034,11 @@ void UPlayground_InventoryGrid::PG_OnPopUpMenuSplit(int32 SplitAmount, int32 Ind
 
 void UPlayground_InventoryGrid::PG_OnPopUpMenuDrop(int32 Index)
 {
+	UPlayground_InventoryItem* RightClickedItem = GridSlots[Index]->GetInventoryItem().Get();
+	if (!IsValid(RightClickedItem)) return;
 
+	PickUp(RightClickedItem, Index);
+	PG_DropItem();
 }
 
 void UPlayground_InventoryGrid::PG_OnPopUpMenuConsume(int32 Index)
