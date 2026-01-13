@@ -1005,14 +1005,30 @@ void UPlayground_InventoryGrid::OnGridSlotUnHovered(int32 GridIndex, const FPoin
 
 void UPlayground_InventoryGrid::PG_OnPopUpMenuSplit(int32 SplitAmount, int32 Index)
 {
+	UPlayground_InventoryItem* RightClickedItem = GridSlots[Index]->GetInventoryItem().Get();
+	if (!IsValid(RightClickedItem)) return;
+	if (!RightClickedItem->IsStackable()) return;
+
+	const int32 UpperLeftIndex = GridSlots[Index]->GetUpperLeftIndex();
+	UPlayground_GridSlot* UpperLeftGridSlot = GridSlots[UpperLeftIndex];
+	const int32 StackCount = UpperLeftGridSlot->GetStackCount();
+	const int32 NewStackCount = StackCount - SplitAmount;
+
+	UpperLeftGridSlot->SetStackCount(NewStackCount);
+	SlottedItems.FindChecked(UpperLeftIndex)->PG_UpdateStackCount(NewStackCount);
+
+	AssignHoverItem(RightClickedItem, UpperLeftIndex, UpperLeftIndex);
+	HoverItem->UpdateStackCount(SplitAmount);
 }
 
 void UPlayground_InventoryGrid::PG_OnPopUpMenuDrop(int32 Index)
 {
+
 }
 
 void UPlayground_InventoryGrid::PG_OnPopUpMenuConsume(int32 Index)
 {
+
 }
 
 bool UPlayground_InventoryGrid::MatchesCategory(const UPlayground_InventoryItem* Item) const
