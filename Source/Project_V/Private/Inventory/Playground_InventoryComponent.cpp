@@ -124,6 +124,7 @@ void UPlayground_InventoryComponent::SpawnDroppedItem(UPlayground_InventoryItem*
 
 	// TODO : Have the Item Manifest spawn the Pickup Actor
 	FPlayground_ItemManifest ItemManifest = Item->GetItemManifestMutable();
+
 	if (FPlayground_StackableFragment* StackableFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_StackableFragment>())
 	{
 		StackableFragment->SetStackCount(StackCount);

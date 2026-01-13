@@ -41,6 +41,12 @@ FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(
 
 }
 
+FReply UPlayground_SpatialInventory::NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+{
+	ActiveGrid->PG_DropItem();
+	return FReply::Handled();
+}
+
 void UPlayground_SpatialInventory::PG_ShowEquippables()
 {
 	SetActiveGrid(Grid_Equippables, Button_Equippables);

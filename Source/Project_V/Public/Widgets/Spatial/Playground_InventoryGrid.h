@@ -41,6 +41,7 @@ public:
 	void PG_ShowCursor();
 	void PG_HideCursor();
 	void PG_SetOwningCanvas(UCanvasPanel* OwningCanvas);
+	void PG_DropItem();
 
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
@@ -115,7 +116,6 @@ private:
 	bool ShouldFillInStack(const int32 RoomInCilckedSlot, const int32 HoveredStackCount) const;
 	void PG_FillInStack(const int32 FillAmount, const int32 Remainder, const int32 Index);
 	void PG_CreateItemPopUp(const int32 GridIndex);
-	void PG_DropItem();
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UPlayground_ItemPopUp> ItemPopUpClass;
