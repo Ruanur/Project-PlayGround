@@ -33,6 +33,8 @@ struct PROJECT_V_API FPlayground_ItemManifest
 	template<typename T> requires std::derived_from<T, FPlayground_ItemFragment>
 	T* GetFragmentOfTypeMutable();
 
+	void PG_SpawnPickupActor(const UObject* WorldContextObject, const FVector& SpawnLocation, const FRotator& SpawnRotation);
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (ExcludeBaseStruct))
 	TArray<TInstancedStruct<FPlayground_ItemFragment>> Fragments;
@@ -42,6 +44,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	FGameplayTag ItemType;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<AActor> PickupActorClass;
+
 };
 
 template<typename T> requires std::derived_from<T, FPlayground_ItemFragment>

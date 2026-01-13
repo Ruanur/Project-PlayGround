@@ -16,6 +16,8 @@ public:
 	UPlayground_ItemComponent();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	void InitItemManifest(FPlayground_ItemManifest CopyOfManifest);
+
 	FPlayground_ItemManifest GetItemManifest() const { return ItemManifest; }
 
 	FString GetPickUpMessage() const { return PickupMessage; }

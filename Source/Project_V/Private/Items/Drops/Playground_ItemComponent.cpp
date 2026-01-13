@@ -16,6 +16,11 @@ void UPlayground_ItemComponent::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	DOREPLIFETIME(ThisClass, ItemManifest);
 }
 
+void UPlayground_ItemComponent::InitItemManifest(FPlayground_ItemManifest CopyOfManifest)
+{
+	ItemManifest = CopyOfManifest;
+}
+
 void UPlayground_ItemComponent::PickedUp()
 {
 	OnPickedUp();

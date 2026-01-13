@@ -123,6 +123,12 @@ void UPlayground_InventoryComponent::SpawnDroppedItem(UPlayground_InventoryItem*
 	const FRotator SpawnRotation = FRotator::ZeroRotator;
 
 	// TODO : Have the Item Manifest spawn the Pickup Actor
+	FPlayground_ItemManifest ItemManifest = Item->GetItemManifestMutable();
+	if (FPlayground_StackableFragment* StackableFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_StackableFragment>())
+	{
+		StackableFragment->SetStackCount(StackCount);
+	}
+	ItemManifest.PG_SpawnPickupActor(this, SpawnLocation, SpawnRotation);
 }
 
 void UPlayground_InventoryComponent::ToggleInventoryMenu()
