@@ -132,6 +132,22 @@ void UPlayground_InventoryComponent::SpawnDroppedItem(UPlayground_InventoryItem*
 	ItemManifest.PG_SpawnPickupActor(this, SpawnLocation, SpawnRotation);
 }
 
+void UPlayground_InventoryComponent::Server_ConsumeItem_Implementation(UPlayground_InventoryItem* Item)
+{
+	const int32 NewStackCount = Item->GetTotalStackCount() - 1;
+	if (NewStackCount <= 0)
+	{
+		InventoryList.RemoveEntry(Item);
+	}
+	else
+	{
+		Item->SetTotalStackCount(NewStackCount);
+	}
+
+	// TODO: Get the Consumable fragment add call Consume()
+	// (Actually create the Consumable Fragment)
+}
+
 void UPlayground_InventoryComponent::ToggleInventoryMenu()
 {
 	if (bInventoryMenuOpen)

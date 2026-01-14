@@ -1043,7 +1043,23 @@ void UPlayground_InventoryGrid::PG_OnPopUpMenuDrop(int32 Index)
 
 void UPlayground_InventoryGrid::PG_OnPopUpMenuConsume(int32 Index)
 {
+	UPlayground_InventoryItem* RightClickedItem = GridSlots[Index]->GetInventoryItem().Get();
+	if (!IsValid(RightClickedItem)) return;
 
+	const int32 UpperLeftIndex = GridSlots[Index]->GetUpperLeftIndex();
+	UPlayground_GridSlot* UpperLeftGridSlot = GridSlots[UpperLeftIndex];
+	const int32 NewStackCount = UpperLeftGridSlot->GetStackCount() - 1;
+
+	UpperLeftGridSlot->SetStackCount(NewStackCount);
+	SlottedItems.FindChecked(UpperLeftIndex)->PG_UpdateStackCount(NewStackCount);
+
+	// TODO: Tell the Server we're consuming an item
+	InventoryComponent->Server_ConsumeItem(RightClickedItem);
+
+	if (NewStackCount <= 0)
+	{
+		RemoveItemFromGrid(RightClickedItem, Index);
+	}
 }
 
 bool UPlayground_InventoryGrid::MatchesCategory(const UPlayground_InventoryItem* Item) const

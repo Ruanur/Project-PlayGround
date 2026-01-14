@@ -38,6 +38,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_DropItem(UPlayground_InventoryItem* Item, int32 StackCount);
 
+	UFUNCTION(Server, Reliable)
+	void Server_ConsumeItem(UPlayground_InventoryItem* Item);
+
 	void ToggleInventoryMenu();
 	void AddRepSubObject(UObject* SubObj);
 	void SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount);
