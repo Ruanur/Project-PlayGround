@@ -42,7 +42,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory{ EPlayground_ItemCategory::None };
 
-	UPROPERTY(EditAnywhere, Category = "Inventory")
+	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (Categories = "GameItems"))
 	FGameplayTag ItemType;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")

@@ -146,6 +146,10 @@ void UPlayground_InventoryComponent::Server_ConsumeItem_Implementation(UPlaygrou
 
 	// TODO: Get the Consumable fragment add call Consume()
 	// (Actually create the Consumable Fragment)
+	if (FPlayground_ConsumableFragment* ConsumableFragment = Item->GetItemManifestMutable().GetFragmentOfTypeMutable<FPlayground_ConsumableFragment>())
+	{
+		ConsumableFragment->OnConsume(OwningController.Get());
+	}
 }
 
 void UPlayground_InventoryComponent::ToggleInventoryMenu()
