@@ -8,6 +8,8 @@
 #include "Playground_ItemFragment.generated.h"
 
 class APlayerController;
+class UPlaygroundAbilitySystemComponent;
+class UGameplayEffect;
 
 /**
  * 
@@ -90,7 +92,7 @@ struct FPlayground_ConsumableFragment : public FPlayground_ItemFragment
 {
 	GENERATED_BODY()
 
-	virtual void OnConsume(APlayerController* PC) {}
+	virtual void OnConsume(APlayerController* PC, UPlaygroundAbilitySystemComponent* AbilitySystemComponent, int32 ApplyLevel) {}
 };
 
 USTRUCT(BlueprintType)
@@ -98,10 +100,10 @@ struct FPlayground_HealthPotionFragment : public FPlayground_ConsumableFragment
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Inventory")
-	float HealAmount = 20.f;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> ConsumableGameplayEffectClass;
 
-	virtual void OnConsume(APlayerController* PC) override;
+	virtual void OnConsume(APlayerController* PC, UPlaygroundAbilitySystemComponent* AbilitySystemComponent, int32 ApplyLevel) override;
 };
 
 USTRUCT(BlueprintType)
@@ -112,5 +114,5 @@ struct FPlayground_ManaPotionFragment : public FPlayground_ConsumableFragment
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	float ManaAmount = 20.f;
 
-	virtual void OnConsume(APlayerController* PC) override;
+	virtual void OnConsume(APlayerController* PC, UPlaygroundAbilitySystemComponent* AbilitySystemComponent, int32 ApplyLevel) override;
 };

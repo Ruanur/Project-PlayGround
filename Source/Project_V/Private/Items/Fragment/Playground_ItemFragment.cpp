@@ -2,19 +2,37 @@
 
 
 #include "Items/Fragment/Playground_ItemFragment.h"
+#include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 
-void FPlayground_HealthPotionFragment::OnConsume(APlayerController* PC)
+void FPlayground_HealthPotionFragment::OnConsume(APlayerController* PC, UPlaygroundAbilitySystemComponent* AbilitySystemComponent, int32 ApplyLevel)
 {
+	if (!PC) return;
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn) return;
+
+	UAbilitySystemComponent* ASC = Pawn->FindComponentByClass<UAbilitySystemComponent>();
+	if (!ASC) return;
+
+	const UGameplayEffect* EffectCDO =
+		ConsumableGameplayEffectClass->GetDefaultObject<UGameplayEffect>();
+
+	ASC->ApplyGameplayEffectToSelf(
+		EffectCDO,
+		1,
+		ASC->MakeEffectContext()
+	);
+
 	// Get a Stats component from the PC or the PC->GetPawn()
 	// or get the Ability System Component and apply a Gameplay Effect
 	// or call an interface function for Healing()
 	
-	Debug::Print(TEXT("Health Potion consumed %f"), FColor::Green, HealAmount);
+	Debug::Print(TEXT("Health Potion consumed %f"), FColor::Green);
 }
 
-void FPlayground_ManaPotionFragment::OnConsume(APlayerController* PC)
+void FPlayground_ManaPotionFragment::OnConsume(APlayerController* PC, UPlaygroundAbilitySystemComponent* AbilitySystemComponent, int32 ApplyLevel)
 {
 	// Replenish mana however you wish
 

@@ -8,6 +8,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Items/Drops/Playground_InventoryItem.h"
 #include "Items/Fragment/Playground_ItemFragment.h"
+#include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -134,6 +135,30 @@ void UPlayground_InventoryComponent::SpawnDroppedItem(UPlayground_InventoryItem*
 
 void UPlayground_InventoryComponent::Server_ConsumeItem_Implementation(UPlayground_InventoryItem* Item)
 {
+	if (!Item || !OwningController.IsValid())
+	{
+		return;
+	}
+
+	APawn* Pawn = OwningController->GetPawn();
+	if (!Pawn) return;
+
+	UPlaygroundAbilitySystemComponent* AbilitySystemComponent =
+		Pawn->FindComponentByClass<UPlaygroundAbilitySystemComponent>();
+
+	if (!AbilitySystemComponent) return;
+
+	FPlayground_ConsumableFragment* ConsumableFragment = Item->GetItemManifestMutable().GetFragmentOfTypeMutable<FPlayground_ConsumableFragment>();
+	if (!ConsumableFragment) return;
+
+	constexpr int32 ApplyLevel = 1;
+	ConsumableFragment->OnConsume(
+		OwningController.Get(),
+		AbilitySystemComponent,
+		ApplyLevel
+	);
+
+
 	const int32 NewStackCount = Item->GetTotalStackCount() - 1;
 	if (NewStackCount <= 0)
 	{
@@ -146,10 +171,10 @@ void UPlayground_InventoryComponent::Server_ConsumeItem_Implementation(UPlaygrou
 
 	// TODO: Get the Consumable fragment add call Consume()
 	// (Actually create the Consumable Fragment)
-	if (FPlayground_ConsumableFragment* ConsumableFragment = Item->GetItemManifestMutable().GetFragmentOfTypeMutable<FPlayground_ConsumableFragment>())
-	{
-		ConsumableFragment->OnConsume(OwningController.Get());
-	}
+	//if (FPlayground_ConsumableFragment* ConsumableFragment = Item->GetItemManifestMutable().GetFragmentOfTypeMutable<FPlayground_ConsumableFragment>())
+	//{
+	//	ConsumableFragment->OnConsume(OwningController.Get());
+	//}
 }
 
 void UPlayground_InventoryComponent::ToggleInventoryMenu()
