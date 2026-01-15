@@ -21,7 +21,6 @@ public class Project_V : ModuleRules
             "Niagara",
             "NavigationSystem",
             "MoviePlayer",
-			"Inventory",
 			"NetCore",
 			"StructUtils",
 			"Slate",

@@ -6,6 +6,9 @@
 
 #include "PlaygroundDebugHelper.h"
 
+// Get a Stats component from the PC or the PC->GetPawn()
+// or get the Ability System Component and apply a Gameplay Effect
+// or call an interface function for Healing()
 void FPlayground_HealthPotionFragment::OnConsume(APlayerController* PC, UPlaygroundAbilitySystemComponent* AbilitySystemComponent, int32 ApplyLevel)
 {
 	if (!PC) return;
@@ -24,10 +27,6 @@ void FPlayground_HealthPotionFragment::OnConsume(APlayerController* PC, UPlaygro
 		1,
 		ASC->MakeEffectContext()
 	);
-
-	// Get a Stats component from the PC or the PC->GetPawn()
-	// or get the Ability System Component and apply a Gameplay Effect
-	// or call an interface function for Healing()
 	
 	Debug::Print(TEXT("Health Potion consumed %f"), FColor::Green);
 }
