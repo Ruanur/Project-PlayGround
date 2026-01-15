@@ -9,6 +9,8 @@
 #include "Inventory/Utils/Playground_InventoryStatics.h"
 
 #include "PlaygroundDebugHelper.h"
+
+
 void UPlayground_SpatialInventory::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -39,6 +41,24 @@ FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(
 		return FPlayground_SlotAvailabilityResult();
 	}
 
+}
+
+void UPlayground_SpatialInventory::OnItemHovered(UPlayground_InventoryItem* Item)
+{
+	Super::OnItemHovered(Item);
+}
+
+void UPlayground_SpatialInventory::OnItemUnHovered()
+{
+	Super::OnItemUnHovered();
+}
+
+bool UPlayground_SpatialInventory::HasHoverItem() const
+{
+	if (Grid_Equippables->PG_HasHoverItem()) return true;
+	if (Grid_Consumables->PG_HasHoverItem()) return true;
+	if (Grid_Craftables->PG_HasHoverItem()) return true;
+	return false;
 }
 
 FReply UPlayground_SpatialInventory::NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)

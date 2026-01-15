@@ -10,7 +10,7 @@
 class UPlayerUIComponent;
 class UEnemyUIComponent;
 class UPlayground_ItemComponent;
-
+class UPlayground_InventoryItem;
 /**
  * 
  */
@@ -19,7 +19,7 @@ class PROJECT_V_API UPlaygroundWidgeBase : public UUserWidget
 {
 	GENERATED_BODY()
 protected:
-	virtual void NativeOnInitialized() override; 
+	virtual void NativeOnInitialized() override;
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "On Owning Hero UI Component Initialized"))
 	void BP_OnOwningPlayerUIComponentInitialized(UPlayerUIComponent* OwningPlayerUIComponent);
@@ -32,4 +32,8 @@ public:
 	void InitEnemyCreatedWidget(AActor* OwningEnemyActor);
 
 	virtual FPlayground_SlotAvailabilityResult HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const { return FPlayground_SlotAvailabilityResult(); }
+	virtual void OnItemHovered(UPlayground_InventoryItem* Item) {}
+	virtual void OnItemUnHovered() {}
+	virtual bool HasHoverItem() const { return false; }
+
 };

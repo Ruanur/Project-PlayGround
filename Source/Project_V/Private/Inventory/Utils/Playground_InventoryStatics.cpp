@@ -5,6 +5,7 @@
 #include "Inventory/Playground_InventoryComponent.h"
 #include "Types/Playground_GridTypes.h"
 #include "Items/Drops/Playground_ItemComponent.h"
+#include "Widgets/PlaygroundWidgeBase.h"
 
 #include "PlaygroundDebugHelper.h"
 UPlayground_InventoryComponent* UPlayground_InventoryStatics::PG_GetInventoryComponent(const APlayerController* PlayerController)
@@ -31,4 +32,29 @@ EPlayground_ItemCategory UPlayground_InventoryStatics::GetItemCategoryFromItemCo
 {
     if (!IsValid(ItemComp)) return EPlayground_ItemCategory::None;
     return ItemComp->GetItemManifest().GetItemCategory();
+}
+
+void UPlayground_InventoryStatics::ItemHovered(APlayerController* PC, UPlayground_InventoryItem* Item)
+{
+    UPlayground_InventoryComponent* IC = PG_GetInventoryComponent(PC);
+    if (!IsValid(IC)) return;
+
+    UPlaygroundWidgeBase* InventoryBase = IC->GetInventoryMenu();
+    if (!IsValid(InventoryBase)) return;
+
+    if (InventoryBase->HasHoverItem()) return;
+
+    InventoryBase->OnItemHovered(Item);
+}
+
+
+void UPlayground_InventoryStatics::ItemUnhovered(APlayerController* PC)
+{
+    UPlayground_InventoryComponent* IC = PG_GetInventoryComponent(PC);
+    if (!IsValid(IC)) return;
+
+    UPlaygroundWidgeBase* InventoryBase = IC->GetInventoryMenu();
+    if (!IsValid(InventoryBase)) return;
+
+    InventoryBase->OnItemUnHovered();
 }

@@ -21,9 +21,12 @@ class PROJECT_V_API UPlayground_SpatialInventory : public UPlaygroundWidgeBase
 
 public:
 	virtual void NativeOnInitialized() override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 
 	virtual FPlayground_SlotAvailabilityResult HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const override;
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+	virtual void OnItemHovered(UPlayground_InventoryItem* Item) override;
+	virtual void OnItemUnHovered() override;
+	virtual bool HasHoverItem() const override;
 
 private:
 	UPROPERTY(meta = (BindWidget))

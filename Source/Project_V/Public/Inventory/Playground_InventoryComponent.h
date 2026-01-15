@@ -10,6 +10,7 @@
 class UPlayground_ItemComponent;
 class UPlayground_InventoryItem;
 class UPlaygroundWidgeBase;
+class UPlaygroundWidgeBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryItemChange, UPlayground_InventoryItem*, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNoRoomInInventory);
@@ -44,6 +45,7 @@ public:
 	void ToggleInventoryMenu();
 	void AddRepSubObject(UObject* SubObj);
 	void SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount);
+	UPlaygroundWidgeBase* GetInventoryMenu() const { return InventoryMenu; }
 
 	FInventoryItemChange OnItemAdded;
 	FInventoryItemChange OnItemRemoved;

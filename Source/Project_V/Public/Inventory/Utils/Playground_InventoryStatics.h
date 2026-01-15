@@ -29,6 +29,11 @@ public:
 	template<typename T, typename FuncT>
 	static void ForEach2D(TArray<T>& Array, int32 Index, const FIntPoint& Range2D, int32 GridColumns, const FuncT& Function);
 	
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	static void ItemHovered(APlayerController* PC, UPlayground_InventoryItem* Item);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	static void ItemUnhovered(APlayerController* PC);
 };
 
 template<typename T, typename FuncT>

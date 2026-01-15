@@ -42,6 +42,7 @@ public:
 	void PG_HideCursor();
 	void PG_SetOwningCanvas(UCanvasPanel* OwningCanvas);
 	void PG_DropItem();
+	bool PG_HasHoverItem() const;
 
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);

@@ -21,6 +21,8 @@ class PROJECT_V_API UPlayground_SlottedItem : public UUserWidget
 
 public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+	virtual void NativeOnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& MouseEvent) override;
 
 	bool IsStackable() const { return bIsStackable; }
 	void SetIsStackable(bool bStackable) { bIsStackable = bStackable; }
