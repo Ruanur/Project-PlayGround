@@ -7,6 +7,8 @@
 #include "Components/WidgetSwitcher.h"
 #include "Widgets/Spatial/Playground_InventoryGrid.h"
 #include "Inventory/Utils/Playground_InventoryStatics.h"
+#include "Components/CanvasPanel.h"
+#include "Widgets/ItemDescription/Playground_ItemDescription.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -45,12 +47,24 @@ FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(
 
 void UPlayground_SpatialInventory::OnItemHovered(UPlayground_InventoryItem* Item)
 {
-	Super::OnItemHovered(Item);
+	UPlayground_ItemDescription* DescriptionWidget = GetItemDescription();
+	DescriptionWidget->SetVisibility(ESlateVisibility::Collapsed);
+
+	GetOwningPlayer()->GetWorldTimerManager().ClearTimer(DescriptionTimer);
+
+	FTimerDelegate DescriptionTimerDelegate;
+	DescriptionTimerDelegate.BindLambda([this]()
+		{
+			GetItemDescription()->SetVisibility(ESlateVisibility::HitTestInvisible);
+		});
+
+	GetOwningPlayer()->GetWorldTimerManager().SetTimer(DescriptionTimer, DescriptionTimerDelegate, DescriptionTimerDelay, false);
 }
 
 void UPlayground_SpatialInventory::OnItemUnHovered()
 {
-	Super::OnItemUnHovered();
+	GetItemDescription()->SetVisibility(ESlateVisibility::Collapsed);
+	GetOwningPlayer()->GetWorldTimerManager().ClearTimer(DescriptionTimer);
 }
 
 bool UPlayground_SpatialInventory::HasHoverItem() const
@@ -65,6 +79,17 @@ FReply UPlayground_SpatialInventory::NativeOnMouseButtonDown(const FGeometry& My
 {
 	ActiveGrid->PG_DropItem();
 	return FReply::Handled();
+}
+
+UPlayground_ItemDescription* UPlayground_SpatialInventory::GetItemDescription()
+{
+	if (!IsValid(ItemDescription))
+	{
+		ItemDescription = CreateWidget<UPlayground_ItemDescription>(GetOwningPlayer(), ItemDescriptionClass);
+		CanvasPanel->AddChild(ItemDescription);
+	}
+
+	return ItemDescription;
 }
 
 void UPlayground_SpatialInventory::PG_ShowEquippables()

@@ -10,6 +10,7 @@ class UPlayground_InventoryGrid;
 class UWidgetSwitcher;
 class UButton;
 class UCanvasPanel;
+class UPlayground_ItemDescription;
 
 /**
  * 
@@ -52,6 +53,19 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> Button_Craftables;
+	
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<UPlayground_ItemDescription> ItemDescriptionClass;
+
+	UPROPERTY()
+	TObjectPtr<UPlayground_ItemDescription> ItemDescription;
+
+	FTimerHandle DescriptionTimer;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	float DescriptionTimerDelay = 0.5;
+
+	UPlayground_ItemDescription* GetItemDescription();
 
 	UFUNCTION()
 	void PG_ShowEquippables();
