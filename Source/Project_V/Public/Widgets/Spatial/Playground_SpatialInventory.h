@@ -23,6 +23,7 @@ class PROJECT_V_API UPlayground_SpatialInventory : public UPlaygroundWidgeBase
 public:
 	virtual void NativeOnInitialized() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	virtual FPlayground_SlotAvailabilityResult HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const override;
 	virtual void OnItemHovered(UPlayground_InventoryItem* Item) override;
@@ -78,6 +79,7 @@ private:
 
 	void DisableButton(UButton* Button);
 	void SetActiveGrid(UPlayground_InventoryGrid* Grid, UButton* Button);
-	
-	TWeakObjectPtr<UPlayground_InventoryGrid> ActiveGrid ;
+	void SetItemDescriptionSizeAndPosition(UPlayground_ItemDescription* Description, UCanvasPanel* Canvas) const;
+
+	TWeakObjectPtr<UPlayground_InventoryGrid> ActiveGrid;
 };

@@ -9,8 +9,11 @@
 #include "Inventory/Utils/Playground_InventoryStatics.h"
 #include "Components/CanvasPanel.h"
 #include "Widgets/ItemDescription/Playground_ItemDescription.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/CanvasPanelSlot.h"
 
 #include "PlaygroundDebugHelper.h"
+
 
 
 void UPlayground_SpatialInventory::NativeOnInitialized()
@@ -81,6 +84,32 @@ FReply UPlayground_SpatialInventory::NativeOnMouseButtonDown(const FGeometry& My
 	return FReply::Handled();
 }
 
+void UPlayground_SpatialInventory::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (!IsValid(ItemDescription)) return; 
+	SetItemDescriptionSizeAndPosition(ItemDescription, CanvasPanel);
+}
+
+
+void UPlayground_SpatialInventory::SetItemDescriptionSizeAndPosition(UPlayground_ItemDescription* Description, UCanvasPanel* Canvas) const
+{
+	UCanvasPanelSlot* ItemDescriptionCPS = UWidgetLayoutLibrary::SlotAsCanvasSlot(Description);
+	if (!IsValid(ItemDescriptionCPS)) return;
+	
+	const FVector2D ItemDescriptionSize = Description->GetBoxSize();
+	ItemDescriptionCPS->SetSize(ItemDescriptionSize);
+
+	FVector2D ClampedPosition = UPlayground_WidgetUtils::GetClampedWidgetPosition(
+		UPlayground_WidgetUtils::PG_GetWidgetSize(Canvas),
+		ItemDescriptionSize,
+		UWidgetLayoutLibrary::GetMousePositionOnViewport(GetOwningPlayer()));
+
+	ItemDescriptionCPS->SetPosition(ClampedPosition);
+}
+
+
 UPlayground_ItemDescription* UPlayground_SpatialInventory::GetItemDescription()
 {
 	if (!IsValid(ItemDescription))
@@ -125,5 +154,6 @@ void UPlayground_SpatialInventory::SetActiveGrid(UPlayground_InventoryGrid* Grid
 	DisableButton(Button);
 	Switcher->SetActiveWidget(Grid);
 }
+
 
 

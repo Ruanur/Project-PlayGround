@@ -30,6 +30,35 @@ bool UPlayground_WidgetUtils::PG_IsWithinBounds(const FVector2D& BoundaryPos, co
 		MousePos.Y >= BoundaryPos.Y && MousePos.Y <= (BoundaryPos.Y + WidgetSize.Y);
 }
 
+FVector2D UPlayground_WidgetUtils::GetClampedWidgetPosition(const FVector2D& Boundary, const FVector2D& WidgetSize, const FVector2D& MousePos)
+{
+	FVector2D ClampedPosition = MousePos;
+
+	// Adjust horizontal position to ensure that the widget stays within the boundary
+	if (MousePos.X + WidgetSize.X > Boundary.X) // Widget exceeds the right edge
+	{
+		ClampedPosition.X = Boundary.X - WidgetSize.X;
+	}
+
+	if (MousePos.X < 0.f) // Widget exceeds the left edge
+	{
+		ClampedPosition.X = 0.f;
+	}
+
+	// Adjust vertical position to ensure that the widget stays within the boundary	
+	if (MousePos.Y + WidgetSize.Y > Boundary.Y) // Widget exceeds the bottom edge
+	{
+		ClampedPosition.Y = Boundary.Y - WidgetSize.Y;
+	}
+
+	if (MousePos.Y < 0.f) // Widget exceeds the top edge
+	{
+		ClampedPosition.Y = 0.f;
+	}
+
+	return ClampedPosition;
+}
+
 int32 UPlayground_WidgetUtils::PG_GetIndexFromPosition(const FIntPoint& Position, const int32 Columns)
 {
 	return Position.X + Position.Y * Columns;
