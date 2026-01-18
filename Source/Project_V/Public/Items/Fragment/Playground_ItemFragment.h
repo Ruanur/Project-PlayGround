@@ -10,6 +10,7 @@
 class APlayerController;
 class UPlaygroundAbilitySystemComponent;
 class UGameplayEffect;
+class UPlayground_CompositeBase;
 
 /**
  * 
@@ -34,6 +35,20 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (Categories = "FragmentTags"))
 	FGameplayTag FragmentTag = FGameplayTag::EmptyTag;
 
+};
+
+/*
+* Item fragment specifically for assimilation into a widget
+*/
+USTRUCT(BlueprintType)
+struct FPlayground_InventoryItemFragment : public FPlayground_ItemFragment
+{
+	GENERATED_BODY()
+
+	virtual void Assimilate(UPlayground_CompositeBase* Composite) const;
+
+protected:
+	bool MatchesWidgetTag(const UPlayground_CompositeBase* Composite) const;
 };
 
 USTRUCT(BlueprintType)

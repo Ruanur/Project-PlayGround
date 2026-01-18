@@ -13,6 +13,7 @@
  * 
  */
 class UPlayground_InventoryItem;
+class UPlayground_CompositeBase;
 struct FPlayground_ItemFragment;
 
 USTRUCT()
@@ -23,6 +24,7 @@ struct PROJECT_V_API FPlayground_ItemManifest
 	UPlayground_InventoryItem* Manifest(UObject* NewOuter);
 	EPlayground_ItemCategory GetItemCategory() const { return ItemCategory; }
 	FGameplayTag GetItemType() const { return ItemType; }
+	void AssimilateInventoryFragments(UPlayground_CompositeBase* Composite) const;
 
 	template<typename T> requires std::derived_from<T, FPlayground_ItemFragment>
 	const T* GetFragmentOfTypeWithTag(const FGameplayTag& FragmentTag) const;
@@ -32,6 +34,9 @@ struct PROJECT_V_API FPlayground_ItemManifest
 
 	template<typename T> requires std::derived_from<T, FPlayground_ItemFragment>
 	T* GetFragmentOfTypeMutable();
+
+	template<typename T> requires std::derived_from<T, FPlayground_ItemFragment>
+	TArray<const T*> GetAllFragmentsOfType() const;
 
 	void PG_SpawnPickupActor(const UObject* WorldContextObject, const FVector& SpawnLocation, const FRotator& SpawnRotation);
 
@@ -91,4 +96,19 @@ T* FPlayground_ItemManifest::GetFragmentOfTypeMutable()
 	}
 
 	return nullptr;
+}
+
+template<typename T> requires std::derived_from<T, FPlayground_ItemFragment>
+TArray<const T*> FPlayground_ItemManifest::GetAllFragmentsOfType() const
+{
+	TArray<const T*> Result;
+	for (const TInstancedStruct<FPlayground_ItemFragment>& Fragment : Fragments)
+	{
+		if (const T* FragmentPtr = Fragment.GetPtr<T>())
+		{
+			Result.Add(FragmentPtr);
+		}
+	}
+
+	return Result;
 }

@@ -3,8 +3,20 @@
 
 #include "Items/Fragment/Playground_ItemFragment.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
+#include "Widgets/Composite/Playground_CompositeBase.h"
 
 #include "PlaygroundDebugHelper.h"
+
+void FPlayground_InventoryItemFragment::Assimilate(UPlayground_CompositeBase* Composite) const
+{
+	if (!MatchesWidgetTag(Composite)) return;
+	Composite->PG_Expand();
+}
+
+bool FPlayground_InventoryItemFragment::MatchesWidgetTag(const UPlayground_CompositeBase* Composite) const
+{
+	return Composite->GetFragmentTag().MatchesTagExact(GetFragmentTag());
+}
 
 // Get a Stats component from the PC or the PC->GetPawn()
 // or get the Ability System Component and apply a Gameplay Effect
@@ -37,3 +49,5 @@ void FPlayground_ManaPotionFragment::OnConsume(APlayerController* PC, UPlaygroun
 
 	Debug::Print(TEXT("Mana Potion consumed %f"), FColor::Blue, ManaAmount);
 }
+
+

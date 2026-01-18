@@ -50,14 +50,17 @@ FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(
 
 void UPlayground_SpatialInventory::OnItemHovered(UPlayground_InventoryItem* Item)
 {
+	const auto& Manifest = Item->GetItemManifest();
 	UPlayground_ItemDescription* DescriptionWidget = GetItemDescription();
 	DescriptionWidget->SetVisibility(ESlateVisibility::Collapsed);
 
 	GetOwningPlayer()->GetWorldTimerManager().ClearTimer(DescriptionTimer);
 
 	FTimerDelegate DescriptionTimerDelegate;
-	DescriptionTimerDelegate.BindLambda([this]()
+	DescriptionTimerDelegate.BindLambda([this, &Manifest, DescriptionWidget]()
 		{
+			// Assimilate the manifest into the Item Description widget.
+			Manifest.AssimilateInventoryFragments(DescriptionWidget);
 			GetItemDescription()->SetVisibility(ESlateVisibility::HitTestInvisible);
 		});
 

@@ -5,6 +5,8 @@
 
 #include "Items/Drops/Playground_InventoryItem.h"
 #include "Items/Drops/Playground_ItemComponent.h"
+#include "Items/Fragment/Playground_ItemFragment.h"
+#include "Widgets/Composite/Playground_CompositeBase.h"
 
 UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter)
 {
@@ -12,6 +14,18 @@ UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter)
 	Item->SetItemManifest(*this);
 
 	return Item;
+}
+
+void FPlayground_ItemManifest::AssimilateInventoryFragments(UPlayground_CompositeBase* Composite) const
+{
+	const auto& InventoryItemFragments = GetAllFragmentsOfType<FPlayground_InventoryItemFragment>();
+	for (const auto* Fragment : InventoryItemFragments)
+	{
+		Composite->ApplyFunction([Fragment](UPlayground_CompositeBase* Widget)
+			{
+				Fragment->Assimilate(Widget);
+			});
+	}
 }
 
 void FPlayground_ItemManifest::PG_SpawnPickupActor(const UObject* WorldContextObject, const FVector& SpawnLocation, const FRotator& SpawnRotation)
