@@ -70,11 +70,12 @@ private:
 };
 
 USTRUCT(BlueprintType)
-struct FPlayground_ImageFragment : public FPlayground_ItemFragment
+struct FPlayground_ImageFragment : public FPlayground_InventoryItemFragment
 {
 	GENERATED_BODY()
 
 	UTexture2D* GetIcon() const { return Icon; }
+	virtual void Assimilate(UPlayground_CompositeBase* Composite) const override;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Inventory")

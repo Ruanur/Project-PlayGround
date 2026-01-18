@@ -4,6 +4,7 @@
 #include "Items/Fragment/Playground_ItemFragment.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "Widgets/Composite/Playground_CompositeBase.h"
+#include "Widgets/Composite/Playground_LeafImage.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -50,4 +51,16 @@ void FPlayground_ManaPotionFragment::OnConsume(APlayerController* PC, UPlaygroun
 	Debug::Print(TEXT("Mana Potion consumed %f"), FColor::Blue, ManaAmount);
 }
 
+void FPlayground_ImageFragment::Assimilate(UPlayground_CompositeBase* Composite) const
+{
+	FPlayground_InventoryItemFragment::Assimilate(Composite);
+	if (!MatchesWidgetTag(Composite)) return;
 
+	UPlayground_LeafImage* Image = Cast<UPlayground_LeafImage>(Composite);
+	if (!IsValid(Image)) return;
+
+	Image->SetImage(Icon);
+	Image->SetBoxSize(IconDimensions);
+	Image->SetImageSize(IconDimensions);
+
+}
