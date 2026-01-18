@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "Widgets/Composite/Playground_Composite.h"
 #include "Playground_ItemDescription.generated.h"
 
 /**
@@ -12,9 +12,10 @@
 class USizeBox;
 
 UCLASS()
-class PROJECT_V_API UPlayground_ItemDescription : public UUserWidget
+class PROJECT_V_API UPlayground_ItemDescription : public UPlayground_Composite
 {
 	GENERATED_BODY()
+
 public:
 
 	FVector2D GetBoxSize() const;
