@@ -12,6 +12,12 @@ UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter)
 {
 	UPlayground_InventoryItem* Item = NewObject<UPlayground_InventoryItem>(NewOuter, UPlayground_InventoryItem::StaticClass());
 	Item->SetItemManifest(*this);
+	for (auto& Fragment : Item->GetItemManifestMutable().GetFragmentsMutable())
+	{
+		Fragment.GetMutable().Manifest();
+	}
+
+	PG_ClearFragments();
 
 	return Item;
 }
@@ -40,4 +46,13 @@ void FPlayground_ItemManifest::PG_SpawnPickupActor(const UObject* WorldContextOb
 	check(ItemComp);
 
 	ItemComp->InitItemManifest(*this);
+}
+
+void FPlayground_ItemManifest::PG_ClearFragments()
+{
+	for (auto& Fragment : Fragments)
+	{
+		Fragment.Reset();
+	}
+	Fragments.Empty();
 }

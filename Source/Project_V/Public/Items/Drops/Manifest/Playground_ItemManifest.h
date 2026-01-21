@@ -21,6 +21,7 @@ struct PROJECT_V_API FPlayground_ItemManifest
 {
 	GENERATED_BODY()
 
+	TArray<TInstancedStruct<FPlayground_ItemFragment>>& GetFragmentsMutable() { return Fragments; }
 	UPlayground_InventoryItem* Manifest(UObject* NewOuter);
 	EPlayground_ItemCategory GetItemCategory() const { return ItemCategory; }
 	FGameplayTag GetItemType() const { return ItemType; }
@@ -52,7 +53,8 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<AActor> PickupActorClass;
-
+	
+	void PG_ClearFragments();
 };
 
 template<typename T> requires std::derived_from<T, FPlayground_ItemFragment>

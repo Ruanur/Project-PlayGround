@@ -6,6 +6,7 @@
 #include "Widgets/Composite/Playground_CompositeBase.h"
 #include "Widgets/Composite/Playground_LeafImage.h"
 #include "Widgets/Composite/Playground_LeafText.h"
+#include "Widgets/Composite/Playground_LeafLabeledValue.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -77,4 +78,32 @@ void FPlayground_ImageFragment::Assimilate(UPlayground_CompositeBase* Composite)
 
 }
 
+void FPlayground_LabeledNumberFragment::Assimilate(UPlayground_CompositeBase* Composite) const
+{
+	FPlayground_InventoryItemFragment::Assimilate(Composite);
+	if (!MatchesWidgetTag(Composite)) return;
 
+	UPlayground_LeafLabeledValue* LabeledValue = Cast<UPlayground_LeafLabeledValue>(Composite);
+	if (!IsValid(LabeledValue)) return;
+
+	LabeledValue->SetText_Label(Text_Label, bCollapseLabel);
+
+	FNumberFormattingOptions Options;
+	Options.MinimumFractionalDigits = MinFractionalDigits;
+	Options.MaximumFractionalDigits = MaxFractionalDigits;
+
+	LabeledValue->SetText_Value(FText::AsNumber(Value, &Options), bCollapseValue);
+	
+}
+
+void FPlayground_LabeledNumberFragment::Manifest()
+{
+	FPlayground_InventoryItemFragment::Manifest();
+
+	if (bRandomizeOnManifest)
+	{
+		Value = FMath::FRandRange(Min, Max);
+	}
+
+	bRandomizeOnManifest = false;
+}

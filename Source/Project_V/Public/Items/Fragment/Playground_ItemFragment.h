@@ -30,6 +30,7 @@ struct FPlayground_ItemFragment
 
 	FGameplayTag GetFragmentTag() const { return FragmentTag; }
 	void SetFragmentTag(FGameplayTag Tag) { FragmentTag = Tag; }
+	virtual void Manifest() {}
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (Categories = "FragmentTags"))
@@ -97,6 +98,45 @@ struct FPlayground_TextFragment : public FPlayground_InventoryItemFragment
 private:
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	FText FragmentText;
+};
+
+USTRUCT(BlueprintType)
+struct FPlayground_LabeledNumberFragment : public FPlayground_InventoryItemFragment
+{
+	GENERATED_BODY()
+
+	virtual void Assimilate(UPlayground_CompositeBase* Composite) const override;
+	virtual void Manifest() override;
+
+	// When manifesting for the first time, this fragment will randomized, However, one equipped
+	// and dropped, an item should retain the same value, so randomization should not occur.
+	bool bRandomizeOnManifest{ true };
+
+private:
+	 
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	FText Text_Label{};
+
+	UPROPERTY(VisibleAnywhere, Category = "Inventory")
+	float Value{ 0.f };
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	float Min{ 0 };
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	float Max{ 0 };
+	
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	bool bCollapseLabel{ false };
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	bool bCollapseValue{ false };
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	int32 MinFractionalDigits{ 1 };
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	int32 MaxFractionalDigits{ 1 };
 };
 
 USTRUCT(BlueprintType)
