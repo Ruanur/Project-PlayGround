@@ -5,6 +5,7 @@
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
 #include "Widgets/Composite/Playground_CompositeBase.h"
 #include "Widgets/Composite/Playground_LeafImage.h"
+#include "Widgets/Composite/Playground_LeafText.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -12,6 +13,17 @@ void FPlayground_InventoryItemFragment::Assimilate(UPlayground_CompositeBase* Co
 {
 	if (!MatchesWidgetTag(Composite)) return;
 	Composite->PG_Expand();
+}
+
+void FPlayground_TextFragment::Assimilate(UPlayground_CompositeBase* Composite) const
+{
+	FPlayground_InventoryItemFragment::Assimilate(Composite);
+	if (!MatchesWidgetTag(Composite)) return;
+
+	UPlayground_LeafText* LeafText = Cast<UPlayground_LeafText>(Composite);
+	if (!IsValid(LeafText)) return;
+
+	LeafText->PG_SetText(FragmentText);
 }
 
 bool FPlayground_InventoryItemFragment::MatchesWidgetTag(const UPlayground_CompositeBase* Composite) const
@@ -64,3 +76,5 @@ void FPlayground_ImageFragment::Assimilate(UPlayground_CompositeBase* Composite)
 	Image->SetImageSize(IconDimensions);
 
 }
+
+

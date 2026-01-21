@@ -86,6 +86,20 @@ private:
 };
 
 USTRUCT(BlueprintType)
+struct FPlayground_TextFragment : public FPlayground_InventoryItemFragment
+{
+	GENERATED_BODY()
+
+	FText GetText() const { return FragmentText; }
+	void SetText(const FText& Text) { FragmentText = Text; }
+	virtual void Assimilate(UPlayground_CompositeBase* Composite) const override;
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	FText FragmentText;
+};
+
+USTRUCT(BlueprintType)
 struct FPlayground_StackableFragment : public FPlayground_ItemFragment
 {
 	GENERATED_BODY()
