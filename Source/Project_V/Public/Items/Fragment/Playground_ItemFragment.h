@@ -11,6 +11,7 @@ class APlayerController;
 class UPlaygroundAbilitySystemComponent;
 class UGameplayEffect;
 class UPlayground_CompositeBase;
+struct FGameplayAttribute;
 
 /**
  * 
@@ -108,6 +109,7 @@ struct FPlayground_LabeledNumberFragment : public FPlayground_InventoryItemFragm
 	virtual void Assimilate(UPlayground_CompositeBase* Composite) const override;
 	virtual void Manifest() override;
 
+
 	// When manifesting for the first time, this fragment will randomized, However, one equipped
 	// and dropped, an item should retain the same value, so randomization should not occur.
 	bool bRandomizeOnManifest{ true };
@@ -131,6 +133,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	bool bCollapseValue{ false };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+	TSubclassOf<UGameplayEffect> SourceGameplayEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	int32 MinFractionalDigits{ 1 };

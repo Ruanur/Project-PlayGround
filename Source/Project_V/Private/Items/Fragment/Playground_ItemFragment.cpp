@@ -7,6 +7,8 @@
 #include "Widgets/Composite/Playground_LeafImage.h"
 #include "Widgets/Composite/Playground_LeafText.h"
 #include "Widgets/Composite/Playground_LeafLabeledValue.h"
+#include "AbilitySystem/PlaygroundAttributeSet.h"
+#include "GameplayEffect.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -100,10 +102,25 @@ void FPlayground_LabeledNumberFragment::Manifest()
 {
 	FPlayground_InventoryItemFragment::Manifest();
 
-	if (bRandomizeOnManifest)
+	if (!SourceGameplayEffect) return;
+
+	const UGameplayEffect* GECDO = SourceGameplayEffect->GetDefaultObject<UGameplayEffect>();
+
+	const FGameplayModifierInfo& Modifier = GECDO->Modifiers[0];
+
+	float OutValue = 0.f;
+
+	if (Modifier.ModifierMagnitude.AttemptCalculateMagnitude(
+		FGameplayEffectSpec(),
+		OutValue))
 	{
-		Value = FMath::FRandRange(Min, Max);
+		Value = OutValue;
 	}
 
-	bRandomizeOnManifest = false;
+	//if (bRandomizeOnManifest)
+	//{
+	//	Value = FMath::FRandRange(Min, Max);
+	//}
+
+	//bRandomizeOnManifest = false;
 }
