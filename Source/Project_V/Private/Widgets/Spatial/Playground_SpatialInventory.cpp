@@ -11,6 +11,7 @@
 #include "Widgets/ItemDescription/Playground_ItemDescription.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Blueprint/WidgetTree.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -29,6 +30,21 @@ void UPlayground_SpatialInventory::NativeOnInitialized()
 	Grid_Craftables->PG_SetOwningCanvas(CanvasPanel);
 
 	PG_ShowEquippables();
+
+	WidgetTree->ForEachWidget([this](UWidget* Widget)
+		{
+			UPlayground_EquippedGridSlot* EquippedGridSlot = Cast<UPlayground_EquippedGridSlot>(Widget);
+			if (IsValid(EquippedGridSlot))
+			{
+				EquippedGridSlots.Add(EquippedGridSlot);
+				EquippedGridSlot->EquippedGridSlotClicked.AddDynamic(this, &ThisClass::EquippedGridSlotClicked);
+			}
+		});
+}
+
+void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedGridSlot* EquippedGridSlot, const FGameplayTag& EquipmentTypeTag)
+{
+
 }
 
 FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const
@@ -138,6 +154,8 @@ void UPlayground_SpatialInventory::PG_ShowCraftables()
 {
 	SetActiveGrid(Grid_Craftables, Button_Craftables);
 }
+
+
 
 void UPlayground_SpatialInventory::DisableButton(UButton* Button)
 {

@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Widgets/PlaygroundWidgeBase.h"
+#include "Widgets/GridSlots/Playground_EquippedGridSlot.h"
 #include "Playground_SpatialInventory.generated.h"
+
 
 class UPlayground_InventoryGrid;
 class UWidgetSwitcher;
@@ -31,6 +33,10 @@ public:
 	virtual bool HasHoverItem() const override;
 
 private:
+
+	UPROPERTY()
+	TArray<TObjectPtr<UPlayground_EquippedGridSlot>> EquippedGridSlots;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCanvasPanel> CanvasPanel;
 
@@ -76,6 +82,9 @@ private:
 
 	UFUNCTION()
 	void PG_ShowCraftables();
+
+	UFUNCTION()
+	void EquippedGridSlotClicked(UPlayground_EquippedGridSlot* EquippedGridSlot, const FGameplayTag& EquipmentTypeTag);
 
 	void DisableButton(UButton* Button);
 	void SetActiveGrid(UPlayground_InventoryGrid* Grid, UButton* Button);
