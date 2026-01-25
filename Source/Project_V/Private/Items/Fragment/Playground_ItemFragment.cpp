@@ -121,6 +121,6 @@ void FPlayground_LabeledNumberFragment::Manifest()
 	//{
 	//	Value = FMath::FRandRange(Min, Max);
 	//}
-
+ 
 	//bRandomizeOnManifest = false;
 }
