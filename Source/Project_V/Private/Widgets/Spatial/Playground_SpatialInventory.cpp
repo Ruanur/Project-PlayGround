@@ -97,6 +97,12 @@ bool UPlayground_SpatialInventory::HasHoverItem() const
 	return false;
 }
 
+UPlayground_HoverItem* UPlayground_SpatialInventory::GetHoverItem() const
+{
+	if (!ActiveGrid.IsValid()) return nullptr;
+	return ActiveGrid->GetHoverItem();
+}
+
 FReply UPlayground_SpatialInventory::NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	ActiveGrid->PG_DropItem();

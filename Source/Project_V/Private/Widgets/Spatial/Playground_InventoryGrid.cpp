@@ -979,6 +979,11 @@ bool UPlayground_InventoryGrid::PG_HasHoverItem() const
 	return IsValid(HoverItem);
 }
 
+UPlayground_HoverItem* UPlayground_InventoryGrid::GetHoverItem() const
+{
+	return HoverItem;
+}
+
 
 void UPlayground_InventoryGrid::PG_ShowCursor()
 {

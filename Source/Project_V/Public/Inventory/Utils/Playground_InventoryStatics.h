@@ -8,11 +8,13 @@
 
 #include "Playground_InventoryStatics.generated.h"
 
+
 /**
  * 
  */
 class UPlayground_InventoryComponent;
 class UPlayground_ItemComponent;
+class UPlayground_HoverItem;
 
 UCLASS()
 class PROJECT_V_API UPlayground_InventoryStatics : public UBlueprintFunctionLibrary
@@ -34,6 +36,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	static void ItemUnhovered(APlayerController* PC);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	static UPlayground_HoverItem* GetHoverItem(APlayerController* PC);
 };
 
 template<typename T, typename FuncT>

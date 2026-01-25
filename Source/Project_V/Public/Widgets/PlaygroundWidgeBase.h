@@ -11,6 +11,7 @@ class UPlayerUIComponent;
 class UEnemyUIComponent;
 class UPlayground_ItemComponent;
 class UPlayground_InventoryItem;
+class UPlayground_HoverItem;
 /**
  * 
  */
@@ -35,5 +36,5 @@ public:
 	virtual void OnItemHovered(UPlayground_InventoryItem* Item) {}
 	virtual void OnItemUnHovered() {}
 	virtual bool HasHoverItem() const { return false; }
-
+	virtual UPlayground_HoverItem* GetHoverItem() const { return nullptr; }
 };

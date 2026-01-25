@@ -13,6 +13,7 @@ class UWidgetSwitcher;
 class UButton;
 class UCanvasPanel;
 class UPlayground_ItemDescription;
+class UPlayground_HoverItem;
 
 /**
  * 
@@ -31,7 +32,7 @@ public:
 	virtual void OnItemHovered(UPlayground_InventoryItem* Item) override;
 	virtual void OnItemUnHovered() override;
 	virtual bool HasHoverItem() const override;
-
+	virtual UPlayground_HoverItem* GetHoverItem() const override;
 private:
 
 	UPROPERTY()

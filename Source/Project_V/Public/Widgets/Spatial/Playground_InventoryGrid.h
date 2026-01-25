@@ -43,6 +43,7 @@ public:
 	void PG_SetOwningCanvas(UCanvasPanel* OwningCanvas);
 	void PG_DropItem();
 	bool PG_HasHoverItem() const;
+	UPlayground_HoverItem* GetHoverItem() const;
 
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
