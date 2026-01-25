@@ -37,3 +37,20 @@ FReply UPlayground_EquippedGridSlot::NativeOnMouseButtonDown(const FGeometry& In
 	EquippedGridSlotClicked.Broadcast(this, EquipmentTypeTag);
 	return FReply::Handled();
 }
+
+UPlayground_EquippedSlottedItem* UPlayground_EquippedGridSlot::OnItemEquipped(UPlayground_InventoryItem* Item, const FGameplayTag& EquipmentTag, float TileSize)
+{
+	// Check the Equipment Type Tag
+	// Get Grid Dimensions
+	// Calculate the Draw Size for the Equipped Slotted Item
+	// Create the Equipped Slotted Item widget
+	// Set the Slotted Item's Inventory Item
+	// Set the Slotted Item's Equipment Type Tag
+	// Hide the Stack Count widget on the Slotted Item
+	// Set Inventory Item on this class (The Equipped Grid Slot)
+	// Set the Image Brush on the Equipped Slotted item
+	// Add the Slotted Item as a child to this widget's Overlay
+	// Return the Equipped Slotted item widget
+
+	return nullptr;
+}

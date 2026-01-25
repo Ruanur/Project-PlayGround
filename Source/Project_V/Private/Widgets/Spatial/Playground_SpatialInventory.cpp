@@ -48,7 +48,7 @@ void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedG
 	// Check to see if we can equip the Hover Item
 	if (!CanEquipHoverItem(EquippedGridSlot, EquipmentTypeTag)) return;
 
-	// Create an Equipped Slotted Item and add it to Equipped Grid Slot
+	// Create an Equipped Slotted Item and add it to Equipped Grid Slot (call EquippedGridSlot->OnItemEquipped()
 	
 
 	// Clear the Hover Item

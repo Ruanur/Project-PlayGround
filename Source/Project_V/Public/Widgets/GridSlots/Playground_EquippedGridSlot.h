@@ -13,6 +13,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEquippedGridSlotClicked, UPlayground_EquippedGridSlot*, GridSlot, const FGameplayTag&, EquipmentTypeTag);
 
 class UImage;
+class UPlayground_EquippedSlottedItem;
 
 UCLASS()
 class PROJECT_V_API UPlayground_EquippedGridSlot : public UPlayground_GridSlot
@@ -24,6 +25,8 @@ public:
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	
+	UPlayground_EquippedSlottedItem* OnItemEquipped(UPlayground_InventoryItem* Item, const FGameplayTag& EquipmentTag, float TileSize);
+
 	FEquippedGridSlotClicked EquippedGridSlotClicked;
 
 private:
