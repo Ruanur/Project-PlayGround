@@ -3,7 +3,6 @@
 
 #include "Inventory/Utils/Playground_InventoryStatics.h"
 #include "Inventory/Playground_InventoryComponent.h"
-#include "Inventory/"
 #include "Types/Playground_GridTypes.h"
 #include "Items/Drops/Playground_ItemComponent.h"
 #include "Widgets/PlaygroundWidgeBase.h"
