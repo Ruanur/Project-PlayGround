@@ -124,3 +124,48 @@ void FPlayground_LabeledNumberFragment::Manifest()
  
 	//bRandomizeOnManifest = false;
 }
+
+void FPlayground_StrengthModifier::OnEquip(APlayerController* PC)
+{
+	
+}
+
+void FPlayground_StrengthModifier::OnUnequip(APlayerController* PC)
+{
+	
+}
+
+
+void FPlayground_EquipmentFragment::OnEquip(APlayerController* PC)
+{
+	if (bEquipped) return;
+	bEquipped = true;
+
+	for (auto& Modifier : EquipModifiers)
+	{
+		auto& ModRef = Modifier.GetMutable();
+		ModRef.OnEquip(PC);
+	}
+}
+
+void FPlayground_EquipmentFragment::OnUnequip(APlayerController* PC)
+{
+	if (!bEquipped) return;
+	bEquipped = false;
+
+	for (auto& Modifier : EquipModifiers)
+	{
+		auto& ModRef = Modifier.GetMutable();
+		ModRef.OnUnequip(PC);
+	}
+}
+
+void FPlayground_EquipmentFragment::Assimilate(UPlayground_CompositeBase* Composite) const
+{
+	FPlayground_InventoryItemFragment::Assimilate(Composite);
+	for (const auto& Modifier : EquipModifiers)
+	{
+		const auto& ModRef = Modifier.Get();
+		ModRef.Assimilate(Composite);
+	}
+}

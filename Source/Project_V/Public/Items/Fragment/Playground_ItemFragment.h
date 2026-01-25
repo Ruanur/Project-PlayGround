@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "StructUtils/InstancedStruct.h"
 
 #include "Playground_ItemFragment.generated.h"
 
@@ -190,4 +191,44 @@ struct FPlayground_ManaPotionFragment : public FPlayground_ConsumableFragment
 	float ManaAmount = 20.f;
 
 	virtual void OnConsume(APlayerController* PC, UPlaygroundAbilitySystemComponent* AbilitySystemComponent, int32 ApplyLevel) override;
+};
+
+// Equipment
+//
+USTRUCT(BlueprintType)
+struct FPlayground_EquipModifier : public FPlayground_LabeledNumberFragment
+{
+	GENERATED_BODY()
+
+	virtual void OnEquip(APlayerController* PC) {}
+	virtual void OnUnequip(APlayerController* PC) {}
+
+
+};
+
+USTRUCT(BlueprintType)
+struct FPlayground_StrengthModifier : public FPlayground_EquipModifier
+{
+	GENERATED_BODY()
+
+	virtual void OnEquip(APlayerController* PC) override;
+	virtual void OnUnequip(APlayerController* PC) override;
+};
+
+USTRUCT(BlueprintType)
+struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment
+{
+	GENERATED_BODY()
+
+	bool bEquipped{ false };
+	void OnEquip(APlayerController* PC);
+	void OnUnequip(APlayerController* PC);
+	virtual void Assimilate(UPlayground_CompositeBase* Composite) const override;
+
+private:
+
+	//meta = (ExcludeBaseStruct) 사용 시 반드시 StructUtils/InstancedStruct.h Include 하기
+	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (ExcludeBaseStruct))
+	TArray<TInstancedStruct<FPlayground_EquipModifier>> EquipModifiers;
+
 };
