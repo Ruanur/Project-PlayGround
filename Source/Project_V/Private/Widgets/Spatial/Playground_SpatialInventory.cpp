@@ -12,6 +12,7 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Blueprint/WidgetTree.h"
+#include "Widgets/HoverItem/Playground_HoverItem.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -44,7 +45,14 @@ void UPlayground_SpatialInventory::NativeOnInitialized()
 
 void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedGridSlot* EquippedGridSlot, const FGameplayTag& EquipmentTypeTag)
 {
+	// Check to see if we can equip the Hover Item
+	if (!CanEquipHoverItem(EquippedGridSlot, EquipmentTypeTag)) return;
 
+	// Create an Equipped Slotted Item and add it to Equipped Grid Slot
+	
+
+	// Clear the Hover Item
+	// Inform the server that we've equipped an item (potentially unequipped an item as well)
 }
 
 FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const
@@ -132,6 +140,21 @@ void UPlayground_SpatialInventory::SetItemDescriptionSizeAndPosition(UPlayground
 		UWidgetLayoutLibrary::GetMousePositionOnViewport(GetOwningPlayer()));
 
 	ItemDescriptionCPS->SetPosition(ClampedPosition);
+}
+
+bool UPlayground_SpatialInventory::CanEquipHoverItem(UPlayground_EquippedGridSlot* EquippedGridSlot, const FGameplayTag& EquipmentTypeTag) const
+{
+	if (!IsValid(EquippedGridSlot) || EquippedGridSlot->GetInventoryItem().IsValid()) return false;
+
+	UPlayground_HoverItem* HoverItem = GetHoverItem();
+	if (!IsValid(HoverItem)) return false;
+
+	UPlayground_InventoryItem* HeldItem = HoverItem->GetInventoryItem();
+
+	return HasHoverItem() && IsValid(HeldItem) &&
+		!HoverItem->IsStackable() &&
+		HeldItem->GetItemManifest().GetItemCategory() == EPlayground_ItemCategory::Equippable &&
+		HeldItem->GetItemManifest().GetItemType().MatchesTag(EquipmentTypeTag);
 }
 
 

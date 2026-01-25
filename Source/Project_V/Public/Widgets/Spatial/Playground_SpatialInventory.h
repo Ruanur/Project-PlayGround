@@ -90,6 +90,7 @@ private:
 	void DisableButton(UButton* Button);
 	void SetActiveGrid(UPlayground_InventoryGrid* Grid, UButton* Button);
 	void SetItemDescriptionSizeAndPosition(UPlayground_ItemDescription* Description, UCanvasPanel* Canvas) const;
+	bool CanEquipHoverItem(UPlayground_EquippedGridSlot* EquippedGridSlot, const FGameplayTag& EquipmentTypeTag) const;
 
 	TWeakObjectPtr<UPlayground_InventoryGrid> ActiveGrid;
 };
