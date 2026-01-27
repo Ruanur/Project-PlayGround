@@ -14,6 +14,7 @@
 #include "Blueprint/WidgetTree.h"
 #include "Widgets/HoverItem/Playground_HoverItem.h"
 #include "Widgets/SlottedItems/Playground_EquippedSlottedItem.h"
+#include "Inventory/Playground_InventoryComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -62,7 +63,18 @@ void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedG
 	EquippedSlottedItem->OnEquippedSlottedItemClicked.AddDynamic(this, &ThisClass::EquippedSlottedItemClicked);
 
 	// Clear the Hover Item
+	Grid_Equippables->PG_ClearHoverItem();
+	
 	// Inform the server that we've equipped an item (potentially unequipped an item as well)
+	UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
+	check(IsValid(InventoryComponent));
+
+	InventoryComponent->Server_EquipSlotClicked(HoverItem->GetInventoryItem(), nullptr);
+
+	if (GetOwningPlayer()->GetNetMode() != NM_DedicatedServer)
+	{
+		InventoryComponent->OnItemEquipped.Broadcast(HoverItem->GetInventoryItem());
+	}
 }
 
 void UPlayground_SpatialInventory::EquippedSlottedItemClicked(UPlayground_EquippedSlottedItem* SlottedItem)

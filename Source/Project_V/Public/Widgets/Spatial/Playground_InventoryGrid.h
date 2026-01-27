@@ -45,6 +45,7 @@ public:
 	bool PG_HasHoverItem() const;
 	UPlayground_HoverItem* GetHoverItem() const;
 	float GetTileSize() const { return TileSize; }
+	void PG_ClearHoverItem();
 
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
@@ -107,7 +108,6 @@ private:
 	void PG_UnHighlightSlots(const int32 Index, const FIntPoint& Dimensions);
 	void ChangeHoverType(const int32 Index, const FIntPoint& Dimensions, EPlayground_GridSlotState GridSlotState);
 	void PG_PutDownOnIndex(const int32 Index);
-	void PG_ClearHoverItem();
 	UUserWidget* PG_GetVisibleCursorWidget();
 	UUserWidget* PG_GetHiddenCursorWidget();
 	bool IsSameStackable(const UPlayground_InventoryItem* ClickedInventoryItem) const;
