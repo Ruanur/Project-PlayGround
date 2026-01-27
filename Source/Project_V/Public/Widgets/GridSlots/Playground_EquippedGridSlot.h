@@ -14,6 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEquippedGridSlotClicked, UPlaygrou
 
 class UImage;
 class UPlayground_EquippedSlottedItem;
+class UOverlay;
 
 UCLASS()
 class PROJECT_V_API UPlayground_EquippedGridSlot : public UPlayground_GridSlot
@@ -42,4 +43,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UPlayground_EquippedSlottedItem> EquippedSlottedItem;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UOverlay> Overlay_Root;
 };

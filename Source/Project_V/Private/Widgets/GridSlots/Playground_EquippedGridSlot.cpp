@@ -8,7 +8,10 @@
 #include "Items/Drops/Playground_InventoryItem.h"
 #include "Items/Fragment/Playground_FragmentTags.h"
 #include "Items/Fragment/Playground_ItemFragment.h"
+#include "Components/Overlay.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Widgets/SlottedItems/Playground_EquippedSlottedItem.h"
+#include "Components/OverlaySlot.h"
 
 void UPlayground_EquippedGridSlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
@@ -72,10 +75,28 @@ UPlayground_EquippedSlottedItem* UPlayground_EquippedGridSlot::OnItemEquipped(UP
 	SetInventoryItem(Item);
 
 	// Set the Image Brush on the Equipped Slotted item
-	
-	// Add the Slotted Item as a child to this widget's Overlay
-	
-	// Return the Equipped Slotted item widget
+	const FPlayground_ImageFragment* ImageFragment = GetFragment<FPlayground_ImageFragment>(Item, FragmentTags::IconFragment);
+	if (!ImageFragment) return nullptr;
 
-	return nullptr;
+	FSlateBrush Brush;
+	Brush.SetResourceObject(ImageFragment->GetIcon());
+	Brush.DrawAs = ESlateBrushDrawType::Image;
+	Brush.ImageSize = DrawSize;
+
+	EquippedSlottedItem->SetImageBrush(Brush);
+
+	// Add the Slotted Item as a child to this widget's Overlay
+	Overlay_Root->AddChildToOverlay(EquippedSlottedItem);
+	FGeometry OverlayGeometry = Overlay_Root->GetCachedGeometry();
+	auto OverlayPos = OverlayGeometry.Position;
+	auto OverlaySize = OverlayGeometry.Size;
+
+	const float LeftPadding = OverlaySize.X / 2.f - DrawSize.X / 2.f;
+	const float TopPadding = OverlaySize.Y / 2.f - DrawSize.Y / 2.f;
+
+	UOverlaySlot* OverlaySlot = UWidgetLayoutLibrary::SlotAsOverlaySlot(EquippedSlottedItem);
+	OverlaySlot->SetPadding(FMargin(LeftPadding, TopPadding));
+
+	// Return the Equipped Slotted item widget
+	return EquippedSlottedItem;
 }
