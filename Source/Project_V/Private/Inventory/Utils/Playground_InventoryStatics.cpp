@@ -69,3 +69,11 @@ UPlayground_HoverItem* UPlayground_InventoryStatics::GetHoverItem(APlayerControl
 
     return InventoryBase->GetHoverItem();
 }
+
+UPlaygroundWidgeBase* UPlayground_InventoryStatics::GetInventoryWidget(APlayerController* PC)
+{
+    UPlayground_InventoryComponent* IC = PG_GetInventoryComponent(PC);
+    if (!IsValid(IC)) return nullptr;
+
+    return IC->GetInventoryMenu();
+}

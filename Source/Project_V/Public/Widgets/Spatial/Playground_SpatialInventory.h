@@ -33,6 +33,7 @@ public:
 	virtual void OnItemUnHovered() override;
 	virtual bool HasHoverItem() const override;
 	virtual UPlayground_HoverItem* GetHoverItem() const override;
+	virtual float GetTileSize() const override;
 private:
 
 	UPROPERTY()
@@ -86,6 +87,9 @@ private:
 
 	UFUNCTION()
 	void EquippedGridSlotClicked(UPlayground_EquippedGridSlot* EquippedGridSlot, const FGameplayTag& EquipmentTypeTag);
+
+	UFUNCTION()
+	void EquippedSlottedItemClicked(UPlayground_EquippedSlottedItem* SlottedItem);
 
 	void DisableButton(UButton* Button);
 	void SetActiveGrid(UPlayground_InventoryGrid* Grid, UButton* Button);

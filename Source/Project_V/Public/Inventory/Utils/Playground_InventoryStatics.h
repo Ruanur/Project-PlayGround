@@ -14,7 +14,8 @@
  */
 class UPlayground_InventoryComponent;
 class UPlayground_ItemComponent;
-class UPlayground_HoverItem;
+class UPlayground_HoverItem; 
+class UPlaygroundWidgeBase;
 
 UCLASS()
 class PROJECT_V_API UPlayground_InventoryStatics : public UBlueprintFunctionLibrary
@@ -39,6 +40,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	static UPlayground_HoverItem* GetHoverItem(APlayerController* PC);
+
+	static UPlaygroundWidgeBase* GetInventoryWidget(APlayerController* PC);
 };
 
 template<typename T, typename FuncT>

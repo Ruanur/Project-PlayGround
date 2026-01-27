@@ -13,6 +13,7 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Blueprint/WidgetTree.h"
 #include "Widgets/HoverItem/Playground_HoverItem.h"
+#include "Widgets/SlottedItems/Playground_EquippedSlottedItem.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -48,11 +49,25 @@ void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedG
 	// Check to see if we can equip the Hover Item
 	if (!CanEquipHoverItem(EquippedGridSlot, EquipmentTypeTag)) return;
 
+	UPlayground_HoverItem* HoverItem = GetHoverItem();
+
 	// Create an Equipped Slotted Item and add it to Equipped Grid Slot (call EquippedGridSlot->OnItemEquipped()
-	
+	const float TileSize = UPlayground_InventoryStatics::GetInventoryWidget(GetOwningPlayer())->GetTileSize();
+	UPlayground_EquippedSlottedItem* EquippedSlottedItem = EquippedGridSlot->OnItemEquipped(
+		HoverItem->GetInventoryItem(),
+		EquipmentTypeTag,
+		TileSize
+	);
+
+	EquippedSlottedItem->OnEquippedSlottedItemClicked.AddDynamic(this, &ThisClass::EquippedSlottedItemClicked);
 
 	// Clear the Hover Item
 	// Inform the server that we've equipped an item (potentially unequipped an item as well)
+}
+
+void UPlayground_SpatialInventory::EquippedSlottedItemClicked(UPlayground_EquippedSlottedItem* SlottedItem)
+{
+
 }
 
 FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const
@@ -109,6 +124,11 @@ UPlayground_HoverItem* UPlayground_SpatialInventory::GetHoverItem() const
 {
 	if (!ActiveGrid.IsValid()) return nullptr;
 	return ActiveGrid->GetHoverItem();
+}
+
+float UPlayground_SpatialInventory::GetTileSize() const
+{
+	return Grid_Equippables->GetTileSize();
 }
 
 FReply UPlayground_SpatialInventory::NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
