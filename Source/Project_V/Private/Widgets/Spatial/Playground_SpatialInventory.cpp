@@ -77,7 +77,7 @@ void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedG
 	}
 }
 
-void UPlayground_SpatialInventory::EquippedSlottedItemClicked(UPlayground_EquippedSlottedItem* SlottedItem)
+void UPlayground_SpatialInventory::EquippedSlottedItemClicked(UPlayground_EquippedSlottedItem* EquippedSlottedItem)
 {
 	// Remove the Item Description 
 	UPlayground_InventoryStatics::ItemUnhovered(GetOwningPlayer());
@@ -88,7 +88,7 @@ void UPlayground_SpatialInventory::EquippedSlottedItemClicked(UPlayground_Equipp
 	UPlayground_InventoryItem* ItemToEquip = IsValid(GetHoverItem()) ? GetHoverItem()->GetInventoryItem() : nullptr;
 
 	// Get Item to Unequip
-	UPlayground_InventoryItem* ItemToUnequip = SlottedItem->GetInventoryItem();
+	UPlayground_InventoryItem* ItemToUnequip = EquippedSlottedItem->GetInventoryItem();
 		
 	// Get the Equipped Grid Slot holding this item
 	UPlayground_EquippedGridSlot* EquippedGridSlot = FindSlotWithEquippedItem(ItemToUnequip);
@@ -100,12 +100,13 @@ void UPlayground_SpatialInventory::EquippedSlottedItemClicked(UPlayground_Equipp
 	Grid_Equippables->AssignHoverItem(ItemToUnequip);
 
 	// Remove of the equipped slotted item from the eqiupped grid slot (unbind from the OnEquippedSlottedItemClicked)
-	RemoveEquippedSlottedItem(SlottedItem);
+	RemoveEquippedSlottedItem(EquippedSlottedItem);
 	
-
-
 	// Make a new equipped slotted item (for the item we held in HoverItem)
+	MakeEquippedSlottedItem(EquippedSlottedItem, EquippedGridSlot, ItemToUnequip);
+
 	// Broadcast delegates for OnItemEquipped/OnItemUnequipped (from the IC)
+
 }
 
 FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const
@@ -243,6 +244,18 @@ void UPlayground_SpatialInventory::RemoveEquippedSlottedItem(UPlayground_Equippe
 		EquippedSlottedItem->OnEquippedSlottedItemClicked.RemoveDynamic(this, &ThisClass::EquippedSlottedItemClicked);
 	}
 	EquippedSlottedItem->RemoveFromParent();
+}
+
+void UPlayground_SpatialInventory::MakeEquippedSlottedItem(UPlayground_EquippedSlottedItem* EquippedSlottedItem, UPlayground_EquippedGridSlot* EquippedGridSlot, UPlayground_InventoryItem* ItemToEquip)
+{
+	if (!IsValid(EquippedGridSlot)) return;
+
+	UPlayground_EquippedSlottedItem* SlottedItem = EquippedGridSlot->OnItemEquipped(ItemToEquip, 
+		EquippedSlottedItem->GetEquipmentTypeTag(), 
+		UPlayground_InventoryStatics::GetInventoryWidget(GetOwningPlayer())->GetTileSize());
+	SlottedItem->OnEquippedSlottedItemClicked.AddDynamic(this, &ThisClass::EquippedSlottedItemClicked);
+
+	EquippedGridSlot->SetEquippedSlottedItem(SlottedItem);
 }
 
 

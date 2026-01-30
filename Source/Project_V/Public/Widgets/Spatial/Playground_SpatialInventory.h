@@ -89,7 +89,7 @@ private:
 	void EquippedGridSlotClicked(UPlayground_EquippedGridSlot* EquippedGridSlot, const FGameplayTag& EquipmentTypeTag);
 
 	UFUNCTION()
-	void EquippedSlottedItemClicked(UPlayground_EquippedSlottedItem* SlottedItem);
+	void EquippedSlottedItemClicked(UPlayground_EquippedSlottedItem* EquippedSlottedItem);
 
 	void DisableButton(UButton* Button);
 	void SetActiveGrid(UPlayground_InventoryGrid* Grid, UButton* Button);
@@ -98,6 +98,7 @@ private:
 	UPlayground_EquippedGridSlot* FindSlotWithEquippedItem(UPlayground_InventoryItem* EquippedItem) const;
 	void ClearSlotOfItem(UPlayground_EquippedGridSlot* EquippedGridSlot);
 	void RemoveEquippedSlottedItem(UPlayground_EquippedSlottedItem* EquippedSlottedItem);
+	void MakeEquippedSlottedItem(UPlayground_EquippedSlottedItem* EquippedSlottedItem, UPlayground_EquippedGridSlot* EquippedGridSlot, UPlayground_InventoryItem* ItemToEquip);
 
 	TWeakObjectPtr<UPlayground_InventoryGrid> ActiveGrid;
 };
