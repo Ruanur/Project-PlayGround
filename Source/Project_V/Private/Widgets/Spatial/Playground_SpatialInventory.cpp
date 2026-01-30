@@ -94,11 +94,16 @@ void UPlayground_SpatialInventory::EquippedSlottedItemClicked(UPlayground_Equipp
 	UPlayground_EquippedGridSlot* EquippedGridSlot = FindSlotWithEquippedItem(ItemToUnequip);
 
 	// Clear the equipped grid slot of this item (set it's inventory item to nullptr)
+	ClearSlotOfItem(EquippedGridSlot);
+
+	// Assign previously equipped item as the hover item
+	Grid_Equippables->AssignHoverItem(ItemToUnequip);
+
 	// Remove of the equipped slotted item from the eqiupped grid slot (unbind from the OnEquippedSlottedItemClicked)
-	// Removing the Equipped Slotted item from the equipped grid slot
-		// (unbind from the OnEquippedSlottedItemClicked)
-		// Removing the Equipped Slotted Item from Parent
-		// Assign previously equipped item as the hover item
+	RemoveEquippedSlottedItem(SlottedItem);
+	
+
+
 	// Make a new equipped slotted item (for the item we held in HoverItem)
 	// Broadcast delegates for OnItemEquipped/OnItemUnequipped (from the IC)
 }
@@ -218,6 +223,26 @@ UPlayground_EquippedGridSlot* UPlayground_SpatialInventory::FindSlotWithEquipped
 		});
 
 	return FoundEquippedGridSlot ? *FoundEquippedGridSlot : nullptr;
+}
+
+void UPlayground_SpatialInventory::ClearSlotOfItem(UPlayground_EquippedGridSlot* EquippedGridSlot)
+{
+	if (!IsValid(EquippedGridSlot))
+	{
+		EquippedGridSlot->SetEquippedSlottedItem(nullptr);
+		EquippedGridSlot->SetInventoryItem(nullptr);
+	}
+}
+
+void UPlayground_SpatialInventory::RemoveEquippedSlottedItem(UPlayground_EquippedSlottedItem* EquippedSlottedItem)
+{
+	if (!IsValid(EquippedSlottedItem)) return;
+
+	if (!EquippedSlottedItem->OnEquippedSlottedItemClicked.IsAlreadyBound(this, &ThisClass::EquippedSlottedItemClicked))
+	{
+		EquippedSlottedItem->OnEquippedSlottedItemClicked.RemoveDynamic(this, &ThisClass::EquippedSlottedItemClicked);
+	}
+	EquippedSlottedItem->RemoveFromParent();
 }
 
 

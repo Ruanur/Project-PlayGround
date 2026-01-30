@@ -46,6 +46,7 @@ public:
 	UPlayground_HoverItem* GetHoverItem() const;
 	float GetTileSize() const { return TileSize; }
 	void PG_ClearHoverItem();
+	void AssignHoverItem(UPlayground_InventoryItem* InventoryItem);
 
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
@@ -94,7 +95,6 @@ private:
 	bool IsRightClick(const FPointerEvent& MouseEvent) const;
 	bool IsLeftClick(const FPointerEvent& MouseEvent) const;
 	void PickUp(UPlayground_InventoryItem* ClickedInventoryItem, const int32 GridIndex);
-	void AssignHoverItem(UPlayground_InventoryItem* InventoryItem);
 	void AssignHoverItem(UPlayground_InventoryItem* InventoryItem, const int32 GridIndex, const int32 PreviouseGridIndex);
 	void RemoveItemFromGrid(UPlayground_InventoryItem* InventoryItem, const int32 GridIndex);
 	void PG_UpdateTileParameters(const FVector2D& CanvasPosition, const FVector2D& MousePosition);

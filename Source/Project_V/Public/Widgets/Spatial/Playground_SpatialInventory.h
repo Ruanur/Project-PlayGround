@@ -96,6 +96,8 @@ private:
 	void SetItemDescriptionSizeAndPosition(UPlayground_ItemDescription* Description, UCanvasPanel* Canvas) const;
 	bool CanEquipHoverItem(UPlayground_EquippedGridSlot* EquippedGridSlot, const FGameplayTag& EquipmentTypeTag) const;
 	UPlayground_EquippedGridSlot* FindSlotWithEquippedItem(UPlayground_InventoryItem* EquippedItem) const;
+	void ClearSlotOfItem(UPlayground_EquippedGridSlot* EquippedGridSlot);
+	void RemoveEquippedSlottedItem(UPlayground_EquippedSlottedItem* EquippedSlottedItem);
 
 	TWeakObjectPtr<UPlayground_InventoryGrid> ActiveGrid;
 };
