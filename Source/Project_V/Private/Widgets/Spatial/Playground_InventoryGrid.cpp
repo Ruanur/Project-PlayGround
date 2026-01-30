@@ -647,8 +647,13 @@ void UPlayground_InventoryGrid::PG_OnSlottedItemClicked(int32 GridIndex, const F
 		}
 	}
 
-	// Swap with the hover item.
-	SwapWithHoverItem(ClickedInventoryItem, GridIndex);
+	
+	//Make sure we can swap with a valid item
+	if (CurrentQueryResult.ValidItem.IsValid())
+	{
+		// Swap with the hover item.
+		SwapWithHoverItem(ClickedInventoryItem, GridIndex);
+	}
 }
 
 void UPlayground_InventoryGrid::AddItem(UPlayground_InventoryItem* Item)
