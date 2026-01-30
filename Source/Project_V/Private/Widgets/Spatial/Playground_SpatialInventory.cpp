@@ -103,10 +103,10 @@ void UPlayground_SpatialInventory::EquippedSlottedItemClicked(UPlayground_Equipp
 	RemoveEquippedSlottedItem(EquippedSlottedItem);
 	
 	// Make a new equipped slotted item (for the item we held in HoverItem)
-	MakeEquippedSlottedItem(EquippedSlottedItem, EquippedGridSlot, ItemToUnequip);
+	MakeEquippedSlottedItem(EquippedSlottedItem, EquippedGridSlot, ItemToEquip);
 
 	// Broadcast delegates for OnItemEquipped/OnItemUnequipped (from the IC)
-
+	BroadcastSlotClickedDelegates(ItemToEquip, ItemToUnequip);
 }
 
 FPlayground_SlotAvailabilityResult UPlayground_SpatialInventory::HasRoomForItem(UPlayground_ItemComponent* ItemComponent) const
@@ -228,7 +228,7 @@ UPlayground_EquippedGridSlot* UPlayground_SpatialInventory::FindSlotWithEquipped
 
 void UPlayground_SpatialInventory::ClearSlotOfItem(UPlayground_EquippedGridSlot* EquippedGridSlot)
 {
-	if (!IsValid(EquippedGridSlot))
+	if (IsValid(EquippedGridSlot))
 	{
 		EquippedGridSlot->SetEquippedSlottedItem(nullptr);
 		EquippedGridSlot->SetInventoryItem(nullptr);
@@ -239,7 +239,7 @@ void UPlayground_SpatialInventory::RemoveEquippedSlottedItem(UPlayground_Equippe
 {
 	if (!IsValid(EquippedSlottedItem)) return;
 
-	if (!EquippedSlottedItem->OnEquippedSlottedItemClicked.IsAlreadyBound(this, &ThisClass::EquippedSlottedItemClicked))
+	if (EquippedSlottedItem->OnEquippedSlottedItemClicked.IsAlreadyBound(this, &ThisClass::EquippedSlottedItemClicked))
 	{
 		EquippedSlottedItem->OnEquippedSlottedItemClicked.RemoveDynamic(this, &ThisClass::EquippedSlottedItemClicked);
 	}
@@ -253,9 +253,22 @@ void UPlayground_SpatialInventory::MakeEquippedSlottedItem(UPlayground_EquippedS
 	UPlayground_EquippedSlottedItem* SlottedItem = EquippedGridSlot->OnItemEquipped(ItemToEquip, 
 		EquippedSlottedItem->GetEquipmentTypeTag(), 
 		UPlayground_InventoryStatics::GetInventoryWidget(GetOwningPlayer())->GetTileSize());
-	SlottedItem->OnEquippedSlottedItemClicked.AddDynamic(this, &ThisClass::EquippedSlottedItemClicked);
+	if (IsValid(SlottedItem)) SlottedItem->OnEquippedSlottedItemClicked.AddDynamic(this, &ThisClass::EquippedSlottedItemClicked);
 
 	EquippedGridSlot->SetEquippedSlottedItem(SlottedItem);
+}
+
+void UPlayground_SpatialInventory::BroadcastSlotClickedDelegates(UPlayground_InventoryItem* ItemToEquip, UPlayground_InventoryItem* ItemToUnequip) const
+{
+	UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
+	check(IsValid(InventoryComponent));
+	InventoryComponent->Server_EquipSlotClicked(ItemToEquip, ItemToUnequip);
+
+	if (GetOwningPlayer()->GetNetMode() != NM_DedicatedServer)
+	{
+		InventoryComponent->OnItemEquipped.Broadcast(ItemToEquip);
+		InventoryComponent->OnItemUnequipped.Broadcast(ItemToUnequip);
+	}
 }
 
 

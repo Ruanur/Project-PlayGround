@@ -99,6 +99,7 @@ private:
 	void ClearSlotOfItem(UPlayground_EquippedGridSlot* EquippedGridSlot);
 	void RemoveEquippedSlottedItem(UPlayground_EquippedSlottedItem* EquippedSlottedItem);
 	void MakeEquippedSlottedItem(UPlayground_EquippedSlottedItem* EquippedSlottedItem, UPlayground_EquippedGridSlot* EquippedGridSlot, UPlayground_InventoryItem* ItemToEquip);
+	void BroadcastSlotClickedDelegates(UPlayground_InventoryItem* ItemToEquip, UPlayground_InventoryItem* ItemToUnequip) const;
 
 	TWeakObjectPtr<UPlayground_InventoryGrid> ActiveGrid;
 };
