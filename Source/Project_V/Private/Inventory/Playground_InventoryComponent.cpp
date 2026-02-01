@@ -179,14 +179,18 @@ void UPlayground_InventoryComponent::Server_ConsumeItem_Implementation(UPlaygrou
 
 void UPlayground_InventoryComponent::Server_EquipSlotClicked_Implementation(UPlayground_InventoryItem* ItemToEquip, UPlayground_InventoryItem* ItemToUnequip)
 {	
-	// Equipment Component will listen to these delegates
-	OnItemEquipped.Broadcast(ItemToEquip);
-	OnItemUnequipped.Broadcast(ItemToUnequip);
+	Multicast_EquipSlotClicked(ItemToEquip, ItemToUnequip);
 }
 
 void UPlayground_InventoryComponent::Multicast_EquipSlotClicked_Implementation(UPlayground_InventoryItem* ItemToEquip, UPlayground_InventoryItem* ItemToUnequip)
 {
-	Multicast_EquipSlotClicked(ItemToEquip, ItemToUnequip);
+	// Equipment Component will listen to these delegates
+	OnItemEquipped.Broadcast(ItemToEquip);
+	OnItemUnequipped.Broadcast(ItemToUnequip);
+
+	UE_LOG(LogTemp, Warning, TEXT("[Broadcast Equip] %s  NetMode=%d"),
+		ItemToEquip ? *ItemToEquip->GetName() : TEXT("NULL"),
+		(int32)GetNetMode());
 }
 
 void UPlayground_InventoryComponent::ToggleInventoryMenu()

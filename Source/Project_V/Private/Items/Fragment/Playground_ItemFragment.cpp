@@ -127,12 +127,12 @@ void FPlayground_LabeledNumberFragment::Manifest()
 
 void FPlayground_StrengthModifier::OnEquip(APlayerController* PC)
 {
-	
+	Debug::Print(TEXT("Strength increased by : 15.0"), FColor::Green);
 }
 
 void FPlayground_StrengthModifier::OnUnequip(APlayerController* PC)
 {
-	
+	Debug::Print(TEXT("Strength decreased by : 15.0"), FColor::Red);
 }
 
 
@@ -167,5 +167,16 @@ void FPlayground_EquipmentFragment::Assimilate(UPlayground_CompositeBase* Compos
 	{
 		const auto& ModRef = Modifier.Get();
 		ModRef.Assimilate(Composite);
+	}
+}
+
+void FPlayground_EquipmentFragment::Manifest()
+{
+	FPlayground_InventoryItemFragment::Manifest();
+
+	for (auto& Modifier : EquipModifiers)
+	{
+		auto& ModRef = Modifier.GetMutable();
+		ModRef.Manifest();
 	}
 }

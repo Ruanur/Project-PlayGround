@@ -2,10 +2,14 @@
 
 
 #include "EquipmentManagement/Components/Playground_EquipmentComponent.h"
+
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Character.h"
 #include "Inventory/Utils/Playground_InventoryStatics.h"
 #include "Inventory/Playground_InventoryComponent.h"
+#include "Items/Drops/Manifest/Playground_ItemManifest.h"
+#include "Items/Drops/Playground_InventoryItem.h"
+#include "Items/Fragment/Playground_ItemFragment.h"
 #include "Kismet/GameplayStatics.h"
 
 // Called when the game starts
@@ -42,12 +46,26 @@ void UPlayground_EquipmentComponent::InitInventoryComponent()
 
 void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* EquippedItem)
 {
+	if (!IsValid(EquippedItem)) return;
+	if (!OwningPlayerController->HasAuthority()) return;
 
+	FPlayground_ItemManifest& ItemManifest = EquippedItem->GetItemManifestMutable();
+	FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
+	if (!EquipmentFragment) return;
+
+	EquipmentFragment->OnEquip(OwningPlayerController.Get());
 }
 
-void UPlayground_EquipmentComponent::OnItemUnequipped(UPlayground_InventoryItem* EquippedItem)
+void UPlayground_EquipmentComponent::OnItemUnequipped(UPlayground_InventoryItem* UnequippedItem)
 {
+	if (!IsValid(UnequippedItem)) return;
+	if (OwningPlayerController->HasAuthority()) return;
 
+	FPlayground_ItemManifest& ItemManifest = UnequippedItem->GetItemManifestMutable();
+	FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
+	if (!EquipmentFragment) return;
+
+	EquipmentFragment->OnUnequip(OwningPlayerController.Get());
 }
 
 

@@ -62,9 +62,6 @@ void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedG
 
 	EquippedSlottedItem->OnEquippedSlottedItemClicked.AddDynamic(this, &ThisClass::EquippedSlottedItemClicked);
 
-	// Clear the Hover Item
-	Grid_Equippables->PG_ClearHoverItem();
-	
 	// Inform the server that we've equipped an item (potentially unequipped an item as well)
 	UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
 	check(IsValid(InventoryComponent));
@@ -75,6 +72,9 @@ void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedG
 	{
 		InventoryComponent->OnItemEquipped.Broadcast(HoverItem->GetInventoryItem());
 	}
+
+	// Clear the Hover Item
+	Grid_Equippables->PG_ClearHoverItem();
 }
 
 void UPlayground_SpatialInventory::EquippedSlottedItemClicked(UPlayground_EquippedSlottedItem* EquippedSlottedItem)

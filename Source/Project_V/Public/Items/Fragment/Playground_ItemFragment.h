@@ -224,6 +224,7 @@ struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment
 	void OnEquip(APlayerController* PC);
 	void OnUnequip(APlayerController* PC);
 	virtual void Assimilate(UPlayground_CompositeBase* Composite) const override;
+	virtual void Manifest() override;
 
 private:
 

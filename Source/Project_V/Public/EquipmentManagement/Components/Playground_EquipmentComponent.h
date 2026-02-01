@@ -32,7 +32,7 @@ private:
 	void OnItemEquipped(UPlayground_InventoryItem* EquippedItem);
 
 	UFUNCTION()
-	void OnItemUnequipped(UPlayground_InventoryItem* EquippedItem);
+	void OnItemUnequipped(UPlayground_InventoryItem* UnequippedItem);
 
 	void InitInventoryComponent();
 };
