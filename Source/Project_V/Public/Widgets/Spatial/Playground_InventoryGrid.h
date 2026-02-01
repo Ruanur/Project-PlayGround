@@ -47,6 +47,7 @@ public:
 	float GetTileSize() const { return TileSize; }
 	void PG_ClearHoverItem();
 	void AssignHoverItem(UPlayground_InventoryItem* InventoryItem);
+	void OnHide();
 
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
@@ -57,8 +58,8 @@ private:
 	TWeakObjectPtr<UCanvasPanel> OwningCanvasPanel;
 
 	void ConstructGrid();
-	FPlayground_SlotAvailabilityResult HasRoomForItem(const UPlayground_InventoryItem* Item);
-	FPlayground_SlotAvailabilityResult HasRoomForItem(const FPlayground_ItemManifest& Manifest);
+	FPlayground_SlotAvailabilityResult HasRoomForItem(const UPlayground_InventoryItem* Item, const int32 StackAmountOverride = -1);
+	FPlayground_SlotAvailabilityResult HasRoomForItem(const FPlayground_ItemManifest& Manifest, const int32 StackAmountOverride = -1);
 	void AddItemToIndices(const FPlayground_SlotAvailabilityResult& Result, UPlayground_InventoryItem* NewItem);
 	bool MatchesCategory(const UPlayground_InventoryItem* Item) const;
 	FVector2D GetDrawSize(const FPlayground_GridFragment* GridFragment) const;
@@ -119,6 +120,7 @@ private:
 	bool ShouldFillInStack(const int32 RoomInCilckedSlot, const int32 HoveredStackCount) const;
 	void PG_FillInStack(const int32 FillAmount, const int32 Remainder, const int32 Index);
 	void PG_CreateItemPopUp(const int32 GridIndex);
+	void PutHoverItemBack();
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UPlayground_ItemPopUp> ItemPopUpClass;
@@ -161,6 +163,9 @@ private:
 
 	UFUNCTION()
 	void PG_OnPopUpMenuConsume(int32 Index);
+	
+	UFUNCTION()
+	void OnInventoryMenuToggled(bool bOpen);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory;

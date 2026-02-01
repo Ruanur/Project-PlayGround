@@ -31,6 +31,7 @@ void UPlayground_InventoryGrid::NativeOnInitialized()
 	InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
 	InventoryComponent->OnItemAdded.AddDynamic(this, &ThisClass::AddItem);
 	InventoryComponent->OnStackChange.AddDynamic(this, &ThisClass::AddStacks);
+	InventoryComponent->OnInventoryMenuToggled.AddDynamic(this, &ThisClass::OnInventoryMenuToggled);
 }
 
 void UPlayground_InventoryGrid::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -269,12 +270,12 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 	return HasRoomForItem(ItemComponent->GetItemManifest());
 }
 
-FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const UPlayground_InventoryItem* Item)
+FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const UPlayground_InventoryItem* Item, const int32 StackAmountOverride)
 {
-	return HasRoomForItem(Item->GetItemManifest());
+	return HasRoomForItem(Item->GetItemManifest(), StackAmountOverride);
 }
 
-FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const FPlayground_ItemManifest& Manifest)
+FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(const FPlayground_ItemManifest& Manifest, const int32 StackAmountOverride)
 {
 	FPlayground_SlotAvailabilityResult Result;
 	
@@ -288,6 +289,10 @@ FPlayground_SlotAvailabilityResult UPlayground_InventoryGrid::HasRoomForItem(con
 	// 추가해야할 스택 수 계산
 	const int32 MaxStackSize = StackableFragment ? StackableFragment->GetMaxStackSize() : 1;
 	int32 AmountToFill = StackableFragment ? StackableFragment->GetStackCount() : 1;
+	if (StackAmountOverride != -1 && Result.bStackable)
+	{
+		AmountToFill = StackAmountOverride;
+	}
 
 	TSet<int32> CheckedIndices;
 	// 각 그리드 슬롯 순회
@@ -542,6 +547,10 @@ void UPlayground_InventoryGrid::AssignHoverItem(UPlayground_InventoryItem* Inven
 	GetOwningPlayer()->SetMouseCursorWidget(EMouseCursor::Default, HoverItem);
 }
 
+void UPlayground_InventoryGrid::OnHide()
+{
+	PutHoverItemBack();
+}
 
 
 void UPlayground_InventoryGrid::AddStacks(const FPlayground_SlotAvailabilityResult& Result)
@@ -968,6 +977,17 @@ void UPlayground_InventoryGrid::PG_CreateItemPopUp(const int32 GridIndex)
 	
 }
 
+void UPlayground_InventoryGrid::PutHoverItemBack()
+{
+	if (!IsValid(HoverItem)) return;
+
+	FPlayground_SlotAvailabilityResult Result = HasRoomForItem(HoverItem->GetInventoryItem(), HoverItem->GetStackCount());
+	Result.Item = HoverItem->GetInventoryItem();
+
+	AddStacks(Result);
+	PG_ClearHoverItem();
+}
+
 void UPlayground_InventoryGrid::PG_DropItem()
 {
 	if (!IsValid(HoverItem)) return;
@@ -1076,6 +1096,14 @@ void UPlayground_InventoryGrid::PG_OnPopUpMenuConsume(int32 Index)
 	if (NewStackCount <= 0)
 	{
 		RemoveItemFromGrid(RightClickedItem, Index);
+	}
+}
+
+void UPlayground_InventoryGrid::OnInventoryMenuToggled(bool bOpen)
+{
+	if (!bOpen)
+	{
+		PutHoverItemBack();
 	}
 }
 

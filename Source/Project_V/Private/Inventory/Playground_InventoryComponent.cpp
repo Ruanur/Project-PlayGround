@@ -201,6 +201,8 @@ void UPlayground_InventoryComponent::ToggleInventoryMenu()
 		Debug::Print(TEXT("Open Inventory"));
 		OpenInventory();
 	}
+
+	OnInventoryMenuToggled.Broadcast(bInventoryMenuOpen);
 }
 
 void UPlayground_InventoryComponent::AddRepSubObject(UObject* SubObj)
