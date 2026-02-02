@@ -20,15 +20,32 @@ void UPlayground_EquipmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwningPlayerController = Cast<APlayerController>(GetOwner());
-	if (OwningPlayerController.IsValid())
+	InitPlayerController();
+}
+
+void UPlayground_EquipmentComponent::InitPlayerController()
+{
+	if (OwningPlayerController = Cast<APlayerController>(GetOwner()); OwningPlayerController.IsValid())
 	{
 		if (ACharacter* OwnerCharacter = Cast<ACharacter>(OwningPlayerController->GetPawn()); IsValid(OwnerCharacter))
 		{
 			OwningSkeletalMesh = OwnerCharacter->GetMesh();
+			OnPossessedPawnChange(nullptr, OwnerCharacter);
 		}
-		InitInventoryComponent();
+		else
+		{
+			OwningPlayerController->OnPossessedPawnChanged.AddDynamic(this, &ThisClass::OnPossessedPawnChange);
+		}
 	}
+}
+
+void UPlayground_EquipmentComponent::OnPossessedPawnChange(APawn* OldPawn, APawn* NewPawn)
+{
+	if (ACharacter* OwnerCharacter = Cast<ACharacter>(NewPawn); IsValid(OwnerCharacter))
+	{
+		OwningSkeletalMesh = OwnerCharacter->GetMesh();
+	}
+	InitInventoryComponent();
 }
 
 void UPlayground_EquipmentComponent::InitInventoryComponent()
@@ -94,7 +111,6 @@ void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* E
 
 	EquippedActors.Add(SpawnedEquipActor);
 
-	RemoveEquippedActor(EquipmentFragment->GetEquipmentType());
 }
 
 void UPlayground_EquipmentComponent::OnItemUnequipped(UPlayground_InventoryItem* UnequippedItem)
@@ -107,6 +123,8 @@ void UPlayground_EquipmentComponent::OnItemUnequipped(UPlayground_InventoryItem*
 	if (!EquipmentFragment) return;
 
 	EquipmentFragment->OnUnequip(OwningPlayerController.Get());
+
+	RemoveEquippedActor(EquipmentFragment->GetEquipmentType());
 }
 
 
