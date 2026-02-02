@@ -228,6 +228,8 @@ struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment
 
 	APlayground_EquipActor* SpawnAttachedActor(USkeletalMeshComponent* AttachMesh) const;
 	void DestroyAttachedActor() const;
+	FGameplayTag GetEquipmentType() const { return EquipmentType; }
+	void SetEquippedActor(APlayground_EquipActor* EquipActor);
 
 private:
 
@@ -241,5 +243,8 @@ private:
 	TWeakObjectPtr<APlayground_EquipActor> EquippedActor = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
-	FName SocketAttackPoint{NAME_None};
+	FName SocketAttachPoint{NAME_None};
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	FGameplayTag EquipmentType = FGameplayTag::EmptyTag;
 };

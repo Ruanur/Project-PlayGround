@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "Playground_EquipmentComponent.generated.h"
 
+struct FPlayground_EquipmentFragment;
+struct FPlayground_ItemManifest;
+class APlayground_EquipActor;
 class UPlayground_InventoryComponent;
 class UPlayground_InventoryItem;
 class APlayerController;
@@ -35,4 +38,8 @@ private:
 	void OnItemUnequipped(UPlayground_InventoryItem* UnequippedItem);
 
 	void InitInventoryComponent();
+	APlayground_EquipActor* SpawnEquippedActor(FPlayground_EquipmentFragment* EquipmentFragment, const FPlayground_ItemManifest& Manifest, USkeletalMeshComponent* AttachMesh);
+
+	UPROPERTY()
+	TArray<TObjectPtr<APlayground_EquipActor>> EquippedActors;
 };

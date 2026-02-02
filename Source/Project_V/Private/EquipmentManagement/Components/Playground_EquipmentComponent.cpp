@@ -11,6 +11,7 @@
 #include "Items/Drops/Playground_InventoryItem.h"
 #include "Items/Fragment/Playground_ItemFragment.h"
 #include "Kismet/GameplayStatics.h"
+#include "EquipmentManagement/EqiupActor/Playground_EquipActor.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -46,6 +47,16 @@ void UPlayground_EquipmentComponent::InitInventoryComponent()
 	}
 }
 
+APlayground_EquipActor* UPlayground_EquipmentComponent::SpawnEquippedActor(FPlayground_EquipmentFragment* EquipmentFragment, const FPlayground_ItemManifest& Manifest, USkeletalMeshComponent* AttachMesh)
+{
+	APlayground_EquipActor* SpawnedEquipActor = EquipmentFragment->SpawnAttachedActor(AttachMesh);
+
+	SpawnedEquipActor->SetEquipmentType(EquipmentFragment->GetEquipmentType());
+	SpawnedEquipActor->SetOwner(GetOwner());
+	EquipmentFragment->SetEquippedActor(SpawnedEquipActor);
+	return SpawnedEquipActor;
+}
+
 void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* EquippedItem)
 {
 	// Error : EquippedItem = Nullptr 값으로 호출됨
@@ -57,6 +68,13 @@ void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* E
 	if (!EquipmentFragment) return;
 
 	EquipmentFragment->OnEquip(OwningPlayerController.Get());
+
+
+	if (!OwningSkeletalMesh.IsValid()) return;
+	APlayground_EquipActor* SpawnedEquipActor = SpawnEquippedActor(EquipmentFragment, ItemManifest, OwningSkeletalMesh.Get());
+
+	EquippedActors.Add(SpawnedEquipActor);
+
 }
 
 void UPlayground_EquipmentComponent::OnItemUnequipped(UPlayground_InventoryItem* UnequippedItem)

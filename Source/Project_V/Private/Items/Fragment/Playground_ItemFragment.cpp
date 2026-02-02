@@ -187,7 +187,7 @@ APlayground_EquipActor* FPlayground_EquipmentFragment::SpawnAttachedActor(USkele
 	if (!IsValid(EquipActorClass) || !IsValid(AttachMesh)) return nullptr;
 
 	APlayground_EquipActor* SpawnedActor = AttachMesh->GetWorld()->SpawnActor<APlayground_EquipActor>(EquipActorClass);
-	SpawnedActor->AttachToComponent(AttachMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketAttackPoint);
+	SpawnedActor->AttachToComponent(AttachMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketAttachPoint);
 
 	return SpawnedActor;
 }
@@ -198,4 +198,9 @@ void FPlayground_EquipmentFragment::DestroyAttachedActor() const
 	{
 		EquippedActor->Destroy();
 	}
+}
+
+void FPlayground_EquipmentFragment::SetEquippedActor(APlayground_EquipActor* EquipActor)
+{
+	EquippedActor = EquipActor;
 }
