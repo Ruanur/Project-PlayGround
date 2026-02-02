@@ -9,6 +9,7 @@
 #include "Widgets/Composite/Playground_LeafLabeledValue.h"
 #include "AbilitySystem/PlaygroundAttributeSet.h"
 #include "GameplayEffect.h"
+#include "EquipmentManagement/EqiupActor/Playground_EquipActor.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -178,5 +179,23 @@ void FPlayground_EquipmentFragment::Manifest()
 	{
 		auto& ModRef = Modifier.GetMutable();
 		ModRef.Manifest();
+	}
+}
+
+APlayground_EquipActor* FPlayground_EquipmentFragment::SpawnAttachedActor(USkeletalMeshComponent* AttachMesh) const
+{
+	if (!IsValid(EquipActorClass) || !IsValid(AttachMesh)) return nullptr;
+
+	APlayground_EquipActor* SpawnedActor = AttachMesh->GetWorld()->SpawnActor<APlayground_EquipActor>(EquipActorClass);
+	SpawnedActor->AttachToComponent(AttachMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketAttackPoint);
+
+	return SpawnedActor;
+}
+
+void FPlayground_EquipmentFragment::DestroyAttachedActor() const
+{
+	if (EquippedActor.IsValid())
+	{
+		EquippedActor->Destroy();
 	}
 }

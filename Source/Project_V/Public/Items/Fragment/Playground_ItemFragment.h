@@ -214,6 +214,7 @@ struct FPlayground_StrengthModifier : public FPlayground_EquipModifier
 	virtual void OnUnequip(APlayerController* PC) override;
 };
 
+class APlayground_EquipActor;
 USTRUCT(BlueprintType)
 struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment
 {
@@ -225,10 +226,20 @@ struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment
 	virtual void Assimilate(UPlayground_CompositeBase* Composite) const override;
 	virtual void Manifest() override;
 
+	APlayground_EquipActor* SpawnAttachedActor(USkeletalMeshComponent* AttachMesh) const;
+	void DestroyAttachedActor() const;
+
 private:
 
 	//meta = (ExcludeBaseStruct) 사용 시 반드시 StructUtils/InstancedStruct.h Include 하기
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TArray<TInstancedStruct<FPlayground_EquipModifier>> EquipModifiers;
 
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	TSubclassOf<APlayground_EquipActor> EquipActorClass = nullptr;
+
+	TWeakObjectPtr<APlayground_EquipActor> EquippedActor = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory")
+	FName SocketAttackPoint{NAME_None};
 };
