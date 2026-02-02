@@ -57,6 +57,25 @@ APlayground_EquipActor* UPlayground_EquipmentComponent::SpawnEquippedActor(FPlay
 	return SpawnedEquipActor;
 }
 
+APlayground_EquipActor* UPlayground_EquipmentComponent::FindEquippedActor(const FGameplayTag& EquipmentTypeTag)
+{
+	auto FoundActor = EquippedActors.FindByPredicate([&EquipmentTypeTag](const APlayground_EquipActor* EquippedActor)
+		{
+			return EquippedActor->GetEquipmentType().MatchesTagExact(EquipmentTypeTag);
+		});
+
+	return FoundActor ? *FoundActor : nullptr;
+}
+
+void UPlayground_EquipmentComponent::RemoveEquippedActor(const FGameplayTag& EquipmentTypeTag)
+{
+	if (APlayground_EquipActor* EquippedActor = FindEquippedActor(EquipmentTypeTag); IsValid(EquippedActor))
+	{
+		EquippedActors.Remove(EquippedActor);
+		EquippedActor->Destroy();
+	}
+}
+
 void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* EquippedItem)
 {
 	// Error : EquippedItem = Nullptr 값으로 호출됨
@@ -75,6 +94,7 @@ void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* E
 
 	EquippedActors.Add(SpawnedEquipActor);
 
+	RemoveEquippedActor(EquipmentFragment->GetEquipmentType());
 }
 
 void UPlayground_EquipmentComponent::OnItemUnequipped(UPlayground_InventoryItem* UnequippedItem)

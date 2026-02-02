@@ -8,6 +8,7 @@
 
 struct FPlayground_EquipmentFragment;
 struct FPlayground_ItemManifest;
+struct FGameplayTag;
 class APlayground_EquipActor;
 class UPlayground_InventoryComponent;
 class UPlayground_InventoryItem;
@@ -42,4 +43,7 @@ private:
 
 	UPROPERTY()
 	TArray<TObjectPtr<APlayground_EquipActor>> EquippedActors;
+
+	APlayground_EquipActor* FindEquippedActor(const FGameplayTag& EquipmentTypeTag);
+	void RemoveEquippedActor(const FGameplayTag& EquipmentTypeTag);
 };
