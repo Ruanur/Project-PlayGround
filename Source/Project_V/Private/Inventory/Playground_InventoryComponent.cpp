@@ -187,10 +187,6 @@ void UPlayground_InventoryComponent::Multicast_EquipSlotClicked_Implementation(U
 	// Equipment Component will listen to these delegates
 	OnItemEquipped.Broadcast(ItemToEquip);
 	OnItemUnequipped.Broadcast(ItemToUnequip);
-
-	UE_LOG(LogTemp, Warning, TEXT("[Broadcast Equip] %s  NetMode=%d"),
-		ItemToEquip ? *ItemToEquip->GetName() : TEXT("NULL"),
-		(int32)GetNetMode());
 }
 
 void UPlayground_InventoryComponent::ToggleInventoryMenu()

@@ -203,7 +203,6 @@ struct FPlayground_EquipModifier : public FPlayground_LabeledNumberFragment
 	virtual void OnEquip(APlayerController* PC) {}
 	virtual void OnUnequip(APlayerController* PC) {}
 
-
 };
 
 USTRUCT(BlueprintType)
@@ -229,7 +228,7 @@ struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment
 private:
 
 	//meta = (ExcludeBaseStruct) 사용 시 반드시 StructUtils/InstancedStruct.h Include 하기
-	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TArray<TInstancedStruct<FPlayground_EquipModifier>> EquipModifiers;
 
 };

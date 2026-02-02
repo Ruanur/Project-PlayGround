@@ -12,6 +12,8 @@
 #include "Items/Fragment/Playground_ItemFragment.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "PlaygroundDebugHelper.h"
+
 // Called when the game starts
 void UPlayground_EquipmentComponent::BeginPlay()
 {
@@ -46,6 +48,7 @@ void UPlayground_EquipmentComponent::InitInventoryComponent()
 
 void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* EquippedItem)
 {
+	// Error : EquippedItem = Nullptr 값으로 호출됨
 	if (!IsValid(EquippedItem)) return;
 	if (!OwningPlayerController->HasAuthority()) return;
 
@@ -59,7 +62,7 @@ void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* E
 void UPlayground_EquipmentComponent::OnItemUnequipped(UPlayground_InventoryItem* UnequippedItem)
 {
 	if (!IsValid(UnequippedItem)) return;
-	if (OwningPlayerController->HasAuthority()) return;
+	if (!OwningPlayerController->HasAuthority()) return;
 
 	FPlayground_ItemManifest& ItemManifest = UnequippedItem->GetItemManifestMutable();
 	FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
