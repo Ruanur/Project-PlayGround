@@ -20,6 +20,15 @@ void UPlayground_EquipmentComponent::SetOwningSkeletalMesh(USkeletalMeshComponen
 	OwningSkeletalMesh = OwningMesh;
 }
 
+void UPlayground_EquipmentComponent::InitializeOwner(APlayerController* PlayerController)
+{
+	if (!IsValid(PlayerController))
+	{
+		OwningPlayerController = PlayerController;
+	}
+	InitInventoryComponent();
+}
+
 // Called when the game starts
 void UPlayground_EquipmentComponent::BeginPlay()
 {
@@ -108,8 +117,11 @@ void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* E
 	FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
 	if (!EquipmentFragment) return;
 
-	EquipmentFragment->OnEquip(OwningPlayerController.Get());
-
+	if (!bIsProxy)
+	{
+		EquipmentFragment->OnEquip(OwningPlayerController.Get());
+	}
+	
 
 	if (!OwningSkeletalMesh.IsValid()) return;
 	APlayground_EquipActor* SpawnedEquipActor = SpawnEquippedActor(EquipmentFragment, ItemManifest, OwningSkeletalMesh.Get());
@@ -127,7 +139,10 @@ void UPlayground_EquipmentComponent::OnItemUnequipped(UPlayground_InventoryItem*
 	FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
 	if (!EquipmentFragment) return;
 
-	EquipmentFragment->OnUnequip(OwningPlayerController.Get());
+	if (!bIsProxy)
+	{
+		EquipmentFragment->OnUnequip(OwningPlayerController.Get());
+	}
 
 	RemoveEquippedActor(EquipmentFragment->GetEquipmentType());
 }
