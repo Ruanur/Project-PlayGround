@@ -22,7 +22,7 @@ void UPlayground_EquipmentComponent::SetOwningSkeletalMesh(USkeletalMeshComponen
 
 void UPlayground_EquipmentComponent::InitializeOwner(APlayerController* PlayerController)
 {
-	if (!IsValid(PlayerController))
+	if (IsValid(PlayerController))
 	{
 		OwningPlayerController = PlayerController;
 	}

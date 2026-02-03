@@ -2,6 +2,8 @@
 
 
 #include "EquipmentManagement/ProxyMesh/Playground_ProxyMesh.h"
+
+
 #include "EquipmentManagement/Components/Playground_EquipmentComponent.h"
 #include "GameFramework/Character.h"
 
@@ -24,8 +26,8 @@ APlayground_ProxyMesh::APlayground_ProxyMesh()
 void APlayground_ProxyMesh::BeginPlay()
 {
 	Super::BeginPlay();
+
 	DelayedInitializeOwner();
-	
 }
 
 void APlayground_ProxyMesh::DelayedInitializeOwner()
@@ -45,7 +47,7 @@ void APlayground_ProxyMesh::DelayedInitializeOwner()
 	}
 
 	ACharacter* Character = Cast<ACharacter>(PC->GetPawn());
-	if (!IsValid(PC))
+	if (!IsValid(Character))
 	{
 		DelayedInitalization();
 		return;
