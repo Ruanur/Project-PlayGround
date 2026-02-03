@@ -15,6 +15,11 @@
 
 #include "PlaygroundDebugHelper.h"
 
+void UPlayground_EquipmentComponent::SetOwningSkeletalMesh(USkeletalMeshComponent* OwningMesh)
+{
+	OwningSkeletalMesh = OwningMesh;
+}
+
 // Called when the game starts
 void UPlayground_EquipmentComponent::BeginPlay()
 {

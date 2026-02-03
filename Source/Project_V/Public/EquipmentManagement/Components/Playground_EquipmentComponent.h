@@ -21,7 +21,8 @@ class PROJECT_V_API UPlayground_EquipmentComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	
+	void SetOwningSkeletalMesh(USkeletalMeshComponent* OwningMesh);
+	void SetIsProxy(bool bProxy) { bIsProxy = bProxy; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -50,4 +51,6 @@ private:
 	
 	UFUNCTION()
 	void OnPossessedPawnChange(APawn* OldPawn, APawn* NewPawn); 
+
+	bool bIsProxy{ false };
 };
