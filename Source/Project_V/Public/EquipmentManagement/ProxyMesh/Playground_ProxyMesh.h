@@ -16,6 +16,7 @@ class PROJECT_V_API APlayground_ProxyMesh : public AActor
 	
 public:	
 	APlayground_ProxyMesh();
+	USkeletalMeshComponent* GetMesh() const { return Mesh; }
 
 protected:
 	virtual void BeginPlay() override;
