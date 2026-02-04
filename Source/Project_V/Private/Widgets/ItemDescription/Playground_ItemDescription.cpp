@@ -9,3 +9,13 @@ FVector2D UPlayground_ItemDescription::GetBoxSize() const
 {
 	return SizeBox->GetDesiredSize();
 }
+
+void UPlayground_ItemDescription::SetVisibility(ESlateVisibility InVisibility)
+{
+	for (auto Child : GetChildren())
+	{
+		Child->PG_Collapse();
+	}
+
+	Super::SetVisibility(InVisibility);
+}

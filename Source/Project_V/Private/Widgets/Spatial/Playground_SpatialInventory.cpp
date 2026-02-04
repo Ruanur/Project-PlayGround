@@ -138,8 +138,8 @@ void UPlayground_SpatialInventory::OnItemHovered(UPlayground_InventoryItem* Item
 	DescriptionTimerDelegate.BindLambda([this, &Manifest, DescriptionWidget]()
 		{
 			// Assimilate the manifest into the Item Description widget.
-			Manifest.AssimilateInventoryFragments(DescriptionWidget);
 			GetItemDescription()->SetVisibility(ESlateVisibility::HitTestInvisible);
+			Manifest.AssimilateInventoryFragments(DescriptionWidget);
 		});
 
 	GetOwningPlayer()->GetWorldTimerManager().SetTimer(DescriptionTimer, DescriptionTimerDelegate, DescriptionTimerDelay, false);

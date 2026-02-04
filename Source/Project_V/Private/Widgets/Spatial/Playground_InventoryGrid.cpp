@@ -806,6 +806,8 @@ void UPlayground_InventoryGrid::OnGridSlotClicked(int32 GridIndex, const FPointe
 		return;
 	}
 
+	if (!IsInGridBounds(ItemDropIndex, HoverItem->GetGridDimensions())) return;
+
 	auto GridSlot = GridSlots[ItemDropIndex];
 	if (!GridSlot->GetInventoryItem().IsValid())
 	{

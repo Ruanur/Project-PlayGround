@@ -18,6 +18,7 @@ public:
 	virtual void NativeOnInitialized() override;
 	virtual void ApplyFunction(FuncType Function) override;
 	virtual void PG_Collapse() override;
+	TArray<UPlayground_CompositeBase*> GetChildren() { return Children; }
 
 private:
 	UPROPERTY()

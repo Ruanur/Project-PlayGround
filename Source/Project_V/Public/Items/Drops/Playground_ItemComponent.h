@@ -19,6 +19,7 @@ public:
 	void InitItemManifest(FPlayground_ItemManifest CopyOfManifest);
 
 	FPlayground_ItemManifest GetItemManifest() const { return ItemManifest; }
+	FPlayground_ItemManifest& GetItemManifestMutable() { return ItemManifest; }
 
 	FString GetPickUpMessage() const { return PickupMessage; }
 	void PickedUp();

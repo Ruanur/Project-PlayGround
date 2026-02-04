@@ -11,6 +11,7 @@
 APlayground_ProxyMesh::APlayground_ProxyMesh()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	SetReplicates(false);
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
 

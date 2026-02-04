@@ -56,11 +56,11 @@ void UPlayground_InventoryComponent::TryAddItem(UPlayground_ItemComponent* ItemC
 	else if (Result.TotalRoomToFill > 0)
 	{
 		// This item type doesn't exist in the inventory. Create a new one and update all pertinent slots.
-		Server_AddNewItem(ItemComponent, Result.bStackable ? Result.TotalRoomToFill : 0);
+		Server_AddNewItem(ItemComponent, Result.bStackable ? Result.TotalRoomToFill : 0, Result.Remainder);
 	}
 }
 
-void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlayground_ItemComponent* ItemComponent, int32 StackCount)
+void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlayground_ItemComponent* ItemComponent, int32 StackCount, int32 Remainder)
 {
 	UPlayground_InventoryItem* NewItem = InventoryList.AddEntry(ItemComponent);
 	NewItem->SetTotalStackCount(StackCount);
@@ -70,9 +70,14 @@ void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlaygroun
 		OnItemAdded.Broadcast(NewItem);
 	}
 
-	// Tell the Item Component to Destory its owning actor.
-	ItemComponent->PickedUp();
-
+	if (Remainder == 0)
+	{
+		ItemComponent->PickedUp();
+	}
+	else if (FPlayground_StackableFragment* StackableFragment = ItemComponent->GetItemManifestMutable().GetFragmentOfTypeMutable<FPlayground_StackableFragment>())
+	{
+		StackableFragment->SetStackCount(Remainder);
+	}
 }
 
 void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlayground_ItemComponent* ItemComponent, int32 StackCount, int32 Remainder)
@@ -89,7 +94,7 @@ void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlay
 	{
 		ItemComponent->PickedUp();
 	}
-	else if (FPlayground_StackableFragment* StackableFragment = ItemComponent->GetItemManifest().GetFragmentOfTypeMutable<FPlayground_StackableFragment>())
+	else if (FPlayground_StackableFragment* StackableFragment = ItemComponent->GetItemManifestMutable().GetFragmentOfTypeMutable<FPlayground_StackableFragment>())
 	{
 		StackableFragment->SetStackCount(Remainder);
 	}

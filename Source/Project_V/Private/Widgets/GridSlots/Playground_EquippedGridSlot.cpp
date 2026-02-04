@@ -32,6 +32,8 @@ void UPlayground_EquippedGridSlot::NativeOnMouseLeave(const FPointerEvent& InMou
 	UPlayground_HoverItem* HoverItem = UPlayground_InventoryStatics::GetHoverItem(GetOwningPlayer());
 	if (!IsValid(HoverItem)) return;
 
+	if (IsValid(EquippedSlottedItem)) return;
+
 	if (HoverItem->GetItemType().MatchesTag(EquipmentTypeTag))
 	{
 		PG_SetUnoccupiedTexture();

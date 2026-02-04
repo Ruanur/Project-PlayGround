@@ -19,6 +19,7 @@ class PROJECT_V_API UPlayground_ItemDescription : public UPlayground_Composite
 public:
 
 	FVector2D GetBoxSize() const;
+	virtual void SetVisibility(ESlateVisibility InVisibility) override;
 
 private:
 	UPROPERTY(meta = (BindWidget))
