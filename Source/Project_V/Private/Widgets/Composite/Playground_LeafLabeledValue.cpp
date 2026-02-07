@@ -30,6 +30,8 @@ void UPlayground_LeafLabeledValue::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
+	if (!Text_Label || !Text_Value) return;
+
 	FSlateFontInfo FontInfo_Label = Text_Label->GetFont();
 	FontInfo_Label.Size = FontSize_Label;
 

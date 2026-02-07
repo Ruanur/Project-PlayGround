@@ -51,6 +51,8 @@ namespace GameItems
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireFernFruit)
 	}
+
+
 }
 
 
