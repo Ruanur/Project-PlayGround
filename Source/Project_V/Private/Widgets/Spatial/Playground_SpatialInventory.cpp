@@ -322,7 +322,19 @@ void UPlayground_SpatialInventory::ShowEquippedItemDescription(UPlayground_Inven
 	// It's not equipped, so find the equipped item with the same equipment type
 	auto FoundEquippedSlot = EquippedGridSlots.FindByPredicate([HoveredEquipmentType](const UPlayground_EquippedGridSlot* GridSlot)
 		{
-			return GridSlot->GetInventoryItem()->GetItemManifest().GetFragmentOfType<FPlayground_EquipmentFragment>()->GetEquipmentType() == HoveredEquipmentType;
+			if (!IsValid(GridSlot)) return false;
+
+			UPlayground_InventoryItem* Item = GridSlot->GetInventoryItem().Get();
+			if (!IsValid(Item)) return false;
+
+			const auto& Manifest = Item->GetItemManifest();
+
+			const FPlayground_EquipmentFragment* Frag = Manifest.GetFragmentOfType<FPlayground_EquipmentFragment>();
+
+			if (!Frag) return false;
+
+			return Frag->GetEquipmentType() == HoveredEquipmentType;
+			//return GridSlot->GetInventoryItem()->GetItemManifest().GetFragmentOfType<FPlayground_EquipmentFragment>()->GetEquipmentType() == HoveredEquipmentType;
 		});
 
 	UPlayground_EquippedGridSlot* EquippedSlot = FoundEquippedSlot ? *FoundEquippedSlot : nullptr;
