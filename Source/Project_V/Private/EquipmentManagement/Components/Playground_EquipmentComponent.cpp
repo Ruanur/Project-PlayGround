@@ -82,6 +82,12 @@ APlayground_EquipActor* UPlayground_EquipmentComponent::SpawnEquippedActor(FPlay
 {
 	APlayground_EquipActor* SpawnedEquipActor = EquipmentFragment->SpawnAttachedActor(AttachMesh);
 
+	// nullptr Defense code
+	if (!IsValid(SpawnedEquipActor))
+	{
+		return nullptr;
+	}
+
 	SpawnedEquipActor->SetEquipmentType(EquipmentFragment->GetEquipmentType());
 	SpawnedEquipActor->SetOwner(GetOwner());
 	EquipmentFragment->SetEquippedActor(SpawnedEquipActor);
@@ -92,7 +98,7 @@ APlayground_EquipActor* UPlayground_EquipmentComponent::FindEquippedActor(const 
 {
 	auto FoundActor = EquippedActors.FindByPredicate([&EquipmentTypeTag](const APlayground_EquipActor* EquippedActor)
 		{
-			return EquippedActor->GetEquipmentType().MatchesTagExact(EquipmentTypeTag);
+			return IsValid(EquippedActor) && EquippedActor->GetEquipmentType().MatchesTagExact(EquipmentTypeTag);
 		});
 
 	return FoundActor ? *FoundActor : nullptr;
@@ -126,7 +132,10 @@ void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* E
 	if (!OwningSkeletalMesh.IsValid()) return;
 	APlayground_EquipActor* SpawnedEquipActor = SpawnEquippedActor(EquipmentFragment, ItemManifest, OwningSkeletalMesh.Get());
 
-	EquippedActors.Add(SpawnedEquipActor);
+	if (IsValid(SpawnedEquipActor))
+	{
+		EquippedActors.Add(SpawnedEquipActor);
+	}
 
 }
 

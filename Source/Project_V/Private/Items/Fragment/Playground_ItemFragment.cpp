@@ -184,12 +184,14 @@ void FPlayground_EquipmentFragment::Manifest()
 
 APlayground_EquipActor* FPlayground_EquipmentFragment::SpawnAttachedActor(USkeletalMeshComponent* AttachMesh) const
 {
-	if (!IsValid(EquipActorClass) || !IsValid(AttachMesh)) return nullptr;
+	//if (!IsValid(EquipActorClass) || !IsValid(AttachMesh)) return nullptr;
 
-	APlayground_EquipActor* SpawnedActor = AttachMesh->GetWorld()->SpawnActor<APlayground_EquipActor>(EquipActorClass);
-	SpawnedActor->AttachToComponent(AttachMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketAttachPoint);
+	//APlayground_EquipActor* SpawnedActor = AttachMesh->GetWorld()->SpawnActor<APlayground_EquipActor>(EquipActorClass);
+	//SpawnedActor->AttachToComponent(AttachMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketAttachPoint);
 
-	return SpawnedActor;
+	//return SpawnedActor;
+
+	return nullptr;
 }
 
 void FPlayground_EquipmentFragment::DestroyAttachedActor() const
@@ -202,5 +204,8 @@ void FPlayground_EquipmentFragment::DestroyAttachedActor() const
 
 void FPlayground_EquipmentFragment::SetEquippedActor(APlayground_EquipActor* EquipActor)
 {
+	// 임시 코드 : nullptr 호출하도록 했기에 return 반환
+	if (!IsValid(EquipActor)) return;
+
 	EquippedActor = EquipActor;
 }
