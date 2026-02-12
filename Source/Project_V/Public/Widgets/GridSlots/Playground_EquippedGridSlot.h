@@ -36,8 +36,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (Categories = "GameItems.Equipment"))
 	FGameplayTag EquipmentTypeTag;
 
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> Image_GrayedOutIcon;
+	//UPROPERTY(meta = (BindWidget))
+	//TObjectPtr<UImage> Image_GrayedOutIcon;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UPlayground_EquippedSlottedItem> EquippedSlottedItemClass;

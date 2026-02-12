@@ -22,7 +22,7 @@ void UPlayground_EquippedGridSlot::NativeOnMouseEnter(const FGeometry& InGeometr
 	if (HoverItem->GetItemType().MatchesTag(EquipmentTypeTag))
 	{
 		PG_SetOccupiedTexture();
-		Image_GrayedOutIcon->SetVisibility(ESlateVisibility::Collapsed);
+		//Image_GrayedOutIcon->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
@@ -37,7 +37,7 @@ void UPlayground_EquippedGridSlot::NativeOnMouseLeave(const FPointerEvent& InMou
 	if (HoverItem->GetItemType().MatchesTag(EquipmentTypeTag))
 	{
 		PG_SetUnoccupiedTexture();
-		Image_GrayedOutIcon->SetVisibility(ESlateVisibility::Visible);
+		//Image_GrayedOutIcon->SetVisibility(ESlateVisibility::Visible);
 	}
 }
  
