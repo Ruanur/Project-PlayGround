@@ -21,6 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNoRoomInInventory);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStackChange, const FPlayground_SlotAvailabilityResult&, Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemEquipStatusChanged, UPlayground_InventoryItem*, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryMenuToggled, bool, bOpen);
+DECLARE_MULTICAST_DELEGATE(FOnInventoryDataChanged);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), Blueprintable)
 class PROJECT_V_API UPlayground_InventoryComponent : public UActorComponent
@@ -54,9 +55,6 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_EquipSlotClicked(UPlayground_InventoryItem* ItemToEquip, UPlayground_InventoryItem* ItemToUnequip);
 
-	void RequestSaveInventory();
-	void RequestLoadInventory();
-
 	void ToggleInventoryMenu();
 	void AddRepSubObject(UObject* SubObj);
 	void SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount);
@@ -69,6 +67,7 @@ public:
 	FItemEquipStatusChanged OnItemEquipped;
 	FItemEquipStatusChanged OnItemUnequipped;
 	FInventoryMenuToggled OnInventoryMenuToggled;
+	FOnInventoryDataChanged OnInventoryDataChanged;
 
 protected:
 	virtual void BeginPlay() override;
@@ -109,10 +108,5 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	float RelativeSpawnElevation = -70.f;
 
-	UFUNCTION(BlueprintCallable)
-	void SaveInventory();
-
-	UFUNCTION(BlueprintCallable)
-	void LoadInventory();
 
 };

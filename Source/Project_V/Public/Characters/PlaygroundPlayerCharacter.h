@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Characters/PlaygroundBaseCharacter.h"
 #include "GameplayTagContainer.h"
+#include "SaveGame/PlaygroundSaveGame.h"
 #include "PlaygroundPlayerCharacter.generated.h"
 
 
@@ -16,6 +17,7 @@ class UPlayerUIComponent;
 class UPlayground_InventoryComponent;
 class UInputAction;
 class UPlayground_HUDWidget;
+class UPlaygroundSaveGame;
 struct FInputActionValue;
 
 
@@ -36,8 +38,7 @@ class PROJECT_V_API APlaygroundPlayerCharacter : public APlaygroundBaseCharacter
 
 public:
 	APlaygroundPlayerCharacter();
-	
-	void CharacterRequestSaveInventory();
+
 
 	//~ Begin IPawnCombatInterface Interface.
 	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
@@ -56,6 +57,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void InventoryToggle();
+
+
 protected:
 	//플레이어가 Controller에 소유될 때 호출
 	//~ Begin APawn Interface.
@@ -77,6 +80,8 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UPlayground_HUDWidget> HUDWidget;
+
+
 #pragma region Components
 	
 	//3인칭 카메라를 제어하기 위한 스프링 암

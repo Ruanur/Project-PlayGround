@@ -62,14 +62,6 @@ APlaygroundPlayerCharacter::APlaygroundPlayerCharacter()
 	PlayerUIComponent = CreateDefaultSubobject<UPlayerUIComponent>(TEXT("PlayerUIComponent"));
 }
 
-void APlaygroundPlayerCharacter::CharacterRequestSaveInventory()
-{
-	if (InventoryComponent.IsValid())
-	{
-		InventoryComponent->RequestSaveInventory();
-	}
-}
-
 UPawnCombatComponent* APlaygroundPlayerCharacter::GetPawnCombatComponent() const
 {
 	return PlayerCombatComponent;
@@ -169,11 +161,6 @@ void APlaygroundPlayerCharacter::BeginPlay()
 
 	InventoryComponent = FindComponentByClass<UPlayground_InventoryComponent>();
 	PG_CreateHUDWidget();
-
-	if (InventoryComponent.IsValid())
-	{
-		InventoryComponent->RequestLoadInventory();
-	}
 }
 
 void APlaygroundPlayerCharacter::PG_CreateHUDWidget()

@@ -6,6 +6,7 @@
 
 #include "PlaygroundDebugHelper.h"
 
+
 APlayGroundPlayerController::APlayGroundPlayerController()
 {
 	PlayerTeamID = FGenericTeamId(0);
@@ -18,3 +19,4 @@ FGenericTeamId APlayGroundPlayerController::GetGenericTeamId() const
 {
 	return PlayerTeamID;
 }
+

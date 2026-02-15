@@ -58,15 +58,18 @@ public:
 
 	// For Save Load Systems 
 	// Save
+	UFUNCTION()
 	void GetSlotInfos(TArray<FInventorySlotInfo>& OutInfos) const;
 
 	// Load
-	void RestoreFromSlotInfos(TArray<FInventorySlotInfo>& Infos);
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void RestoreFromSlotInfos();
 
-protected:
-
-	// Item Type->Manifest->Inventory Item Create
-	UPlayground_InventoryItem* CreateItemByTag(const FGameplayTag& ItemType);
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void CaptureInventory();
+	
+	UPROPERTY(Transient)
+	TArray<FInventorySlotInfo> InventorySlots;
 
 	//// End Save Load System
 

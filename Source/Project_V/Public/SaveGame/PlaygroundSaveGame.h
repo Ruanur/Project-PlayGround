@@ -27,5 +27,5 @@ public:
 	float SavedLookSensitivityPitch = 1.0f;
 
 	UPROPERTY(SaveGame)
-	TArray<FInventorySlotInfo> SavedInventorySlots;
+	TArray<FInventorySlotInfo> SavedInventory;
 };

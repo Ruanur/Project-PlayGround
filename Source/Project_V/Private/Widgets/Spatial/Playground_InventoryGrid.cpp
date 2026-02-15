@@ -33,6 +33,11 @@ void UPlayground_InventoryGrid::NativeOnInitialized()
 	InventoryComponent->OnItemAdded.AddDynamic(this, &ThisClass::AddItem);
 	InventoryComponent->OnStackChange.AddDynamic(this, &ThisClass::AddStacks);
 	InventoryComponent->OnInventoryMenuToggled.AddDynamic(this, &ThisClass::OnInventoryMenuToggled);
+
+	InventoryComponent->OnInventoryDataChanged.AddUObject(
+		this,
+		&ThisClass::CaptureInventory
+	);
 }
 
 void UPlayground_InventoryGrid::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -1112,52 +1117,112 @@ void UPlayground_InventoryGrid::OnInventoryMenuToggled(bool bOpen)
 
 void UPlayground_InventoryGrid::GetSlotInfos(TArray<FInventorySlotInfo>& OutInfos) const
 {
-	OutInfos.Empty();
+	//Clear previous items 
+	OutInfos.Reset(GridSlots.Num());
 
-	for (const UPlayground_GridSlot* GridSlot : GridSlots)
+	// Save all items from the grid to the struct array
+	for (const auto& GridSlot : GridSlots)
 	{
-		if (!GridSlot) continue;
+		if (!IsValid(GridSlot)) continue;
+		UPlayground_InventoryItem* Item = GridSlot->GetInventoryItem().Get();
 
-		auto Item = GridSlot->GetInventoryItem();
-		if (!Item.IsValid()) continue;
+		// If the item is invalid, save a null entry
+		if (!IsValid(Item))
+		{
+			OutInfos.Emplace(nullptr, GridSlot->GetIndex(), 0);
+			continue;
+		}
 
-		// Only UpperLeft Slot Save
+		// Only Save if Index is not equal to UpperLeftIndex !
 		if (GridSlot->GetIndex() != GridSlot->GetUpperLeftIndex()) continue;
 
-		FInventorySlotInfo Info;
-
-		Info.ItemType = Item->GetItemManifest().GetItemType();
-		Info.StackAmount = Item->GetTotalStackCount();
-		Info.UpperLeftIndex = GridSlot->GetUpperLeftIndex();
-
-		OutInfos.Add(Info);
-
-		Debug::Print(TEXT("Item List Get!"),FColor::Green);
+		// Save the item info to the struct array
+		OutInfos.Emplace(Item, GridSlot->GetIndex(), GridSlot->GetUpperLeftIndex(), GridSlot->GetStackCount());
 	}
 }
 
-void UPlayground_InventoryGrid::RestoreFromSlotInfos(TArray<FInventorySlotInfo>& Infos)
+void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 {
-	for (const FInventorySlotInfo& Info : Infos)
+	// Check if there are any saved inventory slots 
+	if (InventorySlots.IsEmpty())
 	{
-		UPlayground_InventoryItem* Item = CreateItemByTag(Info.ItemType);
-
-		Item->SetTotalStackCount(Info.StackAmount);
-
-		AddItemAtIndex(Item, Info.UpperLeftIndex, true, Info.StackAmount);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("NO Inventory to Restore"));
+		return;
 	}
-}
 
-UPlayground_InventoryItem* UPlayground_InventoryGrid::CreateItemByTag(const FGameplayTag& ItemType)
-{
-	for (FPlayground_ItemManifest& Manifest : ItemDatabase)
+	//Clear current inventory Grid
+	for (const auto& GridSlot : GridSlots)
 	{
-		if (Manifest.GetItemType() == ItemType)
+		GridSlot->SetInventoryItem(nullptr);
+		GridSlot->SetUpperLeftIndex(INDEX_NONE);
+		GridSlot->PG_SetUnoccupiedTexture();
+		GridSlot->SetAvailable(true);
+		GridSlot->SetStackCount(0);
+
+		const auto GridIndex = GridSlot->GetIndex();
+
+		if (SlottedItems.Contains(GridIndex))
 		{
-			return Manifest.Manifest(this);
+			TObjectPtr<UPlayground_SlottedItem> FoundSlotteditem;
+			SlottedItems.RemoveAndCopyValue(GridIndex, FoundSlotteditem);
+			FoundSlotteditem->RemoveFromParent();
 		}
 	}
-	return nullptr;
+
+	// Fill the inventory grid with saved items 
+	for (const auto& SavedSlot : InventorySlots)
+	{
+		if (!IsValid(SavedSlot.Item)) continue;
+		auto InvItem = SavedSlot.Item;
+		auto InvIndex = SavedSlot.Index;
+		auto InvUpperLeftIndex = SavedSlot.UpperLeftIndex;
+		auto bIsStackable = SavedSlot.bIsStackable;
+		auto StackAmount = SavedSlot.StackAmount;
+
+		if (InvIndex != InvUpperLeftIndex) continue;
+
+		AddItemAtIndex(InvItem, InvIndex, bIsStackable, StackAmount);
+		UpdateGridSlots(InvItem, InvIndex, bIsStackable, StackAmount);
+	}
+
+	GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Green, TEXT("Inventory Restored"));
+}
+
+void UPlayground_InventoryGrid::CaptureInventory()
+{
+	// Clear previous saved inventory slots
+	InventorySlots.Reset();
+
+	// Save all item from the grid to the struct array
+	GetSlotInfos(InventorySlots);
+
+
+	Debug::Print(TEXT("===== Inventory Capture Start ====="), FColor::Green);
+
+	for (const FInventorySlotInfo& Info : InventorySlots)
+	{
+		if (!IsValid(Info.Item))
+		{
+			Debug::Print(
+				FString::Printf(TEXT("Index: %d | EMPTY"), Info.Index),
+				FColor::Yellow
+			);
+			continue;
+		}
+
+		Debug::Print(
+			FString::Printf(
+				TEXT("Index: %d | Item: %s | Stack: %d | UpperLeft: %d"),
+				Info.Index,
+				*Info.Item->GetName(),
+				Info.StackAmount,
+				Info.UpperLeftIndex
+			),
+			FColor::Cyan
+		);
+	}
+
+	Debug::Print(TEXT("===== Inventory Capture End ====="), FColor::Green);
 }
 
 bool UPlayground_InventoryGrid::MatchesCategory(const UPlayground_InventoryItem* Item) const

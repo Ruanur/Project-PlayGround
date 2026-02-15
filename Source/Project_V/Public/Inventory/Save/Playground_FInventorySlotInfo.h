@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
+#include "Items/Drops/Playground_InventoryItem.h"
 #include "Playground_FInventorySlotInfo.generated.h"
 
 /**
@@ -14,15 +14,31 @@ struct FInventorySlotInfo
 {
     GENERATED_BODY()
 
-    // DataTable / Manifest ID
-    UPROPERTY(SaveGame)
-    FGameplayTag ItemType;
+    UPROPERTY()
+    TObjectPtr<UPlayground_InventoryItem> Item = nullptr;
 
-    // Grid 위치
-    UPROPERTY(SaveGame)
+    UPROPERTY()
+    int32 Index = INDEX_NONE;
+
+    UPROPERTY()
     int32 UpperLeftIndex = INDEX_NONE;
 
-    // 스택 수
-    UPROPERTY(SaveGame)
-    int32 StackAmount = 1;
+    UPROPERTY()
+    bool bIsStackable = false;
+
+    UPROPERTY()
+    int32 StackAmount = 0;
+
+    // Default constructor
+    FInventorySlotInfo() = default;
+
+    // Convenience Constructor - matches what I use in Emplace 
+    explicit FInventorySlotInfo(UPlayground_InventoryItem* InItem, int32 Index, int32 UpperLeftIndex, int32 InStack = 0)
+        : Item(InItem)
+        , Index(Index)
+        , UpperLeftIndex(UpperLeftIndex)
+        , bIsStackable(InItem ? InItem->IsStackable() : false)
+        , StackAmount(InStack)
+    {
+    }
 };

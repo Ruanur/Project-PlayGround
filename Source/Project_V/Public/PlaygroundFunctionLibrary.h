@@ -78,9 +78,4 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Playground|FunctionLibrary")
 	static bool TryLoadSavedLookSensitivity(float& OutYaw, float& OutPitch);
 
-	UFUNCTION(BlueprintCallable, Category = "Save|Inventory")
-	static void SaveInventory(const TArray<FInventorySlotInfo>& Slots);
-
-	UFUNCTION(BlueprintCallable, Category = "Save|Inventory")
-	static bool TryLoadInventory(TArray<FInventorySlotInfo>& OutSlots);
 };

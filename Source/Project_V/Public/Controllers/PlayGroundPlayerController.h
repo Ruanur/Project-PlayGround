@@ -10,6 +10,9 @@
 /**
  * 
  */
+
+class UPlayground_InventoryGrid;
+
 UCLASS()
 class PROJECT_V_API APlayGroundPlayerController : public APlayerController, public IGenericTeamAgentInterface
 {
@@ -21,6 +24,8 @@ public:
 	//~ Begin IGenericTeamAgentInterface Interface.
 	virtual FGenericTeamId GetGenericTeamId() const override;
 	//~ End IGenericTeamAgentInterface Interface
+
 private:
 	FGenericTeamId PlayerTeamID;
+
 };

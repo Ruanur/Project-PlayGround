@@ -313,37 +313,3 @@ bool UPlaygroundFunctionLibrary::TryLoadSavedLookSensitivity(float& OutYaw, floa
 	return false;
 }
 
-void UPlaygroundFunctionLibrary::SaveInventory(const TArray<FInventorySlotInfo>& Slots)
-{
-	UPlaygroundSaveGame* SaveGameObject =
-		Cast<UPlaygroundSaveGame>(
-			UGameplayStatics::CreateSaveGameObject(UPlaygroundSaveGame::StaticClass())
-		);
-
-	if (!SaveGameObject) return;
-
-	SaveGameObject->SavedInventorySlots = Slots;
-
-	UGameplayStatics::SaveGameToSlot(
-		SaveGameObject,
-		TEXT("InventorySlot"),
-		0
-	);
-}
-
-bool UPlaygroundFunctionLibrary::TryLoadInventory(TArray<FInventorySlotInfo>& OutSlots)
-{
-	if (!UGameplayStatics::DoesSaveGameExist(TEXT("InventorySlot"), 0)) return false;
-
-	UPlaygroundSaveGame* SaveGameObject =
-		Cast<UPlaygroundSaveGame>(
-			UGameplayStatics::LoadGameFromSlot(TEXT("InventorySlot"), 0)
-		);
-
-	if (!SaveGameObject) return false;
-
-	OutSlots = SaveGameObject->SavedInventorySlots;
-
-	return true;
-}
-
