@@ -9,6 +9,9 @@
 #include "Items/Drops/Playground_InventoryItem.h"
 #include "Items/Fragment/Playground_ItemFragment.h"
 #include "AbilitySystem/PlaygroundAbilitySystemComponent.h"
+#include "PlaygroundFunctionLibrary.h"
+#include "Widgets/GridSlots/Playground_GridSlot.h"
+#include "Widgets/Spatial/Playground_InventoryGrid.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -52,11 +55,15 @@ void UPlayground_InventoryComponent::TryAddItem(UPlayground_ItemComponent* ItemC
 		// not create a new item of this type.
 		OnStackChange.Broadcast(Result);
 		Server_AddStacksToItem(ItemComponent, Result.TotalRoomToFill, Result.Remainder);
+
+		RequestSaveInventory();
 	}
 	else if (Result.TotalRoomToFill > 0)
 	{
 		// This item type doesn't exist in the inventory. Create a new one and update all pertinent slots.
 		Server_AddNewItem(ItemComponent, Result.bStackable ? Result.TotalRoomToFill : 0, Result.Remainder);
+
+		RequestSaveInventory();
 	}
 }
 
@@ -194,6 +201,16 @@ void UPlayground_InventoryComponent::Multicast_EquipSlotClicked_Implementation(U
 	OnItemUnequipped.Broadcast(ItemToUnequip);
 }
 
+void UPlayground_InventoryComponent::RequestSaveInventory()
+{
+	SaveInventory();
+}
+
+void UPlayground_InventoryComponent::RequestLoadInventory()
+{
+	LoadInventory();
+}
+
 void UPlayground_InventoryComponent::ToggleInventoryMenu()
 {
 	if (bInventoryMenuOpen)
@@ -217,8 +234,6 @@ void UPlayground_InventoryComponent::AddRepSubObject(UObject* SubObj)
 		AddReplicatedSubObject(SubObj);
 	}
 }
-
-
 
 // Called when the game starts
 void UPlayground_InventoryComponent::BeginPlay()
@@ -281,6 +296,54 @@ void UPlayground_InventoryComponent::CloseInventory()
 	OwningController->SetShowMouseCursor(false);
 
 }
+
+void UPlayground_InventoryComponent::SaveInventory()
+{
+	if (!InventoryMenu) return;
+
+	if (!InventoryGrid)
+	{
+		Debug::Print(TEXT("InventoryGrid is NULL"), FColor::Red);
+		return;
+	}
+
+	TArray<FInventorySlotInfo> Infos;
+
+	if (InventoryMenu)
+	{
+		Debug::Print(InventoryMenu->GetClass()->GetName());
+	}
+
+	InventoryGrid->GetSlotInfos(Infos);
+
+	Debug::Print(FString::Printf(TEXT("Saving %d Items"), Infos.Num()), FColor::Yellow);
+
+	// false 호출됨 확인 필요
+	//if (UPlayground_InventoryGrid* Grid = Cast<UPlayground_InventoryGrid>(InventoryMenu))
+	//{
+	//	Grid->GetSlotInfos(Infos);
+	//}
+
+	UPlaygroundFunctionLibrary::SaveInventory(Infos);
+
+}
+
+void UPlayground_InventoryComponent::LoadInventory()
+{
+	if (!InventoryMenu) return;
+
+	TArray<FInventorySlotInfo> Infos;
+
+	if (UPlaygroundFunctionLibrary::TryLoadInventory(Infos))
+	{
+		Debug::Print(FString::Printf(TEXT("Loaded %d Items"), Infos.Num()), FColor::Green);
+
+		InventoryGrid->RestoreFromSlotInfos(Infos);
+	}
+	
+}
+
+
 
 
 

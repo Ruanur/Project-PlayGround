@@ -5,12 +5,16 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Inventory/FastArray/Playground_FastArray.h"
+#include "Inventory/Save/Playground_FInventorySlotInfo.h"
+#include "Items/Drops/Manifest/Playground_ItemManifest.h"
 #include "Playground_InventoryComponent.generated.h"
 
 class UPlayground_ItemComponent;
 class UPlayground_InventoryItem;
+class UPlayground_InventoryGrid;
 class UPlaygroundWidgeBase;
 class UPlaygroundWidgeBase;
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryItemChange, UPlayground_InventoryItem*, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNoRoomInInventory);
@@ -50,6 +54,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_EquipSlotClicked(UPlayground_InventoryItem* ItemToEquip, UPlayground_InventoryItem* ItemToUnequip);
 
+	void RequestSaveInventory();
+	void RequestLoadInventory();
+
 	void ToggleInventoryMenu();
 	void AddRepSubObject(UObject* SubObj);
 	void SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount);
@@ -80,6 +87,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UPlaygroundWidgeBase> InventoryMenuClass;
 
+	UPROPERTY()
+	TObjectPtr<UPlayground_InventoryGrid> InventoryGrid;
+
 	bool bInventoryMenuOpen;
 	void OpenInventory();
 	void CloseInventory();
@@ -98,4 +108,11 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	float RelativeSpawnElevation = -70.f;
+
+	UFUNCTION(BlueprintCallable)
+	void SaveInventory();
+
+	UFUNCTION(BlueprintCallable)
+	void LoadInventory();
+
 };

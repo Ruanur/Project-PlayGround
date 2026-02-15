@@ -16,6 +16,7 @@
 #include "Widgets/SlottedItems/Playground_SlottedItem.h"
 #include "Widgets/HoverItem/Playground_HoverItem.h"
 #include "Widgets/ItemPopUp/Playground_ItemPopUp.h"
+#include "Inventory/Save/Playground_FInventorySlotInfo.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -1107,6 +1108,56 @@ void UPlayground_InventoryGrid::OnInventoryMenuToggled(bool bOpen)
 	{
 		PutHoverItemBack();
 	}
+}
+
+void UPlayground_InventoryGrid::GetSlotInfos(TArray<FInventorySlotInfo>& OutInfos) const
+{
+	OutInfos.Empty();
+
+	for (const UPlayground_GridSlot* GridSlot : GridSlots)
+	{
+		if (!GridSlot) continue;
+
+		auto Item = GridSlot->GetInventoryItem();
+		if (!Item.IsValid()) continue;
+
+		// Only UpperLeft Slot Save
+		if (GridSlot->GetIndex() != GridSlot->GetUpperLeftIndex()) continue;
+
+		FInventorySlotInfo Info;
+
+		Info.ItemType = Item->GetItemManifest().GetItemType();
+		Info.StackAmount = Item->GetTotalStackCount();
+		Info.UpperLeftIndex = GridSlot->GetUpperLeftIndex();
+
+		OutInfos.Add(Info);
+
+		Debug::Print(TEXT("Item List Get!"),FColor::Green);
+	}
+}
+
+void UPlayground_InventoryGrid::RestoreFromSlotInfos(TArray<FInventorySlotInfo>& Infos)
+{
+	for (const FInventorySlotInfo& Info : Infos)
+	{
+		UPlayground_InventoryItem* Item = CreateItemByTag(Info.ItemType);
+
+		Item->SetTotalStackCount(Info.StackAmount);
+
+		AddItemAtIndex(Item, Info.UpperLeftIndex, true, Info.StackAmount);
+	}
+}
+
+UPlayground_InventoryItem* UPlayground_InventoryGrid::CreateItemByTag(const FGameplayTag& ItemType)
+{
+	for (FPlayground_ItemManifest& Manifest : ItemDatabase)
+	{
+		if (Manifest.GetItemType() == ItemType)
+		{
+			return Manifest.Manifest(this);
+		}
+	}
+	return nullptr;
 }
 
 bool UPlayground_InventoryGrid::MatchesCategory(const UPlayground_InventoryItem* Item) const

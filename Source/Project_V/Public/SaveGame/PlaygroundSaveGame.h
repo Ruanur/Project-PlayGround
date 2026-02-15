@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "PlayergroundTypes/PlaygroundEnumTypes.h"
+#include "Inventory/Save/Playground_FInventorySlotInfo.h"
 #include "PlaygroundSaveGame.generated.h"
-
 
 /**
  * 
@@ -25,4 +25,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	float SavedLookSensitivityPitch = 1.0f;
+
+	UPROPERTY(SaveGame)
+	TArray<FInventorySlotInfo> SavedInventorySlots;
 };

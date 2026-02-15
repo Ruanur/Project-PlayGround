@@ -5,10 +5,12 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "PlayergroundTypes/PlaygroundEnumTypes.h"
+#include "Inventory/Save/Playground_FInventorySlotInfo.h"
 #include "PlaygroundFunctionLibrary.generated.h"
 
 class UPlaygroundAbilitySystemComponent;
 class UPawnCombatComponent;
+class UPlayground_InventoryGrid;
 struct FScalableFloat;
 class UPlaygroundGameInstance;
 /**
@@ -76,4 +78,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Playground|FunctionLibrary")
 	static bool TryLoadSavedLookSensitivity(float& OutYaw, float& OutPitch);
 
+	UFUNCTION(BlueprintCallable, Category = "Save|Inventory")
+	static void SaveInventory(const TArray<FInventorySlotInfo>& Slots);
+
+	UFUNCTION(BlueprintCallable, Category = "Save|Inventory")
+	static bool TryLoadInventory(TArray<FInventorySlotInfo>& OutSlots);
 };

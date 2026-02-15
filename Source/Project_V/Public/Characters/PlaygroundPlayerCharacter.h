@@ -37,6 +37,7 @@ class PROJECT_V_API APlaygroundPlayerCharacter : public APlaygroundBaseCharacter
 public:
 	APlaygroundPlayerCharacter();
 	
+	void CharacterRequestSaveInventory();
 
 	//~ Begin IPawnCombatInterface Interface.
 	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;

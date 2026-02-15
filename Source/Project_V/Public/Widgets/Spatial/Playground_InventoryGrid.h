@@ -16,6 +16,7 @@ class UCanvasPanel;
 class UPlayground_GridSlot;
 struct FPlayground_ItemManifest;
 struct FPlayground_GridFragment;
+struct FInventorySlotInfo;
 class UPlayground_InventoryComponent;
 class UPlayground_SlottedItem;
 class UPlayground_HoverItem;
@@ -26,6 +27,7 @@ enum class EPlayground_GridSlotState : uint8;
 /**
  * 
  */
+
 UCLASS()
 class PROJECT_V_API UPlayground_InventoryGrid : public UUserWidget
 {
@@ -52,6 +54,21 @@ public:
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
 
+
+
+	// For Save Load Systems 
+	// Save
+	void GetSlotInfos(TArray<FInventorySlotInfo>& OutInfos) const;
+
+	// Load
+	void RestoreFromSlotInfos(TArray<FInventorySlotInfo>& Infos);
+
+protected:
+
+	// Item Type->Manifest->Inventory Item Create
+	UPlayground_InventoryItem* CreateItemByTag(const FGameplayTag& ItemType);
+
+	//// End Save Load System
 
 private:
 	TWeakObjectPtr<UPlayground_InventoryComponent> InventoryComponent;
@@ -176,6 +193,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	TSubclassOf<UPlayground_GridSlot> GridSlotClass;
 
+	UPROPERTY(EditAnywhere)
+	TArray<FPlayground_ItemManifest> ItemDatabase;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCanvasPanel> CanvasPanel;
 
@@ -213,4 +233,6 @@ private:
 	bool bLastMouseWithinCanvas;
 	int32 LastHighlightedIndex;
 	FIntPoint LastHighlightedDimensions;
+
+
 };

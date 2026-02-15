@@ -22,5 +22,6 @@ void APlaygroundDropsBase::OnPickUpCollisionSphereBeginOverlap(UPrimitiveCompone
 
 	//Player Inventory 컴포넌트의 TryAddItem 호출, 정상 작동
 	Inv->TryAddItem(ItemComp);
+
 	Debug::Print(TEXT("Called This Func"));
 }

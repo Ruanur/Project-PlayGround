@@ -42,6 +42,8 @@ void APlayground_LevelTransfer::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	bIsTransferring = true;
 
+	Character->CharacterRequestSaveInventory();
+
 	FSoftObjectPath LevelPath = LevelToLoad.ToSoftObjectPath();
 	FString PackageName = LevelPath.GetLongPackageName();
 
@@ -54,6 +56,7 @@ void APlayground_LevelTransfer::NotifyActorBeginOverlap(AActor* OtherActor)
 	FName LevelFName(*PackageName);
 
 	UGameplayStatics::OpenLevel(GetWorld(), LevelFName);
+
 	//if (Character)
 	//{
 	//	UGameplayStatics::OpenLevel(GetWorld(), FName(TransferLevelName));
