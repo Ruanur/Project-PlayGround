@@ -20,6 +20,7 @@
 #include "Items/Drops/Playground_ItemComponent.h"
 #include "Widgets/HUD/Playground_HUDWidget.h"
 #include "Controllers/PlayGroundPlayerController.h"
+#include "Widgets/Spatial/Playground_InventoryGrid.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -161,6 +162,8 @@ void APlaygroundPlayerCharacter::BeginPlay()
 
 	InventoryComponent = FindComponentByClass<UPlayground_InventoryComponent>();
 	PG_CreateHUDWidget();
+
+	
 }
 
 void APlaygroundPlayerCharacter::PG_CreateHUDWidget()

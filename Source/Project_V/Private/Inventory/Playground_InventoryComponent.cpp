@@ -13,6 +13,7 @@
 #include "Widgets/GridSlots/Playground_GridSlot.h"
 #include "Widgets/Spatial/Playground_InventoryGrid.h"
 
+
 #include "PlaygroundDebugHelper.h"
 
 
@@ -103,8 +104,6 @@ void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlay
 	{
 		StackableFragment->SetStackCount(Remainder);
 	}
-
-	OnInventoryDataChanged.Broadcast();
 }
 
 void UPlayground_InventoryComponent::Server_DropItem_Implementation(UPlayground_InventoryItem* Item, int32 StackCount)
@@ -285,6 +284,7 @@ void UPlayground_InventoryComponent::CloseInventory()
 	OwningController->SetInputMode(InputMode);
 	OwningController->SetShowMouseCursor(false);
 
+	OnInventoryLoaded.Broadcast();
 }
 
 

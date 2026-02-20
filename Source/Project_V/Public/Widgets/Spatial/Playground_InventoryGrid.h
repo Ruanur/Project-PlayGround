@@ -71,6 +71,11 @@ public:
 	UPROPERTY(Transient)
 	TArray<FInventorySlotInfo> InventorySlots;
 
+	UFUNCTION()
+	void SaveInventory();
+
+	UFUNCTION()
+	void LoadInventory();
 	//// End Save Load System
 
 private:

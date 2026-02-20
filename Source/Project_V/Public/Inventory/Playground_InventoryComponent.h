@@ -22,6 +22,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStackChange, const FPlayground_Slot
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemEquipStatusChanged, UPlayground_InventoryItem*, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryMenuToggled, bool, bOpen);
 DECLARE_MULTICAST_DELEGATE(FOnInventoryDataChanged);
+DECLARE_MULTICAST_DELEGATE(FOnInventoryLoaded);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), Blueprintable)
 class PROJECT_V_API UPlayground_InventoryComponent : public UActorComponent
@@ -68,6 +69,7 @@ public:
 	FItemEquipStatusChanged OnItemUnequipped;
 	FInventoryMenuToggled OnInventoryMenuToggled;
 	FOnInventoryDataChanged OnInventoryDataChanged;
+	FOnInventoryLoaded OnInventoryLoaded;
 
 protected:
 	virtual void BeginPlay() override;
@@ -107,6 +109,4 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	float RelativeSpawnElevation = -70.f;
-
-
 };

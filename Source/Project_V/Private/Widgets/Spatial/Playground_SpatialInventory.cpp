@@ -15,6 +15,8 @@
 #include "Widgets/HoverItem/Playground_HoverItem.h"
 #include "Widgets/SlottedItems/Playground_EquippedSlottedItem.h"
 #include "Inventory/Playground_InventoryComponent.h"
+#include "SaveGame/PlaygroundSaveGame.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -62,7 +64,7 @@ void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedG
 
 	EquippedSlottedItem->OnEquippedSlottedItemClicked.AddDynamic(this, &ThisClass::EquippedSlottedItemClicked);
 
-	// Inform the server that we've equipped an item (potentially unequipped an item as well)
+	// Inform the server that we've equipped an item (potentially unequipped an item as well) 
 	UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
 	check(IsValid(InventoryComponent));
 

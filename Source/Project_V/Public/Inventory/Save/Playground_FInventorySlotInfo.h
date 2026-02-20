@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Items/Drops/Playground_InventoryItem.h"
+#include "Serialization/JsonWriter.h"
+#include "Serialization/JsonSerializer.h"
+#include "Dom/JsonObject.h"
 #include "Playground_FInventorySlotInfo.generated.h"
 
 /**
@@ -15,7 +18,7 @@ struct FInventorySlotInfo
     GENERATED_BODY()
 
     UPROPERTY()
-    TObjectPtr<UPlayground_InventoryItem> Item = nullptr;
+    TSoftClassPtr<UPlayground_InventoryItem> ItemClass;
 
     UPROPERTY()
     int32 Index = INDEX_NONE;
@@ -33,12 +36,13 @@ struct FInventorySlotInfo
     FInventorySlotInfo() = default;
 
     // Convenience Constructor - matches what I use in Emplace 
-    explicit FInventorySlotInfo(UPlayground_InventoryItem* InItem, int32 Index, int32 UpperLeftIndex, int32 InStack = 0)
-        : Item(InItem)
+    explicit FInventorySlotInfo(TSubclassOf<UPlayground_InventoryItem> InClass, int32 Index, int32 UpperLeftIndex, bool bInIsStackable, int32 InStack = 0)
+        : ItemClass(InClass)
         , Index(Index)
         , UpperLeftIndex(UpperLeftIndex)
-        , bIsStackable(InItem ? InItem->IsStackable() : false)
+        , bIsStackable(bInIsStackable)
         , StackAmount(InStack)
     {
     }
+
 };

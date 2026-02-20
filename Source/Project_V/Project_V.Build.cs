@@ -24,7 +24,9 @@ public class Project_V : ModuleRules
 			"NetCore",
 			"StructUtils",
 			"Slate",
-			"SlateCore"});
+			"SlateCore",
+			"Json",
+            "JsonUtilities"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
