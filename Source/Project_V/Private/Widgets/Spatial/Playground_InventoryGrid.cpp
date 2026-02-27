@@ -752,6 +752,15 @@ void UPlayground_InventoryGrid::AddItemAtIndex(UPlayground_InventoryItem* Item, 
 	UE_LOG(LogTemp, Warning, TEXT("Item ptr: %p"), Item);
 	check(Item != nullptr);
 
+	if (TObjectPtr<UPlayground_SlottedItem>* Found = SlottedItems.Find(Index))
+	{
+		if (IsValid(*Found))
+		{
+			(*Found)->RemoveFromParent();
+		}
+		SlottedItems.Remove(Index);
+	}
+
 	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(Item, FragmentTags::GridFragment);
 	Debug::Print(TEXT("=== GetFragment Passed ==="));
 
@@ -1216,6 +1225,19 @@ void UPlayground_InventoryGrid::GetSlotInfos(TArray<FInventorySlotInfo>& OutInfo
 
 void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 {
+	if (IsValid(CanvasPanel))
+	{
+		for (UWidget* Child : CanvasPanel->GetAllChildren())
+		{
+			if (Cast<UPlayground_SlottedItem>(Child))
+			{
+				Child->RemoveFromParent();
+			}
+		}
+	}
+
+	SlottedItems.Empty();
+
 	// Check if there are any saved inventory slots 
 	if (InventorySlots.IsEmpty())
 	{
@@ -1428,23 +1450,52 @@ UPlayground_InventoryItem* UPlayground_InventoryGrid::CreateInventoryItemFromIte
 
 	UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Mapped Class: %s"), *ItemClass->GetName());
 
-	UPlayground_ItemComponent* ItemComp = FindItemComponentOnClass(ItemClass);
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] No World"));
+		return nullptr;
+	}
+
+	// 임시 액터 스폰
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	Params.ObjectFlags |= RF_Transient;   // 저장/패키징 대상 X
+	Params.bDeferConstruction = false;
+
+	// 멀리/숨김 위치 
+	const FTransform SpawnTM(FRotator::ZeroRotator, FVector(0, 0, -100000.f));
+
+	AActor* TempActor = World->SpawnActor<AActor>(ItemClass, SpawnTM, Params);
+	if (!TempActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Failed to spawn temp actor (ItemID: %s)"), *ItemID.ToString());
+		return nullptr;
+	}
+
+	TempActor->SetActorHiddenInGame(true);
+	TempActor->SetActorEnableCollision(false);
+	TempActor->SetActorTickEnabled(false);
+
+	UPlayground_ItemComponent* ItemComp = TempActor->FindComponentByClass<UPlayground_ItemComponent>();
 	if (!ItemComp)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Can't find Playground_ItemComponent on class/templates (ItemID: %s)"),
-			*ItemID.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] TempActor has no ItemComponent (ItemID: %s)"), *ItemID.ToString());
+		TempActor->Destroy();
 		return nullptr;
 	}
 	
+	// 런타임 초기화 반영된 Manifest 확보
 	FPlayground_ItemManifest ManifestCopy = ItemComp->GetItemManifest();
+	UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Spawned ManifestCopy ItemID=%s Frags=%d"),
+		*ManifestCopy.ItemID.ToString(),
+		ManifestCopy.GetFragmentsMutable().Num());
+
+	TempActor->Destroy();
 
 	AActor* OwningActor = GetTypedOuter<AActor>();
 	UObject* NewOuter = OwningActor ? (UObject*)OwningActor : (UObject*)this;
 	UPlayground_InventoryItem* NewItem = ManifestCopy.Manifest(NewOuter);
-
-	UE_LOG(LogTemp, Warning, TEXT("NewItem ID=%s Frags=%d"),
-		*NewItem->GetItemID().ToString(),
-		NewItem->GetItemManifestMutable().GetFragmentsMutable().Num());
 
 	return NewItem;
 }
