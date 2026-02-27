@@ -91,6 +91,8 @@ private:
 	UPROPERTY()
 	TObjectPtr<UPlayground_InventoryGrid> InventoryGrid;
 
+	//UPlayground_ItemComponent* FindItemComponentOnClass(TSubclassOf<AActor> ItemClass);
+
 	bool bInventoryMenuOpen;
 	void OpenInventory();
 	void CloseInventory();

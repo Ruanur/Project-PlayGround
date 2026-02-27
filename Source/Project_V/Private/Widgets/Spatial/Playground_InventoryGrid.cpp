@@ -19,10 +19,58 @@
 #include "Inventory/Save/Playground_FInventorySlotInfo.h"
 #include "SaveGame/PlaygroundSaveGame.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/BlueprintGeneratedClass.h"
+#include "Engine/SimpleConstructionScript.h"
+#include "Engine/SCS_Node.h"
 
 #include "PlaygroundDebugHelper.h"
 
+// 헬퍼 함수
+static UPlayground_ItemComponent* FindItemComponentOnClass(TSubclassOf<AActor> ItemClass)
+{
+	if (!ItemClass) return nullptr;
 
+	// 1) CDO에서 먼저 찾기
+	if (AActor* CDO = ItemClass->GetDefaultObject<AActor>())
+	{
+		if (UPlayground_ItemComponent* Found = CDO->FindComponentByClass<UPlayground_ItemComponent>())
+		{
+			return Found;
+		}
+	}
+
+	// 2) BP ComponentTemplates에서 찾기 (SCS 템플릿)
+	for (UClass* C = *ItemClass; C; C = C->GetSuperClass())
+	{
+		UBlueprintGeneratedClass* BPGC = Cast<UBlueprintGeneratedClass>(C);
+		if (!BPGC) continue;
+		
+		for (UActorComponent* Template : BPGC->ComponentTemplates)
+		{
+			if (UPlayground_ItemComponent* Found = Cast<UPlayground_ItemComponent>(Template))
+			{
+				return Found;
+			}
+		}
+		
+		if (USimpleConstructionScript* SCS = BPGC->SimpleConstructionScript)
+		{
+			TArray<USCS_Node*> Nodes = SCS->GetAllNodes();
+			for (USCS_Node* Node : Nodes)
+			{
+				if (!Node) continue;
+
+				UActorComponent* NodeTemplate = Node->ComponentTemplate;
+				if (UPlayground_ItemComponent* Found = Cast<UPlayground_ItemComponent>(NodeTemplate))
+				{
+					return Found;
+				}
+			}
+		}
+	}
+
+	return nullptr;
+}
 
 void UPlayground_InventoryGrid::NativeOnInitialized()
 {
@@ -700,17 +748,37 @@ void UPlayground_InventoryGrid::AddItemToIndices(const FPlayground_SlotAvailabil
 
 void UPlayground_InventoryGrid::AddItemAtIndex(UPlayground_InventoryItem* Item, const int32 Index, const bool bStackable, const int32 StackAmount)
 {
-	//Debug::Print(TEXT("=== ADD ITEM CALLED ==="));
+	Debug::Print(TEXT("=== ADD ITEM CALLED ==="));
+	UE_LOG(LogTemp, Warning, TEXT("Item ptr: %p"), Item);
+	check(Item != nullptr);
 
 	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(Item, FragmentTags::GridFragment);
+	Debug::Print(TEXT("=== GetFragment Passed ==="));
+
 	const FPlayground_ImageFragment* ImageFragment = GetFragment<FPlayground_ImageFragment>(Item, FragmentTags::IconFragment);
-	if (!GridFragment || !ImageFragment) return;
+	Debug::Print(TEXT("=== ImageFragment Passed ==="));
+
+	if (!GridFragment || !ImageFragment)
+	{
+		Debug::Print(TEXT("=== Crash Point ==="));
+		Debug::Print(FString::Printf(TEXT("GridFragment: %p"), GridFragment));
+		Debug::Print(FString::Printf(TEXT("ImageFragment: %p"), ImageFragment));
+		return;
+	}
+	Debug::Print(TEXT("=== GridFragment || ImageFragment Passed ==="));
+	Debug::Print(FString::Printf(TEXT("GridFragment: %p"), GridFragment));
+	Debug::Print(FString::Printf(TEXT("ImageFragment: %p"), ImageFragment));
 
 	UPlayground_SlottedItem* SlottedItem = CreateSlottedItem(Item, bStackable, StackAmount, GridFragment, ImageFragment, Index);
+	Debug::Print(TEXT("=== CreateSlottedItem Passed ==="));
+
 	AddSlottedItemToCanvas(Index, GridFragment, SlottedItem);
+
+	Debug::Print(TEXT("=== Crash Point: SlottedItems.Add ==="));
 
 	SlottedItems.Add(Index, SlottedItem);
 
+	Debug::Print(TEXT("=== ADD ITEM END ==="));
 }
 
 UPlayground_SlottedItem* UPlayground_InventoryGrid::CreateSlottedItem(UPlayground_InventoryItem* Item, const bool bStackable, const int32 StackAmount, const FPlayground_GridFragment* GridFragment, const FPlayground_ImageFragment* ImageFragment, const int32 Index)
@@ -739,6 +807,8 @@ void UPlayground_InventoryGrid::AddSlottedItemToCanvas(const int32 Index, const 
 
 void UPlayground_InventoryGrid::UpdateGridSlots(UPlayground_InventoryItem* NewItem, const int32 Index, bool bStackableItem, const int32 StackAmount)
 {
+	Debug::Print(TEXT("=== Update Grid Slots CALLED ==="));
+
 	check(GridSlots.IsValidIndex(Index));
 
 	if (bStackableItem)
@@ -749,6 +819,7 @@ void UPlayground_InventoryGrid::UpdateGridSlots(UPlayground_InventoryItem* NewIt
 	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(NewItem, FragmentTags::GridFragment);
 	const FIntPoint Dimension = GridFragment ? GridFragment->GetGridSize() : FIntPoint(1, 1);
 
+	Debug::Print(TEXT("Update GridSlot Success!"));
 
 	UPlayground_InventoryStatics::ForEach2D(GridSlots, Index ,Dimension, Columns, [&](UPlayground_GridSlot* GridSlot)
 		{
@@ -1130,38 +1201,31 @@ void UPlayground_InventoryGrid::GetSlotInfos(TArray<FInventorySlotInfo>& OutInfo
 	{
 		if (!IsValid(GridSlot)) continue;
 		UPlayground_InventoryItem* Item = GridSlot->GetInventoryItem().Get();
-
+		
 		// If the item is invalid, save a null entry
-		if (!IsValid(Item))
-		{
-			OutInfos.Emplace(nullptr, GridSlot->GetIndex(), INDEX_NONE, false, 0);
-			continue;
-		}
+		if (!IsValid(Item)) continue;
 
-		// Only Save if Index is not equal to UpperLeftIndex !
 		if (GridSlot->GetIndex() != GridSlot->GetUpperLeftIndex()) continue;
 
 		// Save the item info to the struct array
-		OutInfos.Emplace(Item->GetClass(), GridSlot->GetIndex(), GridSlot->GetUpperLeftIndex(), Item->IsStackable(), GridSlot->GetStackCount());
+		OutInfos.Emplace(Item->GetItemID(), Item->GetInstancedID(), GridSlot->GetIndex(), GridSlot->GetUpperLeftIndex(), Item->IsStackable(), GridSlot->GetStackCount());
 	}
 
-	Debug::Print(TEXT("GetSlotInfo Success!"));
+	Debug::Print(TEXT("GetSlotInfo End"));
 }
 
 void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 {
-	Debug::Print(FString::Printf(
-		TEXT("GridSlots: %d | InventorySlots: %d"),
-		GridSlots.Num(),
-		InventorySlots.Num()));
-
-
 	// Check if there are any saved inventory slots 
 	if (InventorySlots.IsEmpty())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("No Inventory to Restore"));
+		Debug::Print(TEXT("No Inventory to Restore"));
 		return;
 	}
+
+	Debug::Print(
+		FString::Printf(TEXT("Local Copy Created. Num: %d"), InventorySlots.Num()),
+		FColor::Yellow);
 
 	//Clear current inventory Grid
 	for (const auto& GridSlot : GridSlots)
@@ -1182,28 +1246,62 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 		}
 	}
 
+	Debug::Print(TEXT("Grid Cleared"), FColor::Red);
+
 	// Fill the inventory grid with saved items 
-	for (const auto& SavedSlot : InventorySlots)
+	for (const FInventorySlotInfo& SavedSlot : InventorySlots)
 	{
-		if (SavedSlot.ItemClass.IsNull()) continue;
+		//Subclass Test
+		if (SavedSlot.Index != SavedSlot.UpperLeftIndex)
+		{
+			Debug::Print(TEXT("SavedSlot InValid"));
+			continue;
+		}
 
-		UClass* LoadedClass = SavedSlot.ItemClass.LoadSynchronous();
-		if (!LoadedClass) continue;
+		if (SavedSlot.ItemID.IsNone())
+		{
+			Debug::Print(TEXT("[InventoryLoad] SavedSlot.ItemID is None"));
+			continue;
+		}
 
-		UPlayground_InventoryItem* NewItem = NewObject<UPlayground_InventoryItem>(this, LoadedClass);
+		// InvItem => 현 문제점, UObjectPtr로 직렬화 시 (SaveGame 저장)
+		// 역직렬화할 때 nullptr로 호출되는 현상 확인
+		// 디버그 실행 중에는 정상적으로 작동하나
+		// 디버그 종료 후 실행, 혹은 다른 씬으로 넘어갈 때 정상 작동하지 않는 현상 발견
+		// 예상 : 포인터 GC 현상
+		//
+		// 시도한 목록 : 
+		// TSubclassPtr로 저장 후 불러오기 시도 - 구조체 예외 문제 (해결 불가)
+		// TODO : FName으로 ItemID 저장 후 불러오기 시도 - (진행 중)
+		// HOW : 아이템에 독립적인 ItemID 부여 혹은 GUID 부여
+		//auto InvItem = SavedSlot.Item;
 
-		auto InvIndex = SavedSlot.Index;
-		auto InvUpperLeftIndex = SavedSlot.UpperLeftIndex;
-		auto bIsStackable = SavedSlot.bIsStackable;
-		auto StackAmount = SavedSlot.StackAmount;
+		UPlayground_InventoryItem* InvItem = CreateInventoryItemFromItemID(SavedSlot.ItemID);
+		if (!IsValid(InvItem))
+		{
+			Debug::Print(FString::Printf(TEXT("[InventoryLoad] Failed to create item for ID: %s"), *SavedSlot.ItemID.ToString()));
+			continue;
+		}
+
+		InvItem->SetInstancedID(SavedSlot.InstanceID);
+		InvItem->SetTotalStackCount(SavedSlot.StackAmount);
+
+		int32 InvIndex = SavedSlot.Index;
+		int32 InvUpperLeftIndex = SavedSlot.UpperLeftIndex;
+		bool bIsStackable = SavedSlot.bIsStackable;
+		int32 StackAmount = SavedSlot.StackAmount;
 
 		if (InvIndex != InvUpperLeftIndex) continue;
 
-		AddItemAtIndex(NewItem, InvIndex, bIsStackable, StackAmount);
-		UpdateGridSlots(NewItem, InvIndex, bIsStackable, StackAmount);
+		
+
+		Debug::Print(TEXT("Before Call AddItemIndex"));
+
+		AddItemAtIndex(InvItem, InvIndex, bIsStackable, StackAmount);
+		UpdateGridSlots(InvItem, InvIndex, bIsStackable, StackAmount);
 	}
 
-	GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Green, TEXT("Inventory Restored"));
+	Debug::Print(TEXT("=== Restore Complete ==="), FColor::Green);  
 }
 
 void UPlayground_InventoryGrid::CaptureInventory()
@@ -1214,34 +1312,6 @@ void UPlayground_InventoryGrid::CaptureInventory()
 	// Save all item from the grid to the struct array
 	GetSlotInfos(InventorySlots);
 
-	Debug::Print(TEXT("===== Inventory Capture Start ====="), FColor::Green);
-	Debug::Print(TEXT("InventorySlots Num After Capture: %d"), InventorySlots.Num());
-
-	for (const FInventorySlotInfo& Info : InventorySlots)
-	{
-		if (Info.ItemClass.IsNull())
-		{
-			Debug::Print(
-				FString::Printf(TEXT("Index: %d | EMPTY"), Info.Index),
-				FColor::Yellow
-			);
-			continue;
-		}
-
-		UClass* LoadedClass = Info.ItemClass.LoadSynchronous();
-
-		Debug::Print(
-			FString::Printf(
-				TEXT("Index: %d | Item: %s | Stack: %d | UpperLeft: %d"),
-				Info.Index,
-				LoadedClass ? *LoadedClass->GetName() : TEXT("Invalid"),
-				Info.StackAmount,
-				Info.UpperLeftIndex
-			),
-			FColor::Cyan
-		);
-	}
-
 	Debug::Print(TEXT("===== Inventory Capture End ====="), FColor::Green);
 }
 
@@ -1249,47 +1319,53 @@ void UPlayground_InventoryGrid::SaveInventory()
 {
 	Debug::Print(TEXT("=== SaveInventory CALLED ==="));
 
+	// 인벤토리 카테고리 3개 존재, 3개 전부 루프 후 마지막에 있는 데이터 저장 확인, Null 데이터라면 전부 비거나,
+	// 유효한 아이템이더라도 로드 시 카테고리 구별이 안되어 예외 발생
+	Debug::Print(TEXT("InventorySlots Num BEFORE Capture: %d"), InventorySlots.Num());
+
 	CaptureInventory();
 
-	UPlaygroundSaveGame* SaveGameInstance =
-		Cast<UPlaygroundSaveGame>(
-		UGameplayStatics::CreateSaveGameObject(UPlaygroundSaveGame::StaticClass())
-		);
+	Debug::Print(TEXT("InventorySlots Num AFTER Capture: %d"), InventorySlots.Num());
 
-	if (!SaveGameInstance)
+	if (UGameplayStatics::DoesSaveGameExist(TEXT("Inventory"), 0))
+	{
+		CurrentSaveGame =  Cast<UPlaygroundSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("Inventory"), 0));
+	}
+	else
+	{
+		CurrentSaveGame =
+			Cast<UPlaygroundSaveGame>(
+				UGameplayStatics::CreateSaveGameObject(UPlaygroundSaveGame::StaticClass()));
+	}
+
+	if (!CurrentSaveGame)
 	{
 		Debug::Print(TEXT("SaveGameInstance InValid"));
 		return;
 	}
 
-	SaveGameInstance->SavedInventory = InventorySlots;
 
-	UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("Inventory"), 0);
-
-	if (InventorySlots.Num() <= 0)
+	switch (ItemCategory)
 	{
-		FString Msg = FString::Printf(TEXT("InventorySlots.Num(): %d"), InventorySlots.Num());
-		Debug::Print(Msg, FColor::Red); // 화면에 빨간색으로 출력
-	}
-	else
-	{
-		Debug::Print(TEXT("InventorySlots.Num(): "), InventorySlots.Num());
-		for (auto& Info : InventorySlots)
-		{
-			FString Msg = FString::Printf(
-				TEXT("SaveGame Slot[%d] ClassPath: %s"),
-				Info.Index,
-				*Info.ItemClass.ToSoftObjectPath().ToString()
-			);
-
-			Debug::Print(Msg, FColor::Yellow);
-		}
+	case EPlayground_ItemCategory::Equippable:
+		CurrentSaveGame->SavedEquippable = InventorySlots;
+		Debug::Print("Saved Inventory Equippable");
+		break;
+	case EPlayground_ItemCategory::Consumable:
+		CurrentSaveGame->SavedConsumable = InventorySlots;
+		Debug::Print("Saved Inventory Consumable");
+		break;
+	case EPlayground_ItemCategory::Craftable:
+		CurrentSaveGame->SavedCraftable = InventorySlots;
+		Debug::Print("Saved Inventory Craftable");
+		break;
+	default:
+		break;
 	}
 
+	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, TEXT("Inventory"), 0);
 
-	//UE_LOG(LogTemp, Warning, TEXT("InventorySlots Count: %d"), InventorySlots.Num());
-
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Inventory Saved"));
+	Debug::Print(TEXT("Inventory Saved"), FColor::Green);
 }
 
 void UPlayground_InventoryGrid::LoadInventory()
@@ -1298,45 +1374,79 @@ void UPlayground_InventoryGrid::LoadInventory()
 
 	if (!UGameplayStatics::DoesSaveGameExist(TEXT("Inventory"), 0))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No Save File"));
+		Debug::Print(TEXT("No Save File"), FColor::Red);
 		return;
 	}
 
-	UPlaygroundSaveGame* LoadedGame =
-		Cast<UPlaygroundSaveGame>(
-			UGameplayStatics::LoadGameFromSlot(TEXT("Inventory"), 0)
-		);
+	CurrentSaveGame =Cast<UPlaygroundSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("Inventory"), 0));
 
-	if (!LoadedGame) return;
+	if (!CurrentSaveGame) return;
 
-	Debug::Print(TEXT("LoadedGame->SavedInventory Num: %d"),
-		LoadedGame->SavedInventory.Num());
-
-	for (const FInventorySlotInfo& Info : LoadedGame->SavedInventory)
+	switch (ItemCategory)
 	{
-		if (Info.ItemClass.IsNull())
-		{
-			Debug::Print(TEXT("[Load] Index %d EMPTY"), Info.Index);
-			continue;
-		}
-
-		UClass* LoadedClass = Info.ItemClass.LoadSynchronous();
-
-		UE_LOG(LogTemp, Error,
-			TEXT("[Load] Index %d | Item %s | Stack %d | UL %d"),
-			Info.Index,
-			LoadedClass ? *LoadedClass->GetName() : TEXT("Invalid"),
-			Info.StackAmount,
-			Info.UpperLeftIndex
-		);
+	case EPlayground_ItemCategory::Equippable:
+		InventorySlots = CurrentSaveGame->SavedEquippable;
+		Debug::Print(TEXT("Equippable Item Loaded"));
+		break;
+	case EPlayground_ItemCategory::Consumable:
+		InventorySlots = CurrentSaveGame->SavedConsumable;
+		Debug::Print(TEXT("Consumable Item Loaded"));
+		break;
+	case EPlayground_ItemCategory::Craftable:
+		InventorySlots = CurrentSaveGame->SavedCraftable;
+		Debug::Print(TEXT("Craftable Item Loaded"));
+		break;
+	default:
+		break;
 	}
 
-	InventorySlots = LoadedGame->SavedInventory;
-
-	Debug::Print(TEXT("InventorySlots Num After Copy: %d"),
-		InventorySlots.Num());
+	Debug::Print(
+		FString::Printf(TEXT("InventorySlots Loaded: %d"), InventorySlots.Num()),
+		FColor::Cyan);
 
 	RestoreFromSlotInfos();
+}
+
+TSubclassOf<AActor> UPlayground_InventoryGrid::GetClassFromItemID(FName ItemID)
+{
+	if (const TSubclassOf<AActor>* Found = ItemIDToWorldItemBPClass.Find(ItemID))
+	{
+		return *Found;
+	}
+
+	return nullptr;
+}
+
+UPlayground_InventoryItem* UPlayground_InventoryGrid::CreateInventoryItemFromItemID(FName ItemID)
+{
+	TSubclassOf<AActor> ItemClass = GetClassFromItemID(ItemID);
+	if (!ItemClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] No class mapped for ItemID: %s"), *ItemID.ToString());
+		return nullptr;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Mapped Class: %s"), *ItemClass->GetName());
+
+	UPlayground_ItemComponent* ItemComp = FindItemComponentOnClass(ItemClass);
+	if (!ItemComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Can't find Playground_ItemComponent on class/templates (ItemID: %s)"),
+			*ItemID.ToString());
+		return nullptr;
+	}
+	
+	FPlayground_ItemManifest ManifestCopy = ItemComp->GetItemManifest();
+
+	AActor* OwningActor = GetTypedOuter<AActor>();
+	UObject* NewOuter = OwningActor ? (UObject*)OwningActor : (UObject*)this;
+	UPlayground_InventoryItem* NewItem = ManifestCopy.Manifest(NewOuter);
+
+	UE_LOG(LogTemp, Warning, TEXT("NewItem ID=%s Frags=%d"),
+		*NewItem->GetItemID().ToString(),
+		NewItem->GetItemManifestMutable().GetFragmentsMutable().Num());
+
+	return NewItem;
 }
 
 bool UPlayground_InventoryGrid::MatchesCategory(const UPlayground_InventoryItem* Item) const

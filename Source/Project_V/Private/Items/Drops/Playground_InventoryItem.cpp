@@ -5,6 +5,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Items/Fragment/Playground_ItemFragment.h"
 
+#include "PlaygroundDebugHelper.h"
 void UPlayground_InventoryItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	DOREPLIFETIME(ThisClass, ItemManifest);

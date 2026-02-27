@@ -12,7 +12,7 @@
 #include "PlaygroundFunctionLibrary.h"
 #include "Widgets/GridSlots/Playground_GridSlot.h"
 #include "Widgets/Spatial/Playground_InventoryGrid.h"
-
+#include "Engine/BlueprintGeneratedClass.h"   
 
 #include "PlaygroundDebugHelper.h"
 
@@ -67,7 +67,17 @@ void UPlayground_InventoryComponent::TryAddItem(UPlayground_ItemComponent* ItemC
 void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlayground_ItemComponent* ItemComponent, int32 StackCount, int32 Remainder)
 {
 	UPlayground_InventoryItem* NewItem = InventoryList.AddEntry(ItemComponent);
+
+	NewItem->Initialize(ItemComponent->GetItemManifest());
 	NewItem->SetTotalStackCount(StackCount);
+
+	// ItemID 확인 - None 호출됨
+	UE_LOG(LogTemp, Warning, TEXT("Picked Item ID: %s"),
+		*NewItem->GetItemID().ToString());
+
+	// GUID 정상 작동.
+	UE_LOG(LogTemp, Warning, TEXT("GUID: %s"),
+		*NewItem->GetInstancedID().ToString());
 
 	if (GetOwner()->GetNetMode() == NM_ListenServer || GetOwner()->GetNetMode() == NM_Standalone)
 	{
@@ -82,6 +92,8 @@ void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlaygroun
 	{
 		StackableFragment->SetStackCount(Remainder);
 	}
+
+
 
 	OnInventoryDataChanged.Broadcast();
 }

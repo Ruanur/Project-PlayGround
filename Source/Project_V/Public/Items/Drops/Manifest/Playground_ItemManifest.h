@@ -41,6 +41,9 @@ struct PROJECT_V_API FPlayground_ItemManifest
 
 	void PG_SpawnPickupActor(const UObject* WorldContextObject, const FVector& SpawnLocation, const FRotator& SpawnRotation);
 
+	UPROPERTY(EditDefaultsOnly)
+	FName ItemID;
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (ExcludeBaseStruct))
 	TArray<TInstancedStruct<FPlayground_ItemFragment>> Fragments;

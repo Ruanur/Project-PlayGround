@@ -21,6 +21,7 @@ class UPlayground_InventoryComponent;
 class UPlayground_SlottedItem;
 class UPlayground_HoverItem;
 class UPlayground_ItemPopUp;
+class UPlaygroundSaveGame;
 struct FGameplayTag;
 enum class EPlayground_GridSlotState : uint8;
 
@@ -65,10 +66,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void RestoreFromSlotInfos();
 
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	//UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void CaptureInventory();
 	
-	UPROPERTY(Transient)
+	UPROPERTY(SaveGame)
 	TArray<FInventorySlotInfo> InventorySlots;
 
 	UFUNCTION()
@@ -76,6 +77,20 @@ public:
 
 	UFUNCTION()
 	void LoadInventory();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Inventory|SaveLoad")
+	TMap<FName, TSubclassOf<AActor>> ItemIDToWorldItemBPClass;
+
+	TSubclassOf<AActor> GetClassFromItemID(FName ItemID);
+
+	UPlayground_InventoryItem* CreateInventoryItemFromItemID(FName ItemID);
+
+	UPROPERTY()
+	TObjectPtr<UPlaygroundSaveGame> CurrentSaveGame;
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FName, TSubclassOf<AActor>> ItemClassMap;
+
 	//// End Save Load System
 
 private:

@@ -26,15 +26,12 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	float SavedLookSensitivityPitch = 1.0f;
 
-	UPROPERTY()
-	TArray<FInventorySlotInfo> SavedInventory;
+	UPROPERTY(SaveGame)
+	TArray<FInventorySlotInfo> SavedEquippable;
 
 	UPROPERTY(SaveGame)
-	TArray<FInventorySlotInfo> SavedEquippables;
+	TArray<FInventorySlotInfo> SavedConsumable;
 
 	UPROPERTY(SaveGame)
-	TArray<FInventorySlotInfo> SavedConsumables;
-
-	UPROPERTY(SaveGame)
-	TArray<FInventorySlotInfo> SavedCraftables;
+	TArray<FInventorySlotInfo> SavedCraftable;
 };

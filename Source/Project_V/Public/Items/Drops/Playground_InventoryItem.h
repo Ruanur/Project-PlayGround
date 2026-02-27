@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
 #include "Items/Drops/Manifest/Playground_ItemManifest.h"
+#include "PlaygroundDebugHelper.h" 
 #include "Playground_InventoryItem.generated.h"
 
 /**
@@ -27,7 +28,28 @@ public:
 	int32 GetTotalStackCount() const { return TotalStackCount; }
 	void SetTotalStackCount(int32 Count) { TotalStackCount = Count; }
 
+	FName GetItemID() const
+	{
+		if (!ItemManifest.IsValid())
+		{
+			Debug::Print(TEXT("ItemManifest IsValid = False"));
+			return NAME_None;
+		}
+		return ItemManifest.Get<FPlayground_ItemManifest>().ItemID;
+	}
+
+	void Initialize(const FPlayground_ItemManifest& Manifest)
+	{
+		SetItemManifest(Manifest);
+		InstancedID = FGuid::NewGuid();
+	}
+
+	FGuid GetInstancedID() const { return InstancedID; }
+	void SetInstancedID(const FGuid& InGuid) { InstancedID = InGuid; }
 private:
+
+	UPROPERTY()
+	FGuid InstancedID;
 
 	UPROPERTY(VisibleAnywhere, meta = (BaseStruct = "/Script/Inventory.Playground_ItemManifest"), Replicated)
 	FInstancedStruct ItemManifest;

@@ -17,7 +17,7 @@ UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter)
 		Fragment.GetMutable().Manifest();
 	}
 
-	PG_ClearFragments();
+	//PG_ClearFragments();
 
 	return Item;
 }
