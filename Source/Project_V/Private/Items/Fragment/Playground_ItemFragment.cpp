@@ -159,8 +159,6 @@ void FPlayground_StrengthModifier::OnEquip(APlayerController* PC)
 	if (!SpecHandle.IsValid()) return;
 
 	ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
-
-	Debug::Print(TEXT("Strength increased by : 15.0"), FColor::Green);
 }
 
 void FPlayground_StrengthModifier::OnUnequip(APlayerController* PC)
