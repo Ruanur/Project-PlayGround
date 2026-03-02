@@ -59,6 +59,8 @@ public:
 	void ToggleInventoryMenu();
 	void AddRepSubObject(UObject* SubObj);
 	void SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount);
+	void PG_RegisterLoadedItem(UPlayground_InventoryItem* Item);
+
 	UPlaygroundWidgeBase* GetInventoryMenu() const { return InventoryMenu; }
 
 	FInventoryItemChange OnItemAdded;

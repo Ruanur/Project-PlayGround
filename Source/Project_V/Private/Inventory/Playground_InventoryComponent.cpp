@@ -44,6 +44,13 @@ void UPlayground_InventoryComponent::TryAddItem(UPlayground_ItemComponent* ItemC
 	UPlayground_InventoryItem* FoundItem = InventoryList.FindFirstItemByType(ItemComponent->GetItemManifest().GetItemType());
 	Result.Item = FoundItem;
 
+	UE_LOG(LogTemp, Warning, TEXT("[TryAdd] Type=%s Found=%p bStackable=%d Room=%d Remainder=%d"),
+		*ItemComponent->GetItemManifest().GetItemType().ToString(),
+		FoundItem,
+		Result.bStackable ? 1 : 0,
+		Result.TotalRoomToFill,
+		Result.Remainder);
+
 	//인벤토리 공간 없을 때 호출, 인벤토리가 꽉 참!
 	if (Result.TotalRoomToFill == 0)
 	{
@@ -68,16 +75,24 @@ void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlaygroun
 {
 	UPlayground_InventoryItem* NewItem = InventoryList.AddEntry(ItemComponent);
 
-	NewItem->Initialize(ItemComponent->GetItemManifest());
+	//NewItem->Initialize(ItemComponent->GetItemManifest());
+
+	NewItem->SetInstancedID(FGuid::NewGuid());
 	NewItem->SetTotalStackCount(StackCount);
 
-	// ItemID 확인 - None 호출됨
+	// ItemID 정상 작동
 	UE_LOG(LogTemp, Warning, TEXT("Picked Item ID: %s"),
 		*NewItem->GetItemID().ToString());
 
 	// GUID 정상 작동.
 	UE_LOG(LogTemp, Warning, TEXT("GUID: %s"),
 		*NewItem->GetInstancedID().ToString());
+
+	UE_LOG(LogTemp, Warning, TEXT("[AddNew] ItemID=%s GUID=%s Stack=%d"),
+		*NewItem->GetItemID().ToString(),
+		*NewItem->GetInstancedID().ToString(),
+		NewItem->GetTotalStackCount());
+
 
 	if (GetOwner()->GetNetMode() == NM_ListenServer || GetOwner()->GetNetMode() == NM_Standalone)
 	{
@@ -93,8 +108,6 @@ void UPlayground_InventoryComponent::Server_AddNewItem_Implementation(UPlaygroun
 		StackableFragment->SetStackCount(Remainder);
 	}
 
-
-
 	OnInventoryDataChanged.Broadcast();
 }
 
@@ -105,6 +118,11 @@ void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlay
 	if (!IsValid(Item)) return;
 
 	Item->SetTotalStackCount(Item->GetTotalStackCount() + StackCount);
+
+	UE_LOG(LogTemp, Warning, TEXT("[AddStacks] Found=%p ID=%s NewStack=%d"),
+		Item,
+		*Item->GetItemID().ToString(),
+		Item->GetTotalStackCount());
 
 	// TODO : Destroy the item if the Remainder is zero
 	// Otherwise, update the stack count for the item pickup
@@ -154,6 +172,27 @@ void UPlayground_InventoryComponent::SpawnDroppedItem(UPlayground_InventoryItem*
 		StackableFragment->SetStackCount(StackCount);
 	}
 	ItemManifest.PG_SpawnPickupActor(this, SpawnLocation, SpawnRotation);
+}
+
+// Save & Load에서 생성한 InventoryItem을 InventoryList(FastArray)에 등록
+void UPlayground_InventoryComponent::PG_RegisterLoadedItem(UPlayground_InventoryItem* Item)
+{
+	if (!IsValid(Item)) return;
+
+	AActor* OwnerActor = GetOwner();
+	if (!OwnerActor || !OwnerActor->HasAuthority())
+	{
+		return;
+	}
+
+	InventoryList.AddEntry(Item);
+
+	UE_LOG(LogTemp, Warning, TEXT("[LoadReg] Added ItemID=%s GUID=%s  EntriesNow=%d"),
+		*Item->GetItemID().ToString(),
+		*Item->GetInstancedID().ToString(),
+		InventoryList.PG_GetAllItems().Num() // 또는 Entries.Num() 접근 가능하면 Entries.Num()
+	);
+
 }
 
 void UPlayground_InventoryComponent::Server_ConsumeItem_Implementation(UPlayground_InventoryItem* Item)
@@ -281,6 +320,8 @@ void UPlayground_InventoryComponent::OpenInventory()
 	FInputModeGameAndUI InputMode;
 	OwningController->SetInputMode(InputMode);
 	OwningController->SetShowMouseCursor(true);
+
+	OnInventoryDataChanged.Broadcast();
 }
 
 void UPlayground_InventoryComponent::CloseInventory()

@@ -46,14 +46,26 @@ UPlayground_InventoryItem* FPlayground_InventoryFastArray::AddEntry(UPlayground_
 	check(OwnerComponent);
 	AActor* OwningActor = OwnerComponent->GetOwner();
 	check(OwningActor->HasAuthority());
-	UPlayground_InventoryComponent* IC = Cast<UPlayground_InventoryComponent>(OwnerComponent);
 
+	// 엔트리 생성 (참조)
 	FPlayground_InventoryEntry& NewEntry = Entries.AddDefaulted_GetRef();
-	NewEntry.Item = ItemComponent->GetItemManifest().Manifest(OwningActor);
 
-	IC->AddRepSubObject(NewEntry.Item);
+
+	// Manifest 복사, 원본 깨짐 방지
+	FPlayground_ItemManifest ManifestCopy = ItemComponent->GetItemManifest();
+	NewEntry.Item = ManifestCopy.Manifest(OwningActor);
+
+	if (UPlayground_InventoryComponent* IC = Cast<UPlayground_InventoryComponent>(OwnerComponent))
+	{
+		IC->AddRepSubObject(NewEntry.Item);
+	}
+
+	//FPlayground_InventoryEntry& NewEntry = Entries.AddDefaulted_GetRef();
+	//NewEntry.Item = ItemComponent->GetItemManifest().Manifest(OwningActor);
+
+	//IC->AddRepSubObject(NewEntry.Item);
+
 	MarkItemDirty(NewEntry);
-
 	return NewEntry.Item;
 }
 
@@ -63,8 +75,15 @@ UPlayground_InventoryItem* FPlayground_InventoryFastArray::AddEntry(UPlayground_
 	AActor* OwningActor = OwnerComponent->GetOwner();
 	check(OwningActor->HasAuthority());
 
-	FPlayground_InventoryEntry NewEntry = Entries.AddDefaulted_GetRef();
+	// 참조로 받아야 Entries에 저장됨
+	FPlayground_InventoryEntry& NewEntry = Entries.AddDefaulted_GetRef();
 	NewEntry.Item = Item;
+
+	// 로드 아이템도 등록
+	if (UPlayground_InventoryComponent* IC = Cast<UPlayground_InventoryComponent>(OwnerComponent))
+	{
+		IC->AddRepSubObject(NewEntry.Item);
+	}
 
 	MarkItemDirty(NewEntry);
 	return Item;

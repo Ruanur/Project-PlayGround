@@ -783,8 +783,6 @@ void UPlayground_InventoryGrid::AddItemAtIndex(UPlayground_InventoryItem* Item, 
 
 	AddSlottedItemToCanvas(Index, GridFragment, SlottedItem);
 
-	Debug::Print(TEXT("=== Crash Point: SlottedItems.Add ==="));
-
 	SlottedItems.Add(Index, SlottedItem);
 
 	Debug::Print(TEXT("=== ADD ITEM END ==="));
@@ -1308,6 +1306,11 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 		InvItem->SetInstancedID(SavedSlot.InstanceID);
 		InvItem->SetTotalStackCount(SavedSlot.StackAmount);
 
+		if (InventoryComponent.IsValid())
+		{
+			InventoryComponent.Get()->PG_RegisterLoadedItem(InvItem);
+		}
+
 		int32 InvIndex = SavedSlot.Index;
 		int32 InvUpperLeftIndex = SavedSlot.UpperLeftIndex;
 		bool bIsStackable = SavedSlot.bIsStackable;
@@ -1315,7 +1318,9 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 
 		if (InvIndex != InvUpperLeftIndex) continue;
 
-		
+		UE_LOG(LogTemp, Warning, TEXT("[Load] ItemType=%s Stackable=%d"),
+			*InvItem->GetItemManifest().GetItemType().ToString(),
+			InvItem->IsStackable() ? 1 : 0);
 
 		Debug::Print(TEXT("Before Call AddItemIndex"));
 
