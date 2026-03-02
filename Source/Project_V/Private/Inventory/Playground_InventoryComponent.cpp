@@ -213,7 +213,10 @@ void UPlayground_InventoryComponent::Server_ConsumeItem_Implementation(UPlaygrou
 	FPlayground_ConsumableFragment* ConsumableFragment = Item->GetItemManifestMutable().GetFragmentOfTypeMutable<FPlayground_ConsumableFragment>();
 	if (!ConsumableFragment) return;
 
+	// ApplyLevel = 1 하드코딩 (임시, 포션 종류 확장 시 - Ex. 소형 중형 대형, ApplyLevel 유동적으로 설정하게 변경)
 	constexpr int32 ApplyLevel = 1;
+
+
 	ConsumableFragment->OnConsume(
 		OwningController.Get(),
 		AbilitySystemComponent,

@@ -10,6 +10,7 @@
 #include "AbilitySystem/PlaygroundAttributeSet.h"
 #include "GameplayEffect.h"
 #include "EquipmentManagement/EqiupActor/Playground_EquipActor.h"
+#include "GameFramework/PlayerState.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -126,13 +127,65 @@ void FPlayground_LabeledNumberFragment::Manifest()
 	//bRandomizeOnManifest = false;
 }
 
+
 void FPlayground_StrengthModifier::OnEquip(APlayerController* PC)
 {
+	if (!PC || !EquipmentEffectClass) return;
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn) return;
+
+	// 서버에만 적용
+	if (!Pawn->HasAuthority()) return;
+
+	UAbilitySystemComponent* ASC = Pawn->FindComponentByClass<UAbilitySystemComponent>();
+	if (!ASC && PC->PlayerState)
+	{
+		ASC = PC->PlayerState->FindComponentByClass<UAbilitySystemComponent>();
+	}
+	if (!ASC) return;
+
+	if (ActiveEffectHandle.IsValid())
+	{
+		ASC->RemoveActiveGameplayEffect(ActiveEffectHandle);
+		ActiveEffectHandle.Invalidate();
+	}
+
+	FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+	Context.AddSourceObject(Pawn);
+
+	const float LevelToApply = 1.f;
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(EquipmentEffectClass, LevelToApply, Context);
+	if (!SpecHandle.IsValid()) return;
+
+	ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
 	Debug::Print(TEXT("Strength increased by : 15.0"), FColor::Green);
 }
 
 void FPlayground_StrengthModifier::OnUnequip(APlayerController* PC)
 {
+	if (!PC) return;
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn) return;
+
+	if (!Pawn->HasAuthority()) return;
+
+	UAbilitySystemComponent* ASC = Pawn->FindComponentByClass<UAbilitySystemComponent>();
+
+	if (!ASC && PC->PlayerState)
+	{
+		ASC = PC->PlayerState->FindComponentByClass<UAbilitySystemComponent>();
+	}
+	if (!ASC) return;
+
+	if (ActiveEffectHandle.IsValid())
+	{
+		ASC->RemoveActiveGameplayEffect(ActiveEffectHandle);
+		ActiveEffectHandle.Invalidate();
+	}
+
 	Debug::Print(TEXT("Strength decreased by : 15.0"), FColor::Red);
 }
 

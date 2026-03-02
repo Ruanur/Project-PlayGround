@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "StructUtils/InstancedStruct.h"
+#include "GameplayEffectTypes.h"
 
 #include "Playground_ItemFragment.generated.h"
 
@@ -209,6 +210,13 @@ USTRUCT(BlueprintType)
 struct FPlayground_StrengthModifier : public FPlayground_EquipModifier
 {
 	GENERATED_BODY()
+
+	// 장비 능력치 GameEffect
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> EquipmentEffectClass;
+
+	// 장착 중 적용된 GE Handle
+	FActiveGameplayEffectHandle ActiveEffectHandle;
 
 	virtual void OnEquip(APlayerController* PC) override;
 	virtual void OnUnequip(APlayerController* PC) override;
