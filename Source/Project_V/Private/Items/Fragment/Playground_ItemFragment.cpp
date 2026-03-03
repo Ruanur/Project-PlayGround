@@ -176,6 +176,7 @@ void FPlayground_StrengthModifier::OnUnequip(APlayerController* PC)
 	{
 		ASC = PC->PlayerState->FindComponentByClass<UAbilitySystemComponent>();
 	}
+
 	if (!ASC) return;
 
 	if (ActiveEffectHandle.IsValid())

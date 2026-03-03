@@ -184,6 +184,8 @@ float UPlayground_SpatialInventory::GetTileSize() const
 FReply UPlayground_SpatialInventory::NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	ActiveGrid->PG_DropItem();
+	Debug::Print(TEXT("Over mouse Drop"));
+
 	return FReply::Handled();
 }
 

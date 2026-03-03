@@ -748,8 +748,8 @@ void UPlayground_InventoryGrid::AddItemToIndices(const FPlayground_SlotAvailabil
 
 void UPlayground_InventoryGrid::AddItemAtIndex(UPlayground_InventoryItem* Item, const int32 Index, const bool bStackable, const int32 StackAmount)
 {
-	Debug::Print(TEXT("=== ADD ITEM CALLED ==="));
-	UE_LOG(LogTemp, Warning, TEXT("Item ptr: %p"), Item);
+	//Debug::Print(TEXT("=== ADD ITEM CALLED ==="));
+	//UE_LOG(LogTemp, Warning, TEXT("Item ptr: %p"), Item);
 	check(Item != nullptr);
 
 	if (TObjectPtr<UPlayground_SlottedItem>* Found = SlottedItems.Find(Index))
@@ -762,24 +762,24 @@ void UPlayground_InventoryGrid::AddItemAtIndex(UPlayground_InventoryItem* Item, 
 	}
 
 	const FPlayground_GridFragment* GridFragment = GetFragment<FPlayground_GridFragment>(Item, FragmentTags::GridFragment);
-	Debug::Print(TEXT("=== GetFragment Passed ==="));
+	//Debug::Print(TEXT("=== GetFragment Passed ==="));
 
 	const FPlayground_ImageFragment* ImageFragment = GetFragment<FPlayground_ImageFragment>(Item, FragmentTags::IconFragment);
-	Debug::Print(TEXT("=== ImageFragment Passed ==="));
+	//Debug::Print(TEXT("=== ImageFragment Passed ==="));
 
 	if (!GridFragment || !ImageFragment)
 	{
-		Debug::Print(TEXT("=== Crash Point ==="));
-		Debug::Print(FString::Printf(TEXT("GridFragment: %p"), GridFragment));
-		Debug::Print(FString::Printf(TEXT("ImageFragment: %p"), ImageFragment));
+		//Debug::Print(TEXT("=== Crash Point ==="));
+		//Debug::Print(FString::Printf(TEXT("GridFragment: %p"), GridFragment));
+		//Debug::Print(FString::Printf(TEXT("ImageFragment: %p"), ImageFragment));
 		return;
 	}
-	Debug::Print(TEXT("=== GridFragment || ImageFragment Passed ==="));
-	Debug::Print(FString::Printf(TEXT("GridFragment: %p"), GridFragment));
-	Debug::Print(FString::Printf(TEXT("ImageFragment: %p"), ImageFragment));
+	//Debug::Print(TEXT("=== GridFragment || ImageFragment Passed ==="));
+	//Debug::Print(FString::Printf(TEXT("GridFragment: %p"), GridFragment));
+	//Debug::Print(FString::Printf(TEXT("ImageFragment: %p"), ImageFragment));
 
 	UPlayground_SlottedItem* SlottedItem = CreateSlottedItem(Item, bStackable, StackAmount, GridFragment, ImageFragment, Index);
-	Debug::Print(TEXT("=== CreateSlottedItem Passed ==="));
+	//Debug::Print(TEXT("=== CreateSlottedItem Passed ==="));
 
 	AddSlottedItemToCanvas(Index, GridFragment, SlottedItem);
 
@@ -1088,6 +1088,8 @@ void UPlayground_InventoryGrid::PG_DropItem()
 
 	PG_ClearHoverItem();
 	PG_ShowCursor();
+
+	Debug::Print(TEXT("Dropped"));
 }
 
 bool UPlayground_InventoryGrid::PG_HasHoverItem() const
@@ -1166,6 +1168,7 @@ void UPlayground_InventoryGrid::PG_OnPopUpMenuDrop(int32 Index)
 	if (!IsValid(RightClickedItem)) return;
 
 	PickUp(RightClickedItem, Index);
+	Debug::Print(TEXT("Drop Menu Click : Dropped"));
 	PG_DropItem();
 }
 
@@ -1243,10 +1246,6 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 		return;
 	}
 
-	Debug::Print(
-		FString::Printf(TEXT("Local Copy Created. Num: %d"), InventorySlots.Num()),
-		FColor::Yellow);
-
 	//Clear current inventory Grid
 	for (const auto& GridSlot : GridSlots)
 	{
@@ -1274,15 +1273,11 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 		//Subclass Test
 		if (SavedSlot.Index != SavedSlot.UpperLeftIndex)
 		{
-			Debug::Print(TEXT("SavedSlot InValid"));
+			//Debug::Print(TEXT("SavedSlot InValid"));
 			continue;
 		}
 
-		if (SavedSlot.ItemID.IsNone())
-		{
-			Debug::Print(TEXT("[InventoryLoad] SavedSlot.ItemID is None"));
-			continue;
-		}
+		if (SavedSlot.ItemID.IsNone()) continue;
 
 		// InvItem => 현 문제점, UObjectPtr로 직렬화 시 (SaveGame 저장)
 		// 역직렬화할 때 nullptr로 호출되는 현상 확인
@@ -1299,7 +1294,7 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 		UPlayground_InventoryItem* InvItem = CreateInventoryItemFromItemID(SavedSlot.ItemID);
 		if (!IsValid(InvItem))
 		{
-			Debug::Print(FString::Printf(TEXT("[InventoryLoad] Failed to create item for ID: %s"), *SavedSlot.ItemID.ToString()));
+			//Debug::Print(FString::Printf(TEXT("[InventoryLoad] Failed to create item for ID: %s"), *SavedSlot.ItemID.ToString()));
 			continue;
 		}
 
@@ -1318,11 +1313,11 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 
 		if (InvIndex != InvUpperLeftIndex) continue;
 
-		UE_LOG(LogTemp, Warning, TEXT("[Load] ItemType=%s Stackable=%d"),
-			*InvItem->GetItemManifest().GetItemType().ToString(),
-			InvItem->IsStackable() ? 1 : 0);
+		//UE_LOG(LogTemp, Warning, TEXT("[Load] ItemType=%s Stackable=%d"),
+		//	*InvItem->GetItemManifest().GetItemType().ToString(),
+		//	InvItem->IsStackable() ? 1 : 0);
 
-		Debug::Print(TEXT("Before Call AddItemIndex"));
+		//Debug::Print(TEXT("Before Call AddItemIndex"));
 
 		AddItemAtIndex(InvItem, InvIndex, bIsStackable, StackAmount);
 		UpdateGridSlots(InvItem, InvIndex, bIsStackable, StackAmount);
@@ -1344,15 +1339,15 @@ void UPlayground_InventoryGrid::CaptureInventory()
 
 void UPlayground_InventoryGrid::SaveInventory()
 {
-	Debug::Print(TEXT("=== SaveInventory CALLED ==="));
+	//Debug::Print(TEXT("=== SaveInventory CALLED ==="));
 
 	// 인벤토리 카테고리 3개 존재, 3개 전부 루프 후 마지막에 있는 데이터 저장 확인, Null 데이터라면 전부 비거나,
 	// 유효한 아이템이더라도 로드 시 카테고리 구별이 안되어 예외 발생
-	Debug::Print(TEXT("InventorySlots Num BEFORE Capture: %d"), InventorySlots.Num());
+	//Debug::Print(TEXT("InventorySlots Num BEFORE Capture: %d"), InventorySlots.Num());
 
 	CaptureInventory();
 
-	Debug::Print(TEXT("InventorySlots Num AFTER Capture: %d"), InventorySlots.Num());
+	//Debug::Print(TEXT("InventorySlots Num AFTER Capture: %d"), InventorySlots.Num());
 
 	if (UGameplayStatics::DoesSaveGameExist(TEXT("Inventory"), 0))
 	{
@@ -1367,7 +1362,7 @@ void UPlayground_InventoryGrid::SaveInventory()
 
 	if (!CurrentSaveGame)
 	{
-		Debug::Print(TEXT("SaveGameInstance InValid"));
+		//Debug::Print(TEXT("SaveGameInstance InValid"));
 		return;
 	}
 
@@ -1376,15 +1371,15 @@ void UPlayground_InventoryGrid::SaveInventory()
 	{
 	case EPlayground_ItemCategory::Equippable:
 		CurrentSaveGame->SavedEquippable = InventorySlots;
-		Debug::Print("Saved Inventory Equippable");
+		//Debug::Print("Saved Inventory Equippable");
 		break;
 	case EPlayground_ItemCategory::Consumable:
 		CurrentSaveGame->SavedConsumable = InventorySlots;
-		Debug::Print("Saved Inventory Consumable");
+		//Debug::Print("Saved Inventory Consumable");
 		break;
 	case EPlayground_ItemCategory::Craftable:
 		CurrentSaveGame->SavedCraftable = InventorySlots;
-		Debug::Print("Saved Inventory Craftable");
+		//Debug::Print("Saved Inventory Craftable");
 		break;
 	default:
 		break;
@@ -1413,23 +1408,23 @@ void UPlayground_InventoryGrid::LoadInventory()
 	{
 	case EPlayground_ItemCategory::Equippable:
 		InventorySlots = CurrentSaveGame->SavedEquippable;
-		Debug::Print(TEXT("Equippable Item Loaded"));
+		//Debug::Print(TEXT("Equippable Item Loaded"));
 		break;
 	case EPlayground_ItemCategory::Consumable:
 		InventorySlots = CurrentSaveGame->SavedConsumable;
-		Debug::Print(TEXT("Consumable Item Loaded"));
+		//Debug::Print(TEXT("Consumable Item Loaded"));
 		break;
 	case EPlayground_ItemCategory::Craftable:
 		InventorySlots = CurrentSaveGame->SavedCraftable;
-		Debug::Print(TEXT("Craftable Item Loaded"));
+		//Debug::Print(TEXT("Craftable Item Loaded"));
 		break;
 	default:
 		break;
 	}
 
-	Debug::Print(
-		FString::Printf(TEXT("InventorySlots Loaded: %d"), InventorySlots.Num()),
-		FColor::Cyan);
+	//Debug::Print(
+	//	FString::Printf(TEXT("InventorySlots Loaded: %d"), InventorySlots.Num()),
+	//	FColor::Cyan);
 
 	RestoreFromSlotInfos();
 }
@@ -1449,16 +1444,16 @@ UPlayground_InventoryItem* UPlayground_InventoryGrid::CreateInventoryItemFromIte
 	TSubclassOf<AActor> ItemClass = GetClassFromItemID(ItemID);
 	if (!ItemClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] No class mapped for ItemID: %s"), *ItemID.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] No class mapped for ItemID: %s"), *ItemID.ToString());
 		return nullptr;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Mapped Class: %s"), *ItemClass->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Mapped Class: %s"), *ItemClass->GetName());
 
 	UWorld* World = GetWorld();
 	if (!World)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] No World"));
+		//UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] No World"));
 		return nullptr;
 	}
 
@@ -1474,7 +1469,7 @@ UPlayground_InventoryItem* UPlayground_InventoryGrid::CreateInventoryItemFromIte
 	AActor* TempActor = World->SpawnActor<AActor>(ItemClass, SpawnTM, Params);
 	if (!TempActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Failed to spawn temp actor (ItemID: %s)"), *ItemID.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Failed to spawn temp actor (ItemID: %s)"), *ItemID.ToString());
 		return nullptr;
 	}
 
@@ -1485,16 +1480,16 @@ UPlayground_InventoryItem* UPlayground_InventoryGrid::CreateInventoryItemFromIte
 	UPlayground_ItemComponent* ItemComp = TempActor->FindComponentByClass<UPlayground_ItemComponent>();
 	if (!ItemComp)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] TempActor has no ItemComponent (ItemID: %s)"), *ItemID.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] TempActor has no ItemComponent (ItemID: %s)"), *ItemID.ToString());
 		TempActor->Destroy();
 		return nullptr;
 	}
 	
 	// 런타임 초기화 반영된 Manifest 확보
 	FPlayground_ItemManifest ManifestCopy = ItemComp->GetItemManifest();
-	UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Spawned ManifestCopy ItemID=%s Frags=%d"),
-		*ManifestCopy.ItemID.ToString(),
-		ManifestCopy.GetFragmentsMutable().Num());
+	//UE_LOG(LogTemp, Warning, TEXT("[InventoryLoad] Spawned ManifestCopy ItemID=%s Frags=%d"),
+	//	*ManifestCopy.ItemID.ToString(),
+	//	ManifestCopy.GetFragmentsMutable().Num());
 
 	TempActor->Destroy();
 

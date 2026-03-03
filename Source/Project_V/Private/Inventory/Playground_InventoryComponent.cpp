@@ -134,6 +134,8 @@ void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlay
 	{
 		StackableFragment->SetStackCount(Remainder);
 	}
+
+	OnInventoryDataChanged.Broadcast();
 }
 
 void UPlayground_InventoryComponent::Server_DropItem_Implementation(UPlayground_InventoryItem* Item, int32 StackCount)
@@ -149,6 +151,8 @@ void UPlayground_InventoryComponent::Server_DropItem_Implementation(UPlayground_
 	}
 
 	SpawnDroppedItem(Item, StackCount);
+
+	OnInventoryDataChanged.Broadcast();
 }
 
 void UPlayground_InventoryComponent::SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount)
@@ -156,7 +160,6 @@ void UPlayground_InventoryComponent::SpawnDroppedItem(UPlayground_InventoryItem*
 	// TODO: Spawn the dropped item in the level
 	const APawn* OwningPawn = OwningController->GetPawn();
 	FVector RotatedForward = OwningPawn->GetActorForwardVector();
-
 
 	// Drops Position
 	RotatedForward = RotatedForward.RotateAngleAxis(FMath::FRandRange(DropSpawnAngleMin, DropSpawnAngleMax), FVector::UpVector);
@@ -172,6 +175,8 @@ void UPlayground_InventoryComponent::SpawnDroppedItem(UPlayground_InventoryItem*
 		StackableFragment->SetStackCount(StackCount);
 	}
 	ItemManifest.PG_SpawnPickupActor(this, SpawnLocation, SpawnRotation);
+
+	OnInventoryDataChanged.Broadcast();
 }
 
 // Save & Load에서 생성한 InventoryItem을 InventoryList(FastArray)에 등록
@@ -187,12 +192,11 @@ void UPlayground_InventoryComponent::PG_RegisterLoadedItem(UPlayground_Inventory
 
 	InventoryList.AddEntry(Item);
 
-	UE_LOG(LogTemp, Warning, TEXT("[LoadReg] Added ItemID=%s GUID=%s  EntriesNow=%d"),
-		*Item->GetItemID().ToString(),
-		*Item->GetInstancedID().ToString(),
-		InventoryList.PG_GetAllItems().Num() // 또는 Entries.Num() 접근 가능하면 Entries.Num()
-	);
-
+	//UE_LOG(LogTemp, Warning, TEXT("[LoadReg] Added ItemID=%s GUID=%s  EntriesNow=%d"),
+	//	*Item->GetItemID().ToString(),
+	//	*Item->GetInstancedID().ToString(),
+	//	InventoryList.PG_GetAllItems().Num() // 또는 Entries.Num() 접근 가능하면 Entries.Num()
+	//);
 }
 
 void UPlayground_InventoryComponent::Server_ConsumeItem_Implementation(UPlayground_InventoryItem* Item)
@@ -323,8 +327,6 @@ void UPlayground_InventoryComponent::OpenInventory()
 	FInputModeGameAndUI InputMode;
 	OwningController->SetInputMode(InputMode);
 	OwningController->SetShowMouseCursor(true);
-
-	OnInventoryDataChanged.Broadcast();
 }
 
 void UPlayground_InventoryComponent::CloseInventory()
