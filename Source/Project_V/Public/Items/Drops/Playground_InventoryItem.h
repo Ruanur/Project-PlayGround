@@ -38,6 +38,8 @@ public:
 		return ItemManifest.Get<FPlayground_ItemManifest>().ItemID;
 	}
 
+	FText PG_GetDisplayName() const;
+
 	void Initialize(const FPlayground_ItemManifest& Manifest)
 	{
 		SetItemManifest(Manifest);

@@ -1191,22 +1191,35 @@ void UPlayground_InventoryGrid::OnInventoryMenuToggled(bool bOpen)
 
 void UPlayground_InventoryGrid::PG_DropItem()
 {
-	if (bDropConfirmPending) return;
-
-	if (!IsValid(HoverItem)) return;
+	//if (bDropConfirmPending)
+	//{
+	//	Debug::Print(TEXT("bDropConfirmPending false"));
+	//	return;
+	//}
+		
+	if (!IsValid(HoverItem))
+	{
+		Debug::Print(TEXT("HoverItem is not Valid"));
+		return;
+	}
 
 	UPlayground_InventoryItem* Item = HoverItem->GetInventoryItem();
-	if (!IsValid(Item)) return;
+	if (!IsValid(Item))
+	{
+		Debug::Print(TEXT("Item is not Valid"));
+		return;
+	}
 
 	const int32 DropCount = HoverItem->IsStackable() ? HoverItem->GetStackCount() : 1;
 
 	PendingDropUpperLeftIndex = INDEX_NONE;
 	PG_RequestDropConfirm(Item, DropCount);
+
+	Debug::Print(TEXT("DropItem -> Request"));
 }
 
 void UPlayground_InventoryGrid::PG_RequestDropConfirm(UPlayground_InventoryItem* Item, int32 DropCount)
 {
-	if (bDropConfirmPending) return;
 	if (!IsValid(Item)) return;
 	if (DropCount <= 0) return;
 
@@ -1239,7 +1252,7 @@ void UPlayground_InventoryGrid::PG_RequestDropConfirm(UPlayground_InventoryItem*
 	DropConfirmWidget->OnConfirm.BindDynamic(this, &ThisClass::PG_OnDropConfirm);
 	DropConfirmWidget->OnCancel.BindDynamic(this, &ThisClass::PG_OnDropCancel);
 
-	DropConfirmWidget->SetInfo(FText::FromName(Item->GetItemID()), DropCount);
+	DropConfirmWidget->SetInfo(Item->PG_GetDisplayName(), DropCount);
 
 	if (OwningCanvasPanel.IsValid())
 	{
@@ -1284,11 +1297,11 @@ void UPlayground_InventoryGrid::PG_OnDropConfirm()
 
 void UPlayground_InventoryGrid::PG_OnDropCancel()
 {
-	//bDropConfirmPending = false;
-	//PendingDropItem = nullptr;
-	//PendingDropCount = 1;
+	bDropConfirmPending = false;
+	PendingDropItem = nullptr;
+	PendingDropCount = 1;
 
-	//PendingDropUpperLeftIndex = INDEX_NONE;
+	PendingDropUpperLeftIndex = INDEX_NONE;
 
 	if (IsValid(DropConfirmWidget))
 	{
