@@ -22,6 +22,7 @@
 #include "Engine/BlueprintGeneratedClass.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "Engine/SCS_Node.h"
+#include "Widgets/ItemPopUp/Playground_DropConfirmWidget.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -1079,19 +1080,6 @@ void UPlayground_InventoryGrid::PutHoverItemBack()
 	PG_ClearHoverItem();
 }
 
-void UPlayground_InventoryGrid::PG_DropItem()
-{
-	if (!IsValid(HoverItem)) return;
-	if (!IsValid(HoverItem->GetInventoryItem())) return;
-
-	// TODO: Tell the server to actually drop the item
-
-	PG_ClearHoverItem();
-	PG_ShowCursor();
-
-	Debug::Print(TEXT("Dropped"));
-}
-
 bool UPlayground_InventoryGrid::PG_HasHoverItem() const
 {
 	return IsValid(HoverItem);
@@ -1169,7 +1157,7 @@ void UPlayground_InventoryGrid::PG_OnPopUpMenuDrop(int32 Index)
 
 	PickUp(RightClickedItem, Index);
 	Debug::Print(TEXT("Drop Menu Click : Dropped"));
-	PG_DropItem();
+	PG_ExecuteDrop();
 }
 
 void UPlayground_InventoryGrid::PG_OnPopUpMenuConsume(int32 Index)
@@ -1199,6 +1187,145 @@ void UPlayground_InventoryGrid::OnInventoryMenuToggled(bool bOpen)
 	{
 		PutHoverItemBack();
 	}
+}
+
+void UPlayground_InventoryGrid::PG_DropItem()
+{
+	if (bDropConfirmPending) return;
+
+	if (!IsValid(HoverItem)) return;
+
+	UPlayground_InventoryItem* Item = HoverItem->GetInventoryItem();
+	if (!IsValid(Item)) return;
+
+	const int32 DropCount = HoverItem->IsStackable() ? HoverItem->GetStackCount() : 1;
+
+	PendingDropUpperLeftIndex = INDEX_NONE;
+	PG_RequestDropConfirm(Item, DropCount);
+}
+
+void UPlayground_InventoryGrid::PG_RequestDropConfirm(UPlayground_InventoryItem* Item, int32 DropCount)
+{
+	if (bDropConfirmPending) return;
+	if (!IsValid(Item)) return;
+	if (DropCount <= 0) return;
+
+	// 대기 상태 저장
+	PendingDropItem = Item;
+	PendingDropCount = DropCount;
+	bDropConfirmPending = true;
+
+	// TODO : 확인 위젯 생성
+	if (!IsValid(DropConfirmWidget))
+	{
+		if (!DropConfirmWidgetClass)
+		{
+			Debug::Print(TEXT("DropConfirmWidgetClass is not set"), FColor::Red);
+			bDropConfirmPending = false;
+			PendingDropItem = nullptr;
+			return;
+		}
+
+		DropConfirmWidget = CreateWidget<UPlayground_DropConfirmWidget>(this, DropConfirmWidgetClass);
+	}
+
+	if (!IsValid(DropConfirmWidget))
+	{
+		bDropConfirmPending = false;
+		PendingDropItem = nullptr;
+		return;
+	}
+
+	DropConfirmWidget->OnConfirm.BindDynamic(this, &ThisClass::PG_OnDropConfirm);
+	DropConfirmWidget->OnCancel.BindDynamic(this, &ThisClass::PG_OnDropCancel);
+
+	DropConfirmWidget->SetInfo(FText::FromName(Item->GetItemID()), DropCount);
+
+	if (OwningCanvasPanel.IsValid())
+	{
+		OwningCanvasPanel->AddChild(DropConfirmWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(DropConfirmWidget))
+		{
+			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+			CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+			CanvasSlot->SetAutoSize(true);
+			CanvasSlot->SetPosition(FVector2D(0.f, 0.f));
+			CanvasSlot->SetZOrder(9999);
+		}
+	}
+	else
+	{
+		DropConfirmWidget->AddToViewport(9999);
+	}
+
+}
+
+void UPlayground_InventoryGrid::PG_OnDropConfirm()
+{
+	bDropConfirmPending = false;
+
+	UPlayground_InventoryItem* Item = PendingDropItem.Get();
+	const int32 Count = PendingDropCount;
+
+	PendingDropItem = nullptr;
+	PendingDropCount = 1;
+
+	if (IsValid(DropConfirmWidget))
+	{
+		DropConfirmWidget->RemoveFromParent();
+		DropConfirmWidget = nullptr;
+	}
+
+	if (!IsValid(Item)) return;
+
+	PG_ExecuteDrop();
+}
+
+void UPlayground_InventoryGrid::PG_OnDropCancel()
+{
+	//bDropConfirmPending = false;
+	//PendingDropItem = nullptr;
+	//PendingDropCount = 1;
+
+	//PendingDropUpperLeftIndex = INDEX_NONE;
+
+	if (IsValid(DropConfirmWidget))
+	{
+		DropConfirmWidget->RemoveFromParent();
+		DropConfirmWidget = nullptr;
+	}
+}
+
+void UPlayground_InventoryGrid::PG_ExecuteDrop()
+{
+	//if (!IsValid(Item)) return;
+	//if (DropCount <= 0) return;
+
+	//if (InventoryComponent.IsValid())
+	//{
+	//	InventoryComponent->Server_DropItem(Item, DropCount);
+	//}
+	//else
+	//{
+	//	if (PendingDropUpperLeftIndex != INDEX_NONE && GridSlots.IsValidIndex(PendingDropUpperLeftIndex))
+	//	{
+	//		RemoveItemFromGrid(Item, PendingDropUpperLeftIndex);
+	//		Debug::Print(TEXT("Popup Dropped"));
+	//	}
+	//}
+
+	////PendingDropUpperLeftIndex = INDEX_NONE;
+
+	if (!IsValid(HoverItem)) return;
+	if (!IsValid(HoverItem->GetInventoryItem())) return;
+
+	//const bool bDroppingFromHover = IsValid(HoverItem) && (HoverItem->GetInventoryItem() == Item);
+
+	PG_ClearHoverItem();
+	Debug::Print(TEXT("Hover Dropped | PG_ExecuteDrop"));
+	//PG_ClearHoverItem();
+	//PG_ShowCursor();
 }
 
 void UPlayground_InventoryGrid::GetSlotInfos(TArray<FInventorySlotInfo>& OutInfos) const

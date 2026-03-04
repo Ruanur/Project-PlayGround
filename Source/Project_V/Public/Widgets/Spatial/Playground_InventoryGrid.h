@@ -22,6 +22,7 @@ class UPlayground_SlottedItem;
 class UPlayground_HoverItem;
 class UPlayground_ItemPopUp;
 class UPlaygroundSaveGame;
+class UPlayground_DropConfirmWidget;
 struct FGameplayTag;
 enum class EPlayground_GridSlotState : uint8;
 
@@ -55,7 +56,39 @@ public:
 	UFUNCTION()
 	void AddItem(UPlayground_InventoryItem* Item);
 
+	// Drop Item Confirm Check
 
+	// 버리려는 아이템 기억
+	UPROPERTY()
+	TWeakObjectPtr<UPlayground_InventoryItem> PendingDropItem;
+
+	UPROPERTY()
+	int32 PendingDropCount = 1;
+
+	UPROPERTY()
+	bool bDropConfirmPending = false;
+
+	UFUNCTION()
+	void PG_RequestDropConfirm(UPlayground_InventoryItem* Item, int32 DropCount);
+
+	UFUNCTION()
+	void PG_OnDropConfirm();
+
+	UFUNCTION()
+	void PG_OnDropCancel();
+
+	void PG_ExecuteDrop();
+
+	UPROPERTY(EditAnywhere, Category = "Inventory|DropConfirm")
+	TSubclassOf<UPlayground_DropConfirmWidget> DropConfirmWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UPlayground_DropConfirmWidget> DropConfirmWidget;
+
+	UPROPERTY()
+	int32 PendingDropUpperLeftIndex = INDEX_NONE;
+
+	// End Drop Item Confirm Check
 
 	// For Save Load Systems 
 	// Save
