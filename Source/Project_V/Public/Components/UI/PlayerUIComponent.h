@@ -14,6 +14,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityIconSlotUpdatedDelegate, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAbilityCooldownBeginDelegate, FGameplayTag, AbilityInputTag, float, TotalCooldownTime, float, RemainingCooldownTime);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoneInteractedDelegate, bool, bShouldDisplayInputKey);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStatCurrentMaxChangedDelegate, float, Current, float, Max);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatValueChangedDelegate, float, NewValue);
+
 /**
  * 
  */
@@ -37,4 +42,21 @@ public:
 
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnStoneInteractedDelegate OnStoneInteracted;
+
+
+	// Stats Info Event
+	UPROPERTY(BlueprintAssignable, Category = "UI|Stats")
+	FOnStatCurrentMaxChangedDelegate OnHealthValuesChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "UI|Stats")
+	FOnStatCurrentMaxChangedDelegate OnRageValuesChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "UI|Stats")
+	FOnStatValueChangedDelegate OnAttackPowerChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "UI|Stats")
+	FOnStatValueChangedDelegate OnDefensePowerChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "UI|Stats")
+	FOnStatValueChangedDelegate OnBaseDamageChanged;
 };

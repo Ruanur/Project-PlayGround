@@ -19,6 +19,7 @@ UPlaygroundAttributeSet::UPlaygroundAttributeSet()
 	InitMaxRage(1.f);
 	InitAttackPower(1.f);
 	InitDefensePower(1.f);
+	InitBaseDamage(1.f);
 }
 
 void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -32,17 +33,48 @@ void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMod
 
 	UPawnUIComponent* PawnUIComponent = CachedPawnUIInterface->GetPawnUIComponent();
 
-	checkf(PawnUIComponent, TEXT("Couldn't Extrac a PawnUIComponent from %s"), *Data.Target.GetAvatarActor()->GetActorNameOrLabel())
+	checkf(PawnUIComponent, TEXT("Couldn't Extrac a PawnUIComponent from %s"), *Data.Target.GetAvatarActor()->GetActorNameOrLabel());
 
+	UPlayerUIComponent* PlayerUIComponent = CachedPawnUIInterface->GetPlayerUIComponent();
+
+	// ----------------------
+	// CurrentHealth
+	// ----------------------
 	if (Data.EvaluatedData.Attribute == GetCurrentHealthAttribute())
 	{
 		const float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealth());
 
 		SetCurrentHealth(NewCurrentHealth);
 
+		// ÆÛ¼¾Æ® Health
 		PawnUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth()/GetMaxHealth());
+
+		if (PlayerUIComponent)
+		{
+			PlayerUIComponent->OnHealthValuesChanged.Broadcast(GetCurrentHealth(), GetMaxHealth());
+		}
 	}
 
+	// ----------------------
+	// MaxHealth
+	// ----------------------
+	if (Data.EvaluatedData.Attribute == GetMaxHealthAttribute())
+	{
+		const float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealth());
+		SetCurrentHealth(NewCurrentHealth);
+
+		PawnUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealth());
+
+		if (PlayerUIComponent)
+		{
+			PlayerUIComponent->OnHealthValuesChanged.Broadcast(GetCurrentHealth(), GetMaxHealth());
+		}
+	}
+
+
+	// ----------------------
+	// CurrentRage
+	// ----------------------
 	if (Data.EvaluatedData.Attribute == GetCurrentRageAttribute())
 	{
 		const float NewCurrentRage = FMath::Clamp(GetCurrentRage(), 0.f, GetMaxRage());
@@ -63,12 +95,61 @@ void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMod
 			UPlaygroundFunctionLibrary::RemoveGameplayTagFromActorIfFound(Data.Target.GetAvatarActor(), PlaygroundGameplayTags::Player_Status_Rage_None);
 		}
 
-		if (UPlayerUIComponent* PlayerUIComponent = CachedPawnUIInterface->GetPlayerUIComponent())
+		if (PlayerUIComponent)
 		{
 			PlayerUIComponent->OnCurrentRageChanged.Broadcast(GetCurrentRage() / GetMaxRage());
+			PlayerUIComponent->OnRageValuesChanged.Broadcast(GetCurrentRage(), GetMaxRage());
 		}
 	}
 
+	// ----------------------
+	// MaxRage
+	// ----------------------
+	if (Data.EvaluatedData.Attribute == GetMaxRageAttribute())
+	{
+		const float NewCurrentRage = FMath::Clamp(GetCurrentRage(), 0.f, GetMaxRage());
+		SetCurrentRage(NewCurrentRage);
+
+		if (PlayerUIComponent)
+		{
+			PlayerUIComponent->OnCurrentRageChanged.Broadcast(GetCurrentRage() / GetMaxRage());
+			PlayerUIComponent->OnRageValuesChanged.Broadcast(GetCurrentRage(), GetMaxRage());
+		}
+	}
+
+	// ----------------------
+	// AttackPower / DefensePower
+	// ----------------------
+	if (Data.EvaluatedData.Attribute == GetAttackPowerAttribute())
+	{
+		if (PlayerUIComponent)
+		{
+			PlayerUIComponent->OnAttackPowerChanged.Broadcast(GetAttackPower());
+		}
+	}
+
+	if (Data.EvaluatedData.Attribute == GetDefensePowerAttribute())
+	{
+		if (PlayerUIComponent)
+		{
+			PlayerUIComponent->OnDefensePowerChanged.Broadcast(GetDefensePower());
+		}
+	}
+
+	// ----------------------
+	// BaseDamage
+	// ----------------------
+	if (Data.EvaluatedData.Attribute == GetBaseDamageAttribute())
+	{
+		 if (PlayerUIComponent)
+		 {
+			 PlayerUIComponent->OnBaseDamageChanged.Broadcast(GetBaseDamage());
+		 }
+	}
+
+	// ----------------------
+	// DamageTaken
+	// ----------------------
 	if (Data.EvaluatedData.Attribute == GetDamageTakenAttribute())
 	{
 		const float OldHealth = GetCurrentHealth();
@@ -96,9 +177,6 @@ void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMod
 		if (GetCurrentHealth() == 0.f)
 		{
 			UPlaygroundFunctionLibrary::AddGameplayTagToActorIfNone(Data.Target.GetAvatarActor(), PlaygroundGameplayTags::Shared_Status_Dead);
-
 		}
 	}
-
-
 }

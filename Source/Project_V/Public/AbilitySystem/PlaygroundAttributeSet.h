@@ -30,6 +30,8 @@ public:
 
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
+
+	// Health
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData CurrentHealth;
 	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, CurrentHealth)
@@ -38,6 +40,8 @@ public:
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, MaxHealth)
 
+
+	// Rage
 	UPROPERTY(BlueprintReadOnly, Category = "Rage")
 	FGameplayAttributeData CurrentRage;
 	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, CurrentRage)
@@ -46,6 +50,8 @@ public:
 	FGameplayAttributeData MaxRage;
 	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, MaxRage)
 
+
+	// Damage / Combat Stats
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData AttackPower;
 	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, AttackPower)
@@ -57,6 +63,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData DamageTaken;
 	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, DamageTaken)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData BaseDamage;
+	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, BaseDamage)
 
 private:
 	TWeakInterfacePtr<IPawnUIInterface> CachedPawnUIInterface;

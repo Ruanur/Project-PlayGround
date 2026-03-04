@@ -52,3 +52,15 @@ enum class EPlaygroundInputMode : uint8
 	GameOnly,
 	UIOnly
 };
+
+UENUM(BlueprintType)
+enum class EPlaygroundStatField : uint8
+{
+	CurrentHealth,
+	MaxHealth,
+	CurrentRage,
+	MaxRage,
+	AttackPower,
+	DefensePower,
+	BaseDamage
+};

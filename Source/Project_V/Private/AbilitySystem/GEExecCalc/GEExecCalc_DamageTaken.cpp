@@ -12,12 +12,14 @@ struct FPlaygroundDamageCapture
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPower)
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePower)
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DamageTaken)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(BaseDamage)
 
 	FPlaygroundDamageCapture()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlaygroundAttributeSet, AttackPower, Source, false)
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlaygroundAttributeSet, DefensePower, Target, false)
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlaygroundAttributeSet, DamageTaken, Target, false)
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlaygroundAttributeSet, BaseDamage, Source, false)
 	}
 };
 
@@ -47,6 +49,7 @@ UGEExecCalc_DamageTaken::UGEExecCalc_DamageTaken()
 	RelevantAttributesToCapture.Add(GetPlaygroundDamageCapture().AttackPowerDef);
 	RelevantAttributesToCapture.Add(GetPlaygroundDamageCapture().DefensePowerDef);
 	RelevantAttributesToCapture.Add(GetPlaygroundDamageCapture().DamageTakenDef);
+	RelevantAttributesToCapture.Add(GetPlaygroundDamageCapture().BaseDamageDef);
 }
 
 void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -63,11 +66,20 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 	EvaluateParameters.SourceTags = EffectSpec.CapturedSourceTags.GetAggregatedTags();
 	EvaluateParameters.TargetTags = EffectSpec.CapturedTargetTags.GetAggregatedTags();
 
+	// ===================
+	// 캡처 : 공격력 / 방어력 / 기본피해
+	// ===================
 	float SourceAttackPower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetPlaygroundDamageCapture().AttackPowerDef, EvaluateParameters, SourceAttackPower);
 	//Debug::Print(TEXT("SourceAttackPower"), SourceAttackPower);
 
+	float TargetDefensePower = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetPlaygroundDamageCapture().DefensePowerDef, EvaluateParameters, TargetDefensePower);
+	//Debug::Print(TEXT("TargetDefensePower"), TargetDefensePower);	
+
 	float BaseDamage = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetPlaygroundDamageCapture().BaseDamageDef, EvaluateParameters, BaseDamage);
+
 	int32 UsedLightAttackComboCount = 0;
 	int32 UsedHeavyAttackComboCount = 0;
 
@@ -92,11 +104,11 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 		}
 	}
 
-	float TargetDefensePower = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetPlaygroundDamageCapture().DefensePowerDef, EvaluateParameters, TargetDefensePower);
-	//Debug::Print(TEXT("TargetDefensePower"), TargetDefensePower);
 
 	//피해 계산식
+	// ================= 
+	// 콤보 배율
+	// =================
 	if (UsedLightAttackComboCount != 0)
 	{
 		const float DamageIncreasePercentLight = (UsedLightAttackComboCount - 1) * 0.05f + 1.f;
@@ -113,8 +125,11 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 		//Debug::Print(TEXT("ScaledBaseDamageHeavy"), BaseDamage);
 	}
 
+	// =============
+	// 최종 데미지
+	// =============
 	const float FinalDamageDone = BaseDamage * SourceAttackPower / TargetDefensePower;
-	//Debug::Print(TEXT("FinalDamageDone"), FinalDamageDone);
+	Debug::Print(TEXT("BaseDamge"), BaseDamage);
 
 	if (FinalDamageDone > 0.f)
 	{
