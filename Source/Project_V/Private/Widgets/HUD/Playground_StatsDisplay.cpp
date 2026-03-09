@@ -9,6 +9,16 @@
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystem/PlaygroundAttributeSet.h"
 
+void UPlayground_StatsDisplay::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	if (Text_StatInfo)
+	{
+		Text_StatInfo->SetText(StatInfoText);
+	}
+}
+
 void UPlayground_StatsDisplay::NativeConstruct()
 {
 	Super::NativeConstruct();

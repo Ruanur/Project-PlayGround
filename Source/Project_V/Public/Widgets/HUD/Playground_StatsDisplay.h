@@ -26,12 +26,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	int32 FractionDigits = 0;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", meta = (MultiLine = "true", ExposeOnSpawn = "true"))
+	FText StatInfoText;
 
 protected:
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
 private:
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> Text_StatInfo;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> Text_Value;
 
