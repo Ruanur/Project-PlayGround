@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "StructUtils/InstancedStruct.h"
 #include "GameplayEffectTypes.h"
+#include "PlayergroundTypes/PlaygroundEnumTypes.h"
 
 #include "Playground_ItemFragment.generated.h"
 
@@ -110,7 +111,8 @@ struct FPlayground_LabeledNumberFragment : public FPlayground_InventoryItemFragm
 
 	virtual void Assimilate(UPlayground_CompositeBase* Composite) const override;
 	virtual void Manifest() override;
-
+	float GetValue() const { return Value; }
+	void SetValue(float InValue) { Value = InValue; }
 
 	// When manifesting for the first time, this fragment will randomized, However, one equipped
 	// and dropped, an item should retain the same value, so randomization should not occur.
@@ -201,7 +203,7 @@ struct FPlayground_EquipModifier : public FPlayground_LabeledNumberFragment
 {
 	GENERATED_BODY()
 
-	virtual void OnEquip(APlayerController* PC) {}
+	virtual void OnEquip(APlayerController* PC, float RarityMultiplier = 1.f) {}
 	virtual void OnUnequip(APlayerController* PC) {}
 
 };
@@ -218,7 +220,7 @@ struct FPlayground_StrengthModifier : public FPlayground_EquipModifier
 	// 장착 중 적용된 GE Handle
 	FActiveGameplayEffectHandle ActiveEffectHandle;
 
-	virtual void OnEquip(APlayerController* PC) override;
+	virtual void OnEquip(APlayerController* PC, float RarityMultiplier) override;
 	virtual void OnUnequip(APlayerController* PC) override;
 };
 
@@ -229,10 +231,23 @@ struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment
 	GENERATED_BODY()
 
 	bool bEquipped{ false };
-	void OnEquip(APlayerController* PC);
+	void OnEquip(APlayerController* PC, float RarityMultiplier = 1.f);
 	void OnUnequip(APlayerController* PC);
 	virtual void Assimilate(UPlayground_CompositeBase* Composite) const override;
 	virtual void Manifest() override;
+
+	FPlayground_StrengthModifier* GetStrengthModifierMutable()
+	{
+		for (auto& Modifier : EquipModifiers)
+		{
+			if (FPlayground_StrengthModifier* StrengthModifier = Modifier.GetMutablePtr<FPlayground_StrengthModifier>())
+			{
+				return StrengthModifier;
+			}
+		}
+
+		return nullptr;
+	}
 
 	APlayground_EquipActor* SpawnAttachedActor(USkeletalMeshComponent* AttachMesh) const;
 	void DestroyAttachedActor() const;
@@ -255,4 +270,39 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	FGameplayTag EquipmentType = FGameplayTag::EmptyTag;
+};
+
+USTRUCT(BlueprintType)
+struct FPlayground_ItemRarity : public FPlayground_InventoryItemFragment
+{
+	GENERATED_BODY()
+
+public:
+	EPlaygroundRarity GetRarity() const { return Rarity; }
+	void SetRarity(EPlaygroundRarity InRarity) { Rarity = InRarity; }
+	virtual void Assimilate(UPlayground_CompositeBase* Composite) const override;
+
+	float GetStatMultiplier() const
+	{
+		switch (Rarity)
+		{
+		case EPlaygroundRarity::Common:
+			return 1.0f;
+		case EPlaygroundRarity::Uncommon:
+			return 1.5f;;
+		case EPlaygroundRarity::Rare:
+			return 1.8f;
+		case EPlaygroundRarity::Epic:
+			return 2.0f;
+		case EPlaygroundRarity::Legendary:
+			return 2.5f;
+		default:
+			return 1.0f;
+		}
+	}
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
+	EPlaygroundRarity Rarity = EPlaygroundRarity::Common;
+
 };

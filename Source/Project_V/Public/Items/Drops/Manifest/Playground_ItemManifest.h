@@ -6,7 +6,7 @@
 #include "Types/Playground_GridTypes.h"
 #include "StructUtils/InstancedStruct.h"
 #include "GameplayTagContainer.h"
-
+#include "PlayergroundTypes/PlaygroundEnumTypes.h"
 #include "Playground_ItemManifest.generated.h"
 
 /**
@@ -22,8 +22,9 @@ struct PROJECT_V_API FPlayground_ItemManifest
 	GENERATED_BODY()
 
 	TArray<TInstancedStruct<FPlayground_ItemFragment>>& GetFragmentsMutable() { return Fragments; }
-	UPlayground_InventoryItem* Manifest(UObject* NewOuter);
+	UPlayground_InventoryItem* Manifest(UObject* NewOuter, EPlaygroundRarity InRarity);
 	EPlayground_ItemCategory GetItemCategory() const { return ItemCategory; }
+	EPlaygroundRarity GetConfiguredRarity() const;
 	FGameplayTag GetItemType() const { return ItemType; }
 	void AssimilateInventoryFragments(UPlayground_CompositeBase* Composite) const;
 
@@ -39,7 +40,9 @@ struct PROJECT_V_API FPlayground_ItemManifest
 	template<typename T> requires std::derived_from<T, FPlayground_ItemFragment>
 	TArray<const T*> GetAllFragmentsOfType() const;
 
-	void PG_SpawnPickupActor(const UObject* WorldContextObject, const FVector& SpawnLocation, const FRotator& SpawnRotation);
+	void PG_SpawnPickupActor(const UObject* WorldContextObject, 
+		const FVector& SpawnLocation, 
+		const FRotator& SpawnRotation);
 
 	UPROPERTY(EditDefaultsOnly)
 	FName ItemID;

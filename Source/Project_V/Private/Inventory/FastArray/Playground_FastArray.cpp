@@ -53,7 +53,7 @@ UPlayground_InventoryItem* FPlayground_InventoryFastArray::AddEntry(UPlayground_
 
 	// Manifest º¹»ç, ¿øº» ±úÁü ¹æÁö
 	FPlayground_ItemManifest ManifestCopy = ItemComponent->GetItemManifest();
-	NewEntry.Item = ManifestCopy.Manifest(OwningActor);
+	NewEntry.Item = ManifestCopy.Manifest(OwningActor, ItemComponent->GetItemRarity());
 
 	if (UPlayground_InventoryComponent* IC = Cast<UPlayground_InventoryComponent>(OwnerComponent))
 	{

@@ -104,6 +104,11 @@ namespace PlaygroundGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Status_HitReact_Back, "Shared.Status.HitReact.Back");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Status_Invincible, "Shared.Status.Invincible");
 
+	/*Stats Set by Caller Tags */
+	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_Strength, "Data.Stats.Strength")
+	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_Defense, "Data.Stats.Defense")
+	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_AttackPower, "Data.Stats.AttackPower")
+
 	/* Game Data Tags */
 	UE_DEFINE_GAMEPLAY_TAG(GameData_Level_SurvivalGameModeMap, "GameData.Level.SurvivalGameModeMap");
 	UE_DEFINE_GAMEPLAY_TAG(GameData_Level_MainMenuMap, "GameData.Level.MainMenuMap");

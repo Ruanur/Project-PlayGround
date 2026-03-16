@@ -48,3 +48,15 @@ FText UPlayground_InventoryItem::PG_GetDisplayName() const
 
 	return DisplayName;
 }
+
+EPlaygroundRarity UPlayground_InventoryItem::BP_GetItemRarity() const
+{
+	const FPlayground_ItemManifest& Manifest = GetItemManifest();
+
+	if (const FPlayground_ItemRarity* RarityFragment = Manifest.GetFragmentOfType<FPlayground_ItemRarity>())
+	{
+		return RarityFragment->GetRarity();
+	}
+
+	return EPlaygroundRarity::Common;
+}

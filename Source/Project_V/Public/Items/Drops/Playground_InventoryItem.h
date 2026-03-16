@@ -11,7 +11,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class PROJECT_V_API UPlayground_InventoryItem : public UObject
 {
 	GENERATED_BODY()
@@ -48,6 +48,9 @@ public:
 
 	FGuid GetInstancedID() const { return InstancedID; }
 	void SetInstancedID(const FGuid& InGuid) { InstancedID = InGuid; }
+
+	UFUNCTION(BlueprintPure, Category = "Inventory")
+	EPlaygroundRarity BP_GetItemRarity() const;
 private:
 
 	UPROPERTY()

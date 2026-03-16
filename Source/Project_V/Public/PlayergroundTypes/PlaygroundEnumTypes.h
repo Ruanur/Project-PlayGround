@@ -64,3 +64,13 @@ enum class EPlaygroundStatField : uint8
 	DefensePower,
 	BaseDamage
 };
+
+UENUM(BlueprintType)
+enum class EPlaygroundRarity : uint8
+{
+	Common,
+	Uncommon,
+	Rare,
+	Epic,
+	Legendary
+};

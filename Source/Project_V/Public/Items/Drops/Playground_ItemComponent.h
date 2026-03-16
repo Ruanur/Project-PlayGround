@@ -16,9 +16,11 @@ public:
 	UPlayground_ItemComponent();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	void InitItemManifest(FPlayground_ItemManifest CopyOfManifest);
+	void InitItemManifest(const FPlayground_ItemManifest& CopyOfManifest);
 
 	FPlayground_ItemManifest GetItemManifest() const { return ItemManifest; }
+	EPlaygroundRarity GetItemRarity() const { return ItemRarity; }
+
 	FPlayground_ItemManifest& GetItemManifestMutable() { return ItemManifest; }
 
 	FString GetPickUpMessage() const { return PickupMessage; }
@@ -32,6 +34,8 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Replicated, Category = "Inventory")
 	FPlayground_ItemManifest ItemManifest;
+
+	EPlaygroundRarity ItemRarity = EPlaygroundRarity::Common;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")
 	FString PickupMessage;

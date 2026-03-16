@@ -6,20 +6,70 @@
 #include "Items/Drops/Playground_InventoryItem.h"
 #include "Items/Drops/Playground_ItemComponent.h"
 #include "Items/Fragment/Playground_ItemFragment.h"
+#include "PlayergroundTypes/PlaygroundEnumTypes.h"
 #include "Widgets/Composite/Playground_CompositeBase.h"
 
-UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter)
+UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter, EPlaygroundRarity InRarity)
 {
+	Debug::Print(
+		FString::Printf(TEXT("Manifest InRarity = %d"), static_cast<int32>(InRarity)),
+		FColor::Yellow
+	);
+
 	UPlayground_InventoryItem* Item = NewObject<UPlayground_InventoryItem>(NewOuter, UPlayground_InventoryItem::StaticClass());
 	Item->SetItemManifest(*this);
+
+	FPlayground_ItemManifest& ItemManifest = Item->GetItemManifestMutable();
+
+	float RarityMultiplier = 1.f;
+
+	InRarity = GetConfiguredRarity();
+
+	if (FPlayground_ItemRarity* RarityFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_ItemRarity>())
+	{
+		RarityFragment->SetRarity(InRarity);
+		RarityMultiplier = RarityFragment->GetStatMultiplier();
+
+		Debug::Print(FString::Printf(TEXT("Set Rarity = %d / Multiplier = %.2f"),
+			static_cast<int32>(RarityFragment->GetRarity()),
+			RarityMultiplier), FColor::Green);
+	}
+	else
+	{
+		Debug::Print(TEXT("Manifest: RarityFragment not found"), FColor::Red);
+	}
+
+	// 각 Fragment 자기 값 초기화
 	for (auto& Fragment : Item->GetItemManifestMutable().GetFragmentsMutable())
 	{
 		Fragment.GetMutable().Manifest();
 	}
 
+	FPlayground_LabeledNumberFragment* DisplayFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_LabeledNumberFragment>();
+
+	FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
+
+	if (DisplayFragment && EquipmentFragment)
+	{
+		if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
+		{
+			const float FinalDisplayValue = StrengthModifier->GetValue() * RarityMultiplier;
+			DisplayFragment->SetValue(FinalDisplayValue);
+		}
+	}
+
 	PG_ClearFragments();
 
 	return Item;
+}
+
+EPlaygroundRarity FPlayground_ItemManifest::GetConfiguredRarity() const
+{
+	if (const FPlayground_ItemRarity* RarityFragment = GetFragmentOfType<FPlayground_ItemRarity>())
+	{
+		return RarityFragment->GetRarity();
+	}
+	return EPlaygroundRarity::Common;
 }
 
 void FPlayground_ItemManifest::AssimilateInventoryFragments(UPlayground_CompositeBase* Composite) const

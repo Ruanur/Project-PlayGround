@@ -1635,7 +1635,7 @@ UPlayground_InventoryItem* UPlayground_InventoryGrid::CreateInventoryItemFromIte
 
 	AActor* OwningActor = GetTypedOuter<AActor>();
 	UObject* NewOuter = OwningActor ? (UObject*)OwningActor : (UObject*)this;
-	UPlayground_InventoryItem* NewItem = ManifestCopy.Manifest(NewOuter);
+	UPlayground_InventoryItem* NewItem = ManifestCopy.Manifest(NewOuter, ItemComp->GetItemRarity());
 
 	return NewItem;
 }

@@ -7,6 +7,7 @@
 #include "Widgets/Composite/Playground_LeafImage.h"
 #include "Widgets/Composite/Playground_LeafText.h"
 #include "Widgets/Composite/Playground_LeafLabeledValue.h"
+#include "Widgets/Composite/Playground_RarityBorderLeaf.h"
 #include "AbilitySystem/PlaygroundAttributeSet.h"
 #include "GameplayEffect.h"
 #include "EquipmentManagement/EqiupActor/Playground_EquipActor.h"
@@ -100,35 +101,46 @@ void FPlayground_LabeledNumberFragment::Assimilate(UPlayground_CompositeBase* Co
 	
 }
 
+void FPlayground_ItemRarity::Assimilate(UPlayground_CompositeBase* Composite) const
+{
+	FPlayground_InventoryItemFragment::Assimilate(Composite);
+	if (!MatchesWidgetTag(Composite)) return;
+
+	UPlayground_RarityBorderLeaf* RarityLeaf = Cast<UPlayground_RarityBorderLeaf>(Composite);
+	if (!IsValid(RarityLeaf)) return;
+
+	RarityLeaf->SetBorderByRarity(Rarity);
+}
+
 void FPlayground_LabeledNumberFragment::Manifest()
 {
 	FPlayground_InventoryItemFragment::Manifest();
 
-	if (!SourceGameplayEffect) return;
+	//if (!SourceGameplayEffect) return;
 
-	const UGameplayEffect* GECDO = SourceGameplayEffect->GetDefaultObject<UGameplayEffect>();
+	//const UGameplayEffect* GECDO = SourceGameplayEffect->GetDefaultObject<UGameplayEffect>();
 
-	const FGameplayModifierInfo& Modifier = GECDO->Modifiers[0];
+	//const FGameplayModifierInfo& Modifier = GECDO->Modifiers[0];
 
-	float OutValue = 0.f;
+	//float OutValue = 0.f;
 
-	if (Modifier.ModifierMagnitude.AttemptCalculateMagnitude(
-		FGameplayEffectSpec(),
-		OutValue))
-	{
-		Value = OutValue;
-	}
-
-	//if (bRandomizeOnManifest)
+	//if (Modifier.ModifierMagnitude.AttemptCalculateMagnitude(
+	//	FGameplayEffectSpec(),
+	//	OutValue))
 	//{
-	//	Value = FMath::FRandRange(Min, Max);
+	//	Value = OutValue;
 	//}
+
+	if (bRandomizeOnManifest)
+	{
+		Value = FMath::FRandRange(Min, Max);
+	}
  
-	//bRandomizeOnManifest = false;
+	bRandomizeOnManifest = false;
 }
 
 
-void FPlayground_StrengthModifier::OnEquip(APlayerController* PC)
+void FPlayground_StrengthModifier::OnEquip(APlayerController* PC, float RarityMultiplier)
 {
 	if (!PC || !EquipmentEffectClass) return;
 
@@ -154,11 +166,24 @@ void FPlayground_StrengthModifier::OnEquip(APlayerController* PC)
 	FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
 	Context.AddSourceObject(Pawn);
 
+	const float BaseValue = GetValue();
+	const float FinalValue = BaseValue * RarityMultiplier;
+
 	const float LevelToApply = 1.f;
 	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(EquipmentEffectClass, LevelToApply, Context);
 	if (!SpecHandle.IsValid()) return;
 
+	const FGameplayTag StrengthTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Stats.Strength"));
+	SpecHandle.Data->SetSetByCallerMagnitude(StrengthTag, FinalValue);
+
 	ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	Debug::Print(FString::Printf(TEXT("Strength increased by : %.1f"), FinalValue), FColor::Green);
+	Debug::Print(FString::Printf(
+		TEXT("BaseValue=%.2f, RarityMultiplier=%.2f, FinalValue=%.2f"),
+		BaseValue, RarityMultiplier, FinalValue),
+		FColor::Yellow
+	);
 }
 
 void FPlayground_StrengthModifier::OnUnequip(APlayerController* PC)
@@ -189,7 +214,7 @@ void FPlayground_StrengthModifier::OnUnequip(APlayerController* PC)
 }
 
 
-void FPlayground_EquipmentFragment::OnEquip(APlayerController* PC)
+void FPlayground_EquipmentFragment::OnEquip(APlayerController* PC, float RarityMultiplier)
 {
 	if (bEquipped) return;
 	bEquipped = true;
@@ -197,7 +222,7 @@ void FPlayground_EquipmentFragment::OnEquip(APlayerController* PC)
 	for (auto& Modifier : EquipModifiers)
 	{
 		auto& ModRef = Modifier.GetMutable();
-		ModRef.OnEquip(PC);
+		ModRef.OnEquip(PC, RarityMultiplier);
 	}
 }
 
@@ -261,3 +286,5 @@ void FPlayground_EquipmentFragment::SetEquippedActor(APlayground_EquipActor* Equ
 
 	EquippedActor = EquipActor;
 }
+
+

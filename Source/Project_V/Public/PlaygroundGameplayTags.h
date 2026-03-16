@@ -109,6 +109,11 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_HitReact_Back);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_Invincible);
 
+	/*Stats Set by Caller Tags */
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Stats_Strength);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Stats_Defense);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Stats_AttackPower);
+
 	/* Game Data Tags */
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameData_Level_SurvivalGameModeMap);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameData_Level_MainMenuMap);
