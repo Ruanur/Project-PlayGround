@@ -19,15 +19,15 @@ FLinearColor UPlayground_RarityBorderLeaf::GetRarityColor(EPlaygroundRarity InRa
 	switch (InRarity)
 	{
 	case EPlaygroundRarity::Common:
-		return FLinearColor(0.60f, 0.60f, 0.60f, 1.0f);
+		return FLinearColor(0.6196f, 0.6196f, 0.6196f, 1.0f);
 	case EPlaygroundRarity::Uncommon:
-		return FLinearColor(0.10f, 0.80f, 0.20f, 1.0f);
+		return FLinearColor(0.2980f, 0.6863f, 0.3137f, 1.0f);
 	case EPlaygroundRarity::Rare:
-		return FLinearColor(0.10f, 0.40f, 1.00f, 1.0f);
+		return FLinearColor(0.1294f, 0.5882f, 0.9529f, 1.0f);
 	case EPlaygroundRarity::Epic:
-		return FLinearColor(0.70f, 0.20f, 1.00f, 1.0f);
+		return FLinearColor(0.6118f, 0.1529f, 0.6902f, 1.0f);
 	case EPlaygroundRarity::Legendary:
-		return FLinearColor(1.00f, 0.55f, 0.00f, 1.0f);
+		return FLinearColor(1.00f, 0.7020f, 0.2784f, 1.0f);
 	default:
 		return FLinearColor::White;
 	}

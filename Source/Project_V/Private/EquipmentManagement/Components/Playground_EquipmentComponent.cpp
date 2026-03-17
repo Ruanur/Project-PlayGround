@@ -115,7 +115,6 @@ void UPlayground_EquipmentComponent::RemoveEquippedActor(const FGameplayTag& Equ
 
 void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* EquippedItem)
 {
-	// Error : EquippedItem = Nullptr 값으로 호출됨
 	if (!IsValid(EquippedItem)) return;
 	if (!OwningPlayerController->HasAuthority()) return;
 
@@ -123,9 +122,15 @@ void UPlayground_EquipmentComponent::OnItemEquipped(UPlayground_InventoryItem* E
 	FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
 	if (!EquipmentFragment) return;
 
+	float RarityMultiplier = 1.f;
+	if (const FPlayground_ItemRarity* RarityFragment = ItemManifest.GetFragmentOfType<FPlayground_ItemRarity>())
+	{
+		RarityMultiplier = RarityFragment->GetStatMultiplier();
+	}
+
 	if (!bIsProxy)
 	{
-		EquipmentFragment->OnEquip(OwningPlayerController.Get());
+		EquipmentFragment->OnEquip(OwningPlayerController.Get(), RarityMultiplier);
 	}
 	
 

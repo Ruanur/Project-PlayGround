@@ -12,6 +12,7 @@
 #include "GameplayEffect.h"
 #include "EquipmentManagement/EqiupActor/Playground_EquipActor.h"
 #include "GameFramework/PlayerState.h"
+#include "Items/Drops/Manifest/Playground_ItemManifest.h"
 
 #include "PlaygroundDebugHelper.h"
 

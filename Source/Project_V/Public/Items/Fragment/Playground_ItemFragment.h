@@ -15,6 +15,7 @@ class UPlaygroundAbilitySystemComponent;
 class UGameplayEffect;
 class UPlayground_CompositeBase;
 struct FGameplayAttribute;
+struct FPlayground_ItemManifest;
 
 /**
  * 

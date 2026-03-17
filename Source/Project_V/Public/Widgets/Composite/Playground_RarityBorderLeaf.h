@@ -26,6 +26,6 @@ public:
 private:
 	FLinearColor GetRarityColor(EPlaygroundRarity InRarity) const;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, AllowPrivateAccess = "true"))
 	TObjectPtr<UImage> Border_Image;
 };
