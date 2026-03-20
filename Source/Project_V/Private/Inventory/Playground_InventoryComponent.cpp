@@ -199,6 +199,18 @@ void UPlayground_InventoryComponent::PG_RegisterLoadedItem(UPlayground_Inventory
 	//);
 }
 
+UPlayground_InventoryItem* UPlayground_InventoryComponent::PG_FindItemByInstanceID(const FGuid& InID) const
+{
+	for (UPlayground_InventoryItem* Item : InventoryList.PG_GetAllItems())
+	{
+		if (IsValid(Item) && Item->GetInstancedID() == InID)
+		{
+			return Item;
+		}
+	}
+	return nullptr;
+}
+
 void UPlayground_InventoryComponent::Server_ConsumeItem_Implementation(UPlayground_InventoryItem* Item)
 {
 	if (!Item || !OwningController.IsValid())

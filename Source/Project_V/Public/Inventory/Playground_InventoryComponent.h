@@ -60,6 +60,7 @@ public:
 	void AddRepSubObject(UObject* SubObj);
 	void SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount);
 	void PG_RegisterLoadedItem(UPlayground_InventoryItem* Item);
+	UPlayground_InventoryItem* PG_FindItemByInstanceID(const FGuid& InID) const;
 
 	UPlaygroundWidgeBase* GetInventoryMenu() const { return InventoryMenu; }
 
