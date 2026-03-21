@@ -23,6 +23,7 @@
 #include "Engine/SimpleConstructionScript.h"
 #include "Engine/SCS_Node.h"
 #include "Widgets/ItemPopUp/Playground_DropConfirmWidget.h"
+#include "QuickSlot/Playground_QuickSlotComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -1061,6 +1062,7 @@ void UPlayground_InventoryGrid::PG_CreateItemPopUp(const int32 GridIndex)
 	if (RightClickedItem->IsConsumable())
 	{
 		ItemPopUp->OnConsume.BindDynamic(this, &ThisClass::PG_OnPopUpMenuConsume);
+		ItemPopUp->OnAssignQuick.BindDynamic(this, &ThisClass::PG_OnPopUpMenuAssignQuick);
 	}
 	else
 	{
@@ -1187,6 +1189,44 @@ void UPlayground_InventoryGrid::OnInventoryMenuToggled(bool bOpen)
 	{
 		PutHoverItemBack();
 	}
+}
+
+void UPlayground_InventoryGrid::PG_OnPopUpMenuAssignQuick(int32 SlotIndex, int32 GridIndex)
+{
+	if (!GridSlots.IsValidIndex(GridIndex))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[QuickAssign] Invalid GridIndex=%d"), GridIndex);
+		return;
+	}
+
+	UPlayground_InventoryItem* Item = GridSlots[GridIndex]->GetInventoryItem().Get();
+	if (!IsValid(Item))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[QuickAssign] Item is null at GridIndex=%d"), GridIndex);
+		return;
+	}
+
+	AActor* Owner = GetOwningPlayerPawn() ? (AActor*)GetOwningPlayerPawn() : (AActor*)GetOwningPlayer();
+	if (!IsValid(Owner))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[QuickAssign] Owner invalid"));
+		return;
+	}
+
+	UPlayground_QuickSlotComponent* QS = Owner->FindComponentByClass<UPlayground_QuickSlotComponent>();
+	if (!QS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[QuickAssign] No QuickSlotComponent on %s"), *Owner->GetName());
+		return;
+	}
+
+
+	UE_LOG(LogTemp, Warning, TEXT("[QuickAssign] Assign Slot=%d Grid=%d ItemID=%s GUID=%s"),
+		SlotIndex, GridIndex,
+		*Item->GetItemID().ToString(),
+		*Item->GetInstancedID().ToString());
+
+	QS->AssignSlot(SlotIndex, Item);
 }
 
 void UPlayground_InventoryGrid::PG_DropItem()

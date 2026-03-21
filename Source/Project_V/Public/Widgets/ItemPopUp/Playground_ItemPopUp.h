@@ -14,10 +14,12 @@ class UButton;
 class USlider;
 class UTextBlock;
 class USizeBox;
+class UPlayground_QuickSlotWidget;
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FPopUpMenuSplit, int32, SplitAmount, int32, Index);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FPopUpMenuDrop, int32, Index);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FPopUpMenuConsume, int32, Index);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FPopUpMenuAssignQuick, int32, SlotIndex, int32, Index);
 
 UCLASS()
 class PROJECT_V_API UPlayground_ItemPopUp : public UUserWidget
@@ -31,15 +33,22 @@ public:
 	FPopUpMenuSplit OnSplit;
 	FPopUpMenuDrop OnDrop;
 	FPopUpMenuConsume OnConsume;
+	FPopUpMenuAssignQuick OnAssignQuick;
 
 	int32 PG_GetSplitAmount() const;
 
 	void PG_CollapseSplitButton() const;
 	void PG_CollapseConsumeButton() const;
+	// ¼Òºñ ¾ÆÀÌÅÛ ¾Æ´Ò ½Ã Äü½½·Ô ¹öÆ° ¼û±è
+	void PG_CollapseQuickAssignButton() const;
+
 	void SetSliderParams(const float Max, const float Value) const;
 	FVector2D PG_GetBoxSize() const;
 	void SetGridIndex(int32 Index) { GridIndex = Index; }
 	int32 GetGridIndex() const { return GridIndex; }
+
+	UPROPERTY(EditDefaultsOnly, Category = "QuickSlot")
+	TSubclassOf<UPlayground_QuickSlotWidget> QuickSlotSelectWidgetClass;
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -60,6 +69,12 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USizeBox> SizeBox_Root;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> Button_AssignQuick;
+
+	UPROPERTY()
+	TObjectPtr<UPlayground_QuickSlotWidget> QuickSlotSelectWidget;
+
 	int32 GridIndex{INDEX_NONE};
 
 	UFUNCTION()
@@ -74,5 +89,9 @@ private:
 	UFUNCTION()
 	void PG_SliderValueChanged(float Value);
 
+	UFUNCTION()
+	void PG_AssignQuickButtonClicked();
 
+	UFUNCTION()
+	void PG_OnQuickSlotPicked(int32 SlotIndex);
 };

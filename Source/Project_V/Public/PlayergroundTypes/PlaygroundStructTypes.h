@@ -60,3 +60,19 @@ struct FPlaygroundPlayerWeaponData
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UTexture2D> SoftWeaponIconTexture;
 };
+
+USTRUCT(BlueprintType)
+struct FPlayground_QuickSlotRef
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 SlotIndex = INDEX_NONE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGuid InstanceID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ItemID = NAME_None;
+
+};

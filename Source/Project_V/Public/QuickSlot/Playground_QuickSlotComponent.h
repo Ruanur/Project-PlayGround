@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Playground_QuickSlotTypes.h"
+#include "PlayergroundTypes/PlaygroundStructTypes.h"
 
 #include "Playground_QuickSlotComponent.generated.h"
 

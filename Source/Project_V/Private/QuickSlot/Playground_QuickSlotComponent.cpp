@@ -7,6 +7,8 @@
 #include "Items/Drops/Playground_InventoryItem.h"
 #include "GameFramework/Actor.h"
 
+#include "PlaygroundDebugHelper.h"
+
 UPlayground_QuickSlotComponent::UPlayground_QuickSlotComponent()
 {
 	SetIsReplicatedByDefault(true);
@@ -16,6 +18,7 @@ UPlayground_QuickSlotComponent::UPlayground_QuickSlotComponent()
 void UPlayground_QuickSlotComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("[QuickSlotComp] BeginPlay Owner=%s"), *GetOwner()->GetName());
 	EnsureSlotsSized();
 }
 
@@ -69,14 +72,27 @@ void UPlayground_QuickSlotComponent::Server_AssignSlot_Implementation(int32 Slot
 	if (!PG_IsValidSlotIndex(SlotIndex)) return;
 
 	UPlayground_InventoryComponent* Inv = GetInventory();
-	if (!Inv) return;
+	if (!Inv)
+	{
+		Debug::Print(TEXT("[QuickSlot Comp] No Inventory"));
+		return;
+	}
+
 
 	// 실제 아이템 존재하는지 검증 (치트 방지)
 	UPlayground_InventoryItem* Found = Inv->PG_FindItemByInstanceID(InstanceID);
-	if (!IsValid(Found)) return;
+	if (!IsValid(Found))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[QuickSlot Comp] Item not found by GUID=%s"), *InstanceID.ToString());
+		return;
+	}
 
 	// 소비 아이템만 퀵슬롯 등록
-	if (!Found->IsConsumable()) return;
+	if (!Found->IsConsumable())
+	{
+		Debug::Print(TEXT("[QuickSlot Comp] Not Consumable"));
+		return;
+	}
 
 	EnsureSlotsSized();
 
@@ -85,6 +101,11 @@ void UPlayground_QuickSlotComponent::Server_AssignSlot_Implementation(int32 Slot
 	Slots[SlotIndex].ItemID = ItemID;
 
 	OnQuickSlotsChanged.Broadcast();
+
+	UE_LOG(LogTemp, Warning, TEXT("[QuickSlot] Assigned Slot=%d ItemID=%s GUID=%s"),
+		SlotIndex,
+		*Slots[SlotIndex].ItemID.ToString(),
+		*Slots[SlotIndex].InstanceID.ToString());
 }
 
 void UPlayground_QuickSlotComponent::UseSlot(int32 SlotIndex)

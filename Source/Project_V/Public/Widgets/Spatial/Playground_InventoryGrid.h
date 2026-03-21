@@ -240,6 +240,9 @@ private:
 	UFUNCTION()
 	void OnInventoryMenuToggled(bool bOpen);
 
+	UFUNCTION()
+	void PG_OnPopUpMenuAssignQuick(int32 SlotIndex, int32 GridIndex);
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory;
 
