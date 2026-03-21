@@ -140,6 +140,8 @@ void UPlayground_InventoryComponent::Server_AddStacksToItem_Implementation(UPlay
 
 void UPlayground_InventoryComponent::Server_DropItem_Implementation(UPlayground_InventoryItem* Item, int32 StackCount)
 {
+	Debug::Print(TEXT("[DropItem Func] Called this Function"));
+
 	const int32 NewStackCount = Item->GetTotalStackCount() - StackCount;
 	if (NewStackCount <= 0)
 	{
@@ -150,7 +152,9 @@ void UPlayground_InventoryComponent::Server_DropItem_Implementation(UPlayground_
 		Item->SetTotalStackCount(NewStackCount);
 	}
 
-	SpawnDroppedItem(Item, StackCount);
+	//SpawnDroppedItem(Item, StackCount);
+
+	
 
 	OnInventoryDataChanged.Broadcast();
 }
@@ -250,6 +254,8 @@ void UPlayground_InventoryComponent::Server_ConsumeItem_Implementation(UPlaygrou
 		Item->SetTotalStackCount(NewStackCount);
 	}
 
+
+	OnInventoryDataChanged.Broadcast();
 	// TODO: Get the Consumable fragment add call Consume()
 	// (Actually create the Consumable Fragment)
 	//if (FPlayground_ConsumableFragment* ConsumableFragment = Item->GetItemManifestMutable().GetFragmentOfTypeMutable<FPlayground_ConsumableFragment>())

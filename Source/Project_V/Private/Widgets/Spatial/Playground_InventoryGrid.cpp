@@ -913,7 +913,6 @@ void UPlayground_InventoryGrid::PG_PutDownOnIndex(const int32 Index)
 	UpdateGridSlots(HoverItem->GetInventoryItem(), Index, HoverItem->IsStackable(), HoverItem->GetStackCount());
 	PG_ClearHoverItem();
 }
-
 void UPlayground_InventoryGrid::PG_ClearHoverItem()
 {
 	if (!IsValid(HoverItem)) return;
@@ -1258,6 +1257,7 @@ void UPlayground_InventoryGrid::PG_DropItem()
 	const int32 DropCount = HoverItem->IsStackable() ? HoverItem->GetStackCount() : 1;
 
 	PendingDropUpperLeftIndex = INDEX_NONE;
+
 	PG_RequestDropConfirm(Item, DropCount);
 
 	Debug::Print(TEXT("DropItem -> Request"));
@@ -1379,6 +1379,7 @@ void UPlayground_InventoryGrid::PG_ExecuteDrop()
 	if (!IsValid(HoverItem->GetInventoryItem())) return;
 
 	//const bool bDroppingFromHover = IsValid(HoverItem) && (HoverItem->GetInventoryItem() == Item);
+	InventoryComponent->Server_DropItem(HoverItem->GetInventoryItem(), HoverItem->GetStackCount());
 
 	PG_ClearHoverItem();
 	Debug::Print(TEXT("Hover Dropped | PG_ExecuteDrop"));

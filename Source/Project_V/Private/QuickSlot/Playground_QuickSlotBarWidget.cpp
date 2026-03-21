@@ -29,7 +29,7 @@ void UPlayground_QuickSlotBarWidget::NativeConstruct()
 	{
 		Inv->OnItemAdded.AddDynamic(this, &ThisClass::HandleItemAdded);
 		Inv->OnStackChange.AddDynamic(this, &ThisClass::HandleStackChanged);
-		//Inv->OnInventoryDataChanged.AddDynamic(this, &ThisClass::PG_RefreshUI);
+		Inv->OnInventoryDataChanged.AddUObject(this, &ThisClass::PG_RefreshUI);
 	}
 
 	PG_RefreshUI();
@@ -46,6 +46,7 @@ void UPlayground_QuickSlotBarWidget::NativeDestruct()
 	{
 		Inv->OnItemAdded.RemoveDynamic(this, &ThisClass::HandleItemAdded);
 		Inv->OnStackChange.RemoveDynamic(this, &ThisClass::HandleStackChanged);
+		Inv->OnInventoryDataChanged.RemoveAll(this);
 	}
 
 	Super::NativeDestruct();
