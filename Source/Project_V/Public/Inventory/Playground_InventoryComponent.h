@@ -56,6 +56,12 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_EquipSlotClicked(UPlayground_InventoryItem* ItemToEquip, UPlayground_InventoryItem* ItemToUnequip);
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	int32 PG_GetTotalCountByItemID(FName ItemID) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	UPlayground_InventoryItem* PG_FindFirstItemByItemID(FName ItemID) const;
+
 	void ToggleInventoryMenu();
 	void AddRepSubObject(UObject* SubObj);
 	void SpawnDroppedItem(UPlayground_InventoryItem* Item, int32 StackCount);

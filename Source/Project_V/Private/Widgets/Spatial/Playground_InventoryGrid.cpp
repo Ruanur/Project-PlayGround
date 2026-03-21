@@ -1221,8 +1221,13 @@ void UPlayground_InventoryGrid::PG_OnPopUpMenuAssignQuick(int32 SlotIndex, int32
 	}
 
 
-	UE_LOG(LogTemp, Warning, TEXT("[QuickAssign] Assign Slot=%d Grid=%d ItemID=%s GUID=%s"),
-		SlotIndex, GridIndex,
+	const int32 UL = GridSlots[GridIndex]->GetUpperLeftIndex() != INDEX_NONE ? GridSlots[GridIndex]->GetUpperLeftIndex() : GridIndex;
+
+	const int32 GridStack = GridSlots.IsValidIndex(UL) ? GridSlots[UL]->GetStackCount() : -1;
+
+	UE_LOG(LogTemp, Warning, TEXT("[QuickAssignCheck] GridStack=%d  ItemTotal=%d  ItemID=%s  GUID=%s"),
+		GridStack,
+		Item->GetTotalStackCount(),
 		*Item->GetItemID().ToString(),
 		*Item->GetInstancedID().ToString());
 

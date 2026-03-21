@@ -270,6 +270,38 @@ void UPlayground_InventoryComponent::Multicast_EquipSlotClicked_Implementation(U
 	OnItemUnequipped.Broadcast(ItemToUnequip);
 }
 
+int32 UPlayground_InventoryComponent::PG_GetTotalCountByItemID(FName ItemID) const
+{
+	if (ItemID.IsNone()) return 0;
+
+	int32 Total = 0;
+
+	for (UPlayground_InventoryItem* Item : InventoryList.PG_GetAllItems())
+	{
+		if (!IsValid(Item)) continue;
+		if (Item->GetItemID() != ItemID) continue;
+
+		Total += Item->IsStackable() ? Item->GetTotalStackCount() : 1;
+	}
+
+	return Total;
+}
+
+UPlayground_InventoryItem* UPlayground_InventoryComponent::PG_FindFirstItemByItemID(FName ItemID) const
+{
+	if (ItemID.IsNone()) return nullptr;
+
+	for (UPlayground_InventoryItem* Item : InventoryList.PG_GetAllItems())
+	{
+		if (IsValid(Item) && Item->GetItemID() == ItemID)
+		{
+			return Item;
+		}
+	}
+
+	return nullptr;
+}
+
 void UPlayground_InventoryComponent::ToggleInventoryMenu()
 {
 	if (bInventoryMenuOpen)
