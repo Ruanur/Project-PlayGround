@@ -18,6 +18,7 @@ class UPlayground_InventoryComponent;
 class UInputAction;
 class UPlayground_HUDWidget;
 class UPlaygroundSaveGame;
+class UPlayground_QuickSlotComponent;
 struct FInputActionValue;
 
 
@@ -58,6 +59,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void InventoryToggle();
 
+	void UseQuickSlot(int32 SlotIndex);
 
 protected:
 	//플레이어가 Controller에 소유될 때 호출
@@ -100,6 +102,9 @@ private:
 	UPlayerUIComponent* PlayerUIComponent;
 
 	TWeakObjectPtr<UPlayground_InventoryComponent> InventoryComponent;
+
+	TWeakObjectPtr<UPlayground_QuickSlotComponent> QuickSlotComponent;
+
 #pragma endregion
 
 #pragma region Inputs
@@ -129,15 +134,36 @@ private:
 	//어빌리티 입력 (뗌)
 	void Input_AbilityInputReleased(FGameplayTag InInputTag);
 
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UInputAction> ToggleInventroyAction;
-
 #pragma endregion
 
 #pragma region Inventory
 
 	void PG_PrimaryInteract();
 	TWeakObjectPtr<AActor> ThisActor;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UInputAction> ToggleInventroyAction;
+#pragma endregion
+
+#pragma region QuickSlot
+
+	void Input_UseQuickSlot1(const FInputActionValue& Value);
+	void Input_UseQuickSlot2(const FInputActionValue& Value);
+	void Input_UseQuickSlot3(const FInputActionValue& Value);
+	void Input_UseQuickSlot4(const FInputActionValue& Value);
+
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UInputAction> UseQuickSlot1;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UInputAction> UseQuickSlot2;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UInputAction> UseQuickSlot3;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UInputAction> UseQuickSlot4;
 
 #pragma endregion
 public:

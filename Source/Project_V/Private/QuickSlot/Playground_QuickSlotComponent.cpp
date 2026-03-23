@@ -112,14 +112,8 @@ void UPlayground_QuickSlotComponent::UseSlot(int32 SlotIndex)
 {
 	if (!PG_IsValidSlotIndex(SlotIndex)) return;
 
-	if (GetOwner() && GetOwner()->HasAuthority())
-	{
-		Server_UseSlot_Implementation(SlotIndex); // 서버일 시 바로 처리 (현재 프로젝트는 싱글 플레이 중심, 추후 확장 가능성 열어둠)
-	}
-	else
-	{
-		Server_UseSlot(SlotIndex);
-	}
+	Server_UseSlot_Implementation(SlotIndex); // 서버일 시 바로 처리 (현재 프로젝트는 싱글 플레이 중심, 추후 확장 가능성 열어둠)
+
 }
 
 void UPlayground_QuickSlotComponent::Server_UseSlot_Implementation(int32 SlotIndex)

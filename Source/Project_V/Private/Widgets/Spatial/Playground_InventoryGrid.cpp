@@ -91,6 +91,7 @@ void UPlayground_InventoryGrid::NativeOnInitialized()
 		&ThisClass::SaveInventory
 	);
 
+	InventoryComponent->OnInventoryDataChanged.AddUObject(this, &ThisClass::HandleInventoryDataChanged);
 	InventoryComponent->OnInventoryLoaded.AddUObject(this, &ThisClass::LoadInventory);
 }
 
@@ -1231,6 +1232,95 @@ void UPlayground_InventoryGrid::PG_OnPopUpMenuAssignQuick(int32 SlotIndex, int32
 		*Item->GetInstancedID().ToString());
 
 	QS->AssignSlot(SlotIndex, Item);
+}
+
+void UPlayground_InventoryGrid::HandleInventoryDataChanged()
+{
+	SyncGridStacksFromInventory();
+}
+
+void UPlayground_InventoryGrid::SyncGridStacksFromInventory()
+{
+	if (!InventoryComponent.IsValid()) return;
+
+	TMap<FName, TArray<int32>> ItemToUpperLefts;
+
+	for (UPlayground_GridSlot* GridSlot : GridSlots)
+	{
+		if (!IsValid(Slot)) continue;
+		if (GridSlot->GetIndex() != GridSlot->GetUpperLeftIndex()) continue;
+
+		UPlayground_InventoryItem* Item = GridSlot->GetInventoryItem().Get();
+		if (!IsValid(Item)) continue;
+		if (!MatchesCategory(Item)) continue;
+
+		ItemToUpperLefts.FindOrAdd(Item->GetItemID()).Add(GridSlot->GetIndex());
+	}
+
+	for (auto& Pair : ItemToUpperLefts)
+	{
+		const FName ItemID = Pair.Key;
+		TArray<int32>& ULs = Pair.Value;
+		ULs.Sort();
+
+		const int32 Total = InventoryComponent->PG_GetTotalCountByItemID(ItemID);
+
+		if (Total <= 0)
+		{
+			for (int32 UL : ULs)
+			{
+				if (!GridSlots.IsValidIndex(UL)) continue;
+				UPlayground_InventoryItem* Item = GridSlots[UL]->GetInventoryItem().Get();
+				if (IsValid(Item))
+				{
+					RemoveItemFromGrid(Item, UL);
+				}
+			}
+			continue;
+		}
+
+		int32 CurrentSum = 0;
+		for (int32 UL : ULs)
+		{
+			if (!GridSlots.IsValidIndex(UL)) continue;
+			CurrentSum += GridSlots[UL]->GetStackCount();
+		}
+
+		if (CurrentSum > Total)
+		{
+			int32 Delta = CurrentSum - Total;
+
+			for (int32 i = ULs.Num() - 1; i >= 0 && Delta > 0; --i)
+			{
+				const int32 UL = ULs[i];
+				if (!GridSlots.IsValidIndex(UL)) continue;
+
+				int32 SlotCount = GridSlots[UL]->GetStackCount();
+				const int32 RemoveAmount = FMath::Min(SlotCount, Delta);
+				const int32 NewCount = SlotCount - RemoveAmount;
+
+				UPlayground_InventoryItem* Item = GridSlots[UL]->GetInventoryItem().Get();
+				if (!IsValid(Item)) continue;
+
+				if (NewCount <= 0)
+				{
+					RemoveItemFromGrid(Item, UL);
+				}
+				else
+				{
+					GridSlots[UL]->SetStackCount(NewCount);
+					if (TObjectPtr<UPlayground_SlottedItem>* W = SlottedItems.Find(UL))
+					{
+						if (IsValid(*W))
+						{
+							(*W)->PG_UpdateStackCount(NewCount);
+						}
+					}
+				}
+				Delta -= RemoveAmount;
+			}
+		}
+	}
 }
 
 void UPlayground_InventoryGrid::PG_DropItem()

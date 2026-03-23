@@ -91,7 +91,7 @@ public:
 	// End Drop Item Confirm Check
 
 	// For Save Load Systems 
-	// Save
+#pragma region Save&Load Systems
 	UFUNCTION()
 	void GetSlotInfos(TArray<FInventorySlotInfo>& OutInfos) const;
 
@@ -101,7 +101,7 @@ public:
 
 	//UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void CaptureInventory();
-	
+
 	UPROPERTY(SaveGame)
 	TArray<FInventorySlotInfo> InventorySlots;
 
@@ -123,8 +123,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TMap<FName, TSubclassOf<AActor>> ItemClassMap;
+#pragma endregion
 
-	//// End Save Load System
 
 private:
 	TWeakObjectPtr<UPlayground_InventoryComponent> InventoryComponent;
@@ -242,6 +242,11 @@ private:
 
 	UFUNCTION()
 	void PG_OnPopUpMenuAssignQuick(int32 SlotIndex, int32 GridIndex);
+
+	UFUNCTION()
+	void HandleInventoryDataChanged();
+
+	void SyncGridStacksFromInventory();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Inventory")
 	EPlayground_ItemCategory ItemCategory;

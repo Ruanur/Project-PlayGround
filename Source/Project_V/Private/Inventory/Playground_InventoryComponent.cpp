@@ -392,7 +392,8 @@ void UPlayground_InventoryComponent::CloseInventory()
 	OwningController->SetInputMode(InputMode);
 	OwningController->SetShowMouseCursor(false);
 
-	OnInventoryLoaded.Broadcast();
+	// Inventory Load Test Code - Debug
+	//OnInventoryLoaded.Broadcast();
 }
 
 

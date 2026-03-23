@@ -21,6 +21,7 @@
 #include "Widgets/HUD/Playground_HUDWidget.h"
 #include "Controllers/PlayGroundPlayerController.h"
 #include "Widgets/Spatial/Playground_InventoryGrid.h"
+#include "QuickSlot/Playground_QuickSlotComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -154,6 +155,10 @@ void APlaygroundPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Play
 	
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	EnhancedInputComponent->BindAction(ToggleInventroyAction, ETriggerEvent::Started, this, &ThisClass::InventoryToggle);
+	EnhancedInputComponent->BindAction(UseQuickSlot1, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot1);
+	EnhancedInputComponent->BindAction(UseQuickSlot2, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot2);
+	EnhancedInputComponent->BindAction(UseQuickSlot3, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot3);
+	EnhancedInputComponent->BindAction(UseQuickSlot4, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot4);
 }
 
 void APlaygroundPlayerCharacter::BeginPlay()
@@ -161,9 +166,10 @@ void APlaygroundPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	InventoryComponent = FindComponentByClass<UPlayground_InventoryComponent>();
-	PG_CreateHUDWidget();
+	QuickSlotComponent = FindComponentByClass<UPlayground_QuickSlotComponent>();
 
-	
+	InventoryComponent->OnInventoryLoaded.Broadcast();
+	PG_CreateHUDWidget();
 }
 
 void APlaygroundPlayerCharacter::PG_CreateHUDWidget()
@@ -189,10 +195,26 @@ void APlaygroundPlayerCharacter::PG_PrimaryInteract()
 	InventoryComponent->TryAddItem(ItemComp);
 }
 
+void APlaygroundPlayerCharacter::Input_UseQuickSlot1(const FInputActionValue& Value) { UseQuickSlot(0); }
+void APlaygroundPlayerCharacter::Input_UseQuickSlot2(const FInputActionValue& Value) { UseQuickSlot(1); }
+void APlaygroundPlayerCharacter::Input_UseQuickSlot3(const FInputActionValue& Value) { UseQuickSlot(2); }
+void APlaygroundPlayerCharacter::Input_UseQuickSlot4(const FInputActionValue& Value) { UseQuickSlot(3); }
+
 void APlaygroundPlayerCharacter::InventoryToggle()
 {
 	if (!InventoryComponent.IsValid()) return;
 	InventoryComponent->ToggleInventoryMenu();
+}
+
+void APlaygroundPlayerCharacter::UseQuickSlot(int32 SlotIndex)
+{
+	if (!QuickSlotComponent.IsValid())
+	{
+		QuickSlotComponent = FindComponentByClass<UPlayground_QuickSlotComponent>();
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[QuickSlot] Use Slot=%d"), SlotIndex);
+	QuickSlotComponent->UseSlot(SlotIndex);
 }
 
 void APlaygroundPlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
