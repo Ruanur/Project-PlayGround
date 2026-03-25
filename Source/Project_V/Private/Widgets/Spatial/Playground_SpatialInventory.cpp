@@ -17,6 +17,7 @@
 #include "Inventory/Playground_InventoryComponent.h"
 #include "SaveGame/PlaygroundSaveGame.h"
 #include "Kismet/GameplayStatics.h"
+#include "Inventory/Save/Playground_FInventorySlotInfo.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -45,6 +46,15 @@ void UPlayground_SpatialInventory::NativeOnInitialized()
 				EquippedGridSlot->EquippedGridSlotClicked.AddDynamic(this, &ThisClass::EquippedGridSlotClicked);
 			}
 		});
+
+
+	InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
+
+	if (InventoryComponent.IsValid())
+	{
+		InventoryComponent->OnInventoryDataChanged.AddUObject(this, &ThisClass::SaveEquipment);
+		InventoryComponent->OnInventoryLoaded.AddUObject(this, &ThisClass::LoadEquipmentAfterInventory);
+	}
 }
 
 void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedGridSlot* EquippedGridSlot, const FGameplayTag& EquipmentTypeTag)
@@ -65,8 +75,8 @@ void UPlayground_SpatialInventory::EquippedGridSlotClicked(UPlayground_EquippedG
 	EquippedSlottedItem->OnEquippedSlottedItemClicked.AddDynamic(this, &ThisClass::EquippedSlottedItemClicked);
 
 	// Inform the server that we've equipped an item (potentially unequipped an item as well) 
-	UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
-	check(IsValid(InventoryComponent));
+	//UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
+	check(InventoryComponent.IsValid());
 
 	InventoryComponent->Server_EquipSlotClicked(HoverItem->GetInventoryItem(), nullptr);
 
@@ -179,6 +189,16 @@ UPlayground_HoverItem* UPlayground_SpatialInventory::GetHoverItem() const
 float UPlayground_SpatialInventory::GetTileSize() const
 {
 	return Grid_Equippables->GetTileSize();
+}
+
+void UPlayground_SpatialInventory::LoadEquipmentAfterInventory()
+{
+	if (!GetWorld()) return;
+	
+	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+		{
+			LoadEquipment();
+		});
 }
 
 FReply UPlayground_SpatialInventory::NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
@@ -295,8 +315,8 @@ void UPlayground_SpatialInventory::MakeEquippedSlottedItem(UPlayground_EquippedS
 
 void UPlayground_SpatialInventory::BroadcastSlotClickedDelegates(UPlayground_InventoryItem* ItemToEquip, UPlayground_InventoryItem* ItemToUnequip) const
 {
-	UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
-	check(IsValid(InventoryComponent));
+	//UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer());
+	check(InventoryComponent.IsValid());
 	InventoryComponent->Server_EquipSlotClicked(ItemToEquip, ItemToUnequip);
 
 	if (GetOwningPlayer()->GetNetMode() != NM_DedicatedServer)
@@ -304,6 +324,159 @@ void UPlayground_SpatialInventory::BroadcastSlotClickedDelegates(UPlayground_Inv
 		InventoryComponent->OnItemEquipped.Broadcast(ItemToEquip);
 		InventoryComponent->OnItemUnequipped.Broadcast(ItemToUnequip);
 	}
+}
+
+// 저장 직전 현재 슬롯 상태 구조체 배열로 직렬화
+void UPlayground_SpatialInventory::CaptureEquipment()
+{
+	EquipmentSlots.Reset();
+	GetEquippedSlotInfos(EquipmentSlots);
+
+	Debug::Print(TEXT("======= Equipment Capture End ======="), FColor::Green);
+}
+
+void UPlayground_SpatialInventory::SaveEquipment()
+{
+	CaptureEquipment();
+
+	if (UGameplayStatics::DoesSaveGameExist(TEXT("Inventory"), 0))
+	{
+		CurrentSaveGame = Cast<UPlaygroundSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("Inventory"), 0));
+	}
+	else
+	{
+		CurrentSaveGame = Cast<UPlaygroundSaveGame>(
+			UGameplayStatics::CreateSaveGameObject(UPlaygroundSaveGame::StaticClass()));
+	}
+
+	if (!CurrentSaveGame) return;
+
+	CurrentSaveGame->SavedEquipmentSlots = EquipmentSlots;
+
+	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, TEXT("Inventory"), 0);
+
+	Debug::Print(TEXT("Equipment Saved"), FColor::Green);
+}
+
+void UPlayground_SpatialInventory::LoadEquipment()
+{
+	Debug::Print("==== EQUIPMENT LOAD CALLED ====");
+
+	if (!UGameplayStatics::DoesSaveGameExist(TEXT("Inventory"), 0))
+	{
+		Debug::Print(TEXT("No Save File"), FColor::Red);
+		return;
+	}
+
+	CurrentSaveGame = Cast<UPlaygroundSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("Inventory"), 0));
+	if (!CurrentSaveGame) return;
+
+	EquipmentSlots = CurrentSaveGame->SavedEquipmentSlots;
+	RestoreFromEquippedSlotInfos();
+}
+
+void UPlayground_SpatialInventory::GetEquippedSlotInfos(TArray<FEquippedSlotInfo>& OutInfos) const
+{
+	OutInfos.Reset(EquippedGridSlots.Num());
+
+	for (const UPlayground_EquippedGridSlot* EquippedGridSlot : EquippedGridSlots)
+	{
+		if (!IsValid(EquippedGridSlot)) continue;
+
+		UPlayground_InventoryItem* Item = EquippedGridSlot->GetInventoryItem().Get();
+		if (!IsValid(Item)) continue;
+
+		const FGameplayTag& EquipmentTypeTag = EquippedGridSlot->GetEquipmentTypeTag();
+		if (!EquipmentTypeTag.IsValid()) continue;
+
+		OutInfos.Emplace(
+			EquipmentTypeTag,
+			Item->GetItemID(),
+			Item->GetInstancedID(),
+			Item->IsStackable(),
+			Item->GetTotalStackCount()
+		);
+	}
+
+	Debug::Print(TEXT("GetEquippedSlotInfos End"));
+}
+
+void UPlayground_SpatialInventory::RestoreFromEquippedSlotInfos()
+{
+	// 현재 장비 슬롯 UI 비우기
+	for (UPlayground_EquippedGridSlot* EquippedGridSlot : EquippedGridSlots)
+	{
+		if (!IsValid(EquippedGridSlot)) continue;
+
+		if (UPlayground_EquippedSlottedItem* ExistingItem = EquippedGridSlot->GetEquippedSlottedItem())
+		{
+			if (ExistingItem->OnEquippedSlottedItemClicked.IsAlreadyBound(this, &ThisClass::EquippedSlottedItemClicked))
+			{
+				ExistingItem->OnEquippedSlottedItemClicked.RemoveDynamic(this, &ThisClass::EquippedSlottedItemClicked);
+			}
+			
+			ExistingItem->RemoveFromParent();
+		}
+
+		EquippedGridSlot->SetEquippedSlottedItem(nullptr);
+		EquippedGridSlot->SetInventoryItem(nullptr);
+		EquippedGridSlot->PG_SetUnoccupiedTexture();
+	}
+
+	if (EquipmentSlots.IsEmpty())
+	{
+		Debug::Print(TEXT("No Equipment to Restore"));
+		return;
+	}
+
+	// 저장 데이터로 장비 슬롯 다시 채우기
+	for (const FEquippedSlotInfo& SavedSlot : EquipmentSlots)
+	{
+		if (!SavedSlot.EquipmentTypeTag.IsValid()) continue;
+		if (SavedSlot.ItemID.IsNone()) continue;
+
+		UPlayground_InventoryItem* InvItem = Grid_Equippables->CreateInventoryItemFromItemID(SavedSlot.ItemID);
+		if (!IsValid(InvItem)) continue;
+		
+		InvItem->SetInstancedID(SavedSlot.InstanceID);
+		InvItem->SetTotalStackCount(SavedSlot.StackAmount);
+		//UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer())
+		if (InventoryComponent.IsValid())
+		{
+			InventoryComponent->PG_RegisterLoadedItem(InvItem);
+		}
+
+		UPlayground_EquippedGridSlot* TargetSlot = FindEquippedGridSlotByTag(SavedSlot.EquipmentTypeTag);
+		if (!IsValid(TargetSlot)) continue;
+
+		UPlayground_EquippedSlottedItem* EquippedSlottedItem = TargetSlot->OnItemEquipped(InvItem, SavedSlot.EquipmentTypeTag, GetTileSize());
+
+		if (IsValid(EquippedSlottedItem))
+		{
+			EquippedSlottedItem->OnEquippedSlottedItemClicked.AddDynamic(this, &ThisClass::EquippedSlottedItemClicked);
+			TargetSlot->SetEquippedSlottedItem(EquippedSlottedItem);
+		}
+
+		// 실제 장착 효과 / 액터 복원
+		if (InventoryComponent.IsValid())
+		{
+			InventoryComponent->OnItemEquipped.Broadcast(InvItem);
+		}
+	}
+	Debug::Print(TEXT(" === Equipment Restore Complete === "), FColor::Green);
+}
+
+// 태그로 슬롯 찾기
+UPlayground_EquippedGridSlot* UPlayground_SpatialInventory::FindEquippedGridSlotByTag(const FGameplayTag& EquipmentTypeTag) const
+{
+	auto* FoundSlot = EquippedGridSlots.FindByPredicate(
+		[&EquipmentTypeTag](const UPlayground_EquippedGridSlot* EquipmentSlot) 
+		{
+			return IsValid(EquipmentSlot) && EquipmentSlot->GetEquipmentTypeTag().MatchesTagExact(EquipmentTypeTag);
+		}
+	);
+
+	return FoundSlot ? *FoundSlot : nullptr;
 }
 
 

@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "Widgets/PlaygroundWidgeBase.h"
 #include "Widgets/GridSlots/Playground_EquippedGridSlot.h"
+#include "Inventory/Save/Playground_FInventorySlotInfo.h"
 #include "Playground_SpatialInventory.generated.h"
 
 
+class UPlaygroundSaveGame;
 class UPlayground_InventoryGrid;
+class UPlayground_InventoryComponent;
 class UWidgetSwitcher;
 class UButton;
 class UCanvasPanel;
@@ -34,7 +37,13 @@ public:
 	virtual bool HasHoverItem() const override;
 	virtual UPlayground_HoverItem* GetHoverItem() const override;
 	virtual float GetTileSize() const override;
+
+	//인벤토리 먼저 Load 후 장비 Load (후처리 함수)
+	void LoadEquipmentAfterInventory();
+
 private:
+
+	TWeakObjectPtr<UPlayground_InventoryComponent> InventoryComponent;
 
 	UPROPERTY()
 	TArray<TObjectPtr<UPlayground_EquippedGridSlot>> EquippedGridSlots;
@@ -117,4 +126,27 @@ private:
 	void BroadcastSlotClickedDelegates(UPlayground_InventoryItem* ItemToEquip, UPlayground_InventoryItem* ItemToUnequip) const;
 
 	TWeakObjectPtr<UPlayground_InventoryGrid> ActiveGrid;
+
+#pragma region EquipmentSaveSystem
+	UPROPERTY()
+	TArray<FEquippedSlotInfo> EquipmentSlots;
+
+	UFUNCTION()
+	void CaptureEquipment();
+
+	UFUNCTION()
+	void SaveEquipment();
+
+	UFUNCTION()
+	void LoadEquipment();
+
+	void GetEquippedSlotInfos(TArray<FEquippedSlotInfo>& OutInfos) const;
+	void RestoreFromEquippedSlotInfos();
+
+	UPROPERTY()
+	TObjectPtr<UPlaygroundSaveGame> CurrentSaveGame;
+
+	UPlayground_EquippedGridSlot* FindEquippedGridSlotByTag(const FGameplayTag& EquipmentTypeTag) const;
+#pragma endregion
+
 };

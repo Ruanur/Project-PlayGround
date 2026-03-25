@@ -34,4 +34,7 @@ public:
 
 	UPROPERTY(SaveGame)
 	TArray<FInventorySlotInfo> SavedCraftable;
+
+	UPROPERTY(SaveGame)
+	TArray<FEquippedSlotInfo> SavedEquipmentSlots;
 };

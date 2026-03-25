@@ -24,6 +24,8 @@
 #include "Engine/SCS_Node.h"
 #include "Widgets/ItemPopUp/Playground_DropConfirmWidget.h"
 #include "QuickSlot/Playground_QuickSlotComponent.h"
+#include "EquipmentManagement/Components/Playground_EquipmentComponent.h"
+#include "Widgets/Spatial/Playground_SpatialInventory.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -1563,7 +1565,7 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 		//
 		// 시도한 목록 : 
 		// TSubclassPtr로 저장 후 불러오기 시도 - 구조체 예외 문제 (해결 불가)
-		// TODO : FName으로 ItemID 저장 후 불러오기 시도 - (진행 중)
+		// TODO : FName으로 ItemID 저장 후 불러오기 시도
 		// HOW : 아이템에 독립적인 ItemID 부여 혹은 GUID 부여
 		//auto InvItem = SavedSlot.Item;
 
@@ -1676,7 +1678,7 @@ void UPlayground_InventoryGrid::LoadInventory()
 		return;
 	}
 
-	CurrentSaveGame =Cast<UPlaygroundSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("Inventory"), 0));
+	CurrentSaveGame = Cast<UPlaygroundSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("Inventory"), 0));
 
 	if (!CurrentSaveGame) return;
 

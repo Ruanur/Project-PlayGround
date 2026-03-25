@@ -29,8 +29,11 @@ public:
 	UPlayground_EquippedSlottedItem* OnItemEquipped(UPlayground_InventoryItem* Item, const FGameplayTag& EquipmentTag, float TileSize);
 	void SetEquippedSlottedItem(UPlayground_EquippedSlottedItem* Item) { EquippedSlottedItem = Item; }
 
+	const FGameplayTag& GetEquipmentTypeTag() const { return EquipmentTypeTag; }
+
 	FEquippedGridSlotClicked EquippedGridSlotClicked;
 
+	UPlayground_EquippedSlottedItem* GetEquippedSlottedItem() const { return EquippedSlottedItem; }
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Inventory", meta = (Categories = "GameItems.Equipment"))

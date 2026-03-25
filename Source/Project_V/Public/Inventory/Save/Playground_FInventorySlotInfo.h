@@ -10,7 +10,7 @@
  * 
  */
 
-// SaveGame 직렬화 구조체 (Inventory)
+// SaveGame 직렬화 구조체 (Inventory) - 인벤토리
 USTRUCT(BlueprintType)
 struct FInventorySlotInfo
 {
@@ -49,4 +49,42 @@ struct FInventorySlotInfo
     {
     }
 
+};
+
+// 장착 슬롯
+USTRUCT(BlueprintType)
+struct FEquippedSlotInfo
+{
+    GENERATED_BODY()
+
+    UPROPERTY(SaveGame)
+    FGameplayTag EquipmentTypeTag;
+
+    UPROPERTY(SaveGame)
+    FName ItemID = NAME_None;
+
+    UPROPERTY(SaveGame)
+    FGuid InstanceID;
+
+    UPROPERTY(SaveGame) 
+    bool bIsStackable = false;
+
+    UPROPERTY(SaveGame)
+    int32 StackAmount = 1;
+
+    FEquippedSlotInfo() = default;
+
+    FEquippedSlotInfo(
+        const FGameplayTag& InEquipmentTypeTag,
+        FName InItemID,
+        const FGuid& InInstanceID,
+        bool bInIsStackable,
+        int32 InStackAmount)
+        : EquipmentTypeTag(InEquipmentTypeTag)
+        , ItemID(InItemID)
+        , InstanceID(InInstanceID)
+        , bIsStackable(bInIsStackable)
+        , StackAmount(InStackAmount)
+    {
+    }
 };
