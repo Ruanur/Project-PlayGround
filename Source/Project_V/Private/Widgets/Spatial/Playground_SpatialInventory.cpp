@@ -287,6 +287,8 @@ void UPlayground_SpatialInventory::ClearSlotOfItem(UPlayground_EquippedGridSlot*
 	{
 		EquippedGridSlot->SetEquippedSlottedItem(nullptr);
 		EquippedGridSlot->SetInventoryItem(nullptr);
+		EquippedGridSlot->PG_SetUnoccupiedTexture();
+		EquippedGridSlot->SetAvailable(true);
 	}
 }
 
@@ -421,6 +423,7 @@ void UPlayground_SpatialInventory::RestoreFromEquippedSlotInfos()
 		EquippedGridSlot->SetEquippedSlottedItem(nullptr);
 		EquippedGridSlot->SetInventoryItem(nullptr);
 		EquippedGridSlot->PG_SetUnoccupiedTexture();
+		EquippedGridSlot->SetAvailable(true);
 	}
 
 	if (EquipmentSlots.IsEmpty())

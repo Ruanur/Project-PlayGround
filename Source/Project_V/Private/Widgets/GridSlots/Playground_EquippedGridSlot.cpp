@@ -75,6 +75,8 @@ UPlayground_EquippedSlottedItem* UPlayground_EquippedGridSlot::OnItemEquipped(UP
 
 	// Set Inventory Item on this class (The Equipped Grid Slot)
 	SetInventoryItem(Item);
+	PG_SetOccupiedTexture();
+	SetAvailable(false);
 
 	// Set the Image Brush on the Equipped Slotted item
 	const FPlayground_ImageFragment* ImageFragment = GetFragment<FPlayground_ImageFragment>(Item, FragmentTags::IconFragment);
@@ -88,16 +90,25 @@ UPlayground_EquippedSlottedItem* UPlayground_EquippedGridSlot::OnItemEquipped(UP
 	EquippedSlottedItem->SetImageBrush(Brush);
 
 	// Add the Slotted Item as a child to this widget's Overlay
-	Overlay_Root->AddChildToOverlay(EquippedSlottedItem);
-	FGeometry OverlayGeometry = Overlay_Root->GetCachedGeometry();
-	auto OverlayPos = OverlayGeometry.Position;
-	auto OverlaySize = OverlayGeometry.Size;
+	//Overlay_Root->AddChildToOverlay(EquippedSlottedItem);
+	//FGeometry OverlayGeometry = Overlay_Root->GetCachedGeometry();
+	//auto OverlayPos = OverlayGeometry.Position;
+	//auto OverlaySize = OverlayGeometry.Size;
 
-	const float LeftPadding = OverlaySize.X / 2.f - DrawSize.X / 2.f;
-	const float TopPadding = OverlaySize.Y / 2.f - DrawSize.Y / 2.f;
+	//const float LeftPadding = OverlaySize.X / 2.f - DrawSize.X / 2.f;
+	//const float TopPadding = OverlaySize.Y / 2.f - DrawSize.Y / 2.f;
 
-	UOverlaySlot* OverlaySlot = UWidgetLayoutLibrary::SlotAsOverlaySlot(EquippedSlottedItem);
-	OverlaySlot->SetPadding(FMargin(LeftPadding, TopPadding));
+	//UOverlaySlot* OverlaySlot = UWidgetLayoutLibrary::SlotAsOverlaySlot(EquippedSlottedItem);
+	//OverlaySlot->SetPadding(FMargin(LeftPadding, TopPadding));
+
+	UOverlaySlot* OverlaySlot = Overlay_Root->AddChildToOverlay(EquippedSlottedItem);
+
+	if (IsValid(OverlaySlot))
+	{
+		OverlaySlot->SetHorizontalAlignment(HAlign_Center);
+		OverlaySlot->SetVerticalAlignment(VAlign_Center);
+		OverlaySlot->SetPadding(FMargin(0.f));
+	}
 
 	// Return the Equipped Slotted item widget
 	return EquippedSlottedItem;
