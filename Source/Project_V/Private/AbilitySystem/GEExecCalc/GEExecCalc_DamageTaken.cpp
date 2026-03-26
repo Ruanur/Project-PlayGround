@@ -12,14 +12,14 @@ struct FPlaygroundDamageCapture
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPower)
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePower)
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DamageTaken)
-	DECLARE_ATTRIBUTE_CAPTUREDEF(BaseDamage)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(BonusDamage)
 
 	FPlaygroundDamageCapture()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlaygroundAttributeSet, AttackPower, Source, false)
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlaygroundAttributeSet, DefensePower, Target, false)
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlaygroundAttributeSet, DamageTaken, Target, false)
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlaygroundAttributeSet, BaseDamage, Source, false)
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UPlaygroundAttributeSet, BonusDamage, Source, false)
 	}
 };
 
@@ -49,7 +49,7 @@ UGEExecCalc_DamageTaken::UGEExecCalc_DamageTaken()
 	RelevantAttributesToCapture.Add(GetPlaygroundDamageCapture().AttackPowerDef);
 	RelevantAttributesToCapture.Add(GetPlaygroundDamageCapture().DefensePowerDef);
 	RelevantAttributesToCapture.Add(GetPlaygroundDamageCapture().DamageTakenDef);
-	RelevantAttributesToCapture.Add(GetPlaygroundDamageCapture().BaseDamageDef);
+	RelevantAttributesToCapture.Add(GetPlaygroundDamageCapture().BonusDamageDef);
 }
 
 void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -78,7 +78,8 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 	//Debug::Print(TEXT("TargetDefensePower"), TargetDefensePower);	
 
 	float BaseDamage = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetPlaygroundDamageCapture().BaseDamageDef, EvaluateParameters, BaseDamage);
+	float BonusDamage = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetPlaygroundDamageCapture().BonusDamageDef, EvaluateParameters, BonusDamage);
 
 	int32 UsedLightAttackComboCount = 0;
 	int32 UsedHeavyAttackComboCount = 0;
@@ -88,6 +89,12 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 		if (TagMagnitude.Key.MatchesTagExact(PlaygroundGameplayTags::Shared_SetByCaller_BaseDamage))
 		{
 			BaseDamage = TagMagnitude.Value;
+			//Debug::Print(TEXT("BaseDamage"), BaseDamage);
+		}
+
+		if (TagMagnitude.Key.MatchesTagExact(PlaygroundGameplayTags::Shared_SetByCaller_BonusDamage))
+		{
+			BonusDamage = TagMagnitude.Value;
 			//Debug::Print(TEXT("BaseDamage"), BaseDamage);
 		}
 		
@@ -104,6 +111,7 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 		}
 	}
 
+	float DefaultDamage = BaseDamage + BonusDamage;
 
 	//피해 계산식
 	// ================= 
@@ -113,7 +121,7 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 	{
 		const float DamageIncreasePercentLight = (UsedLightAttackComboCount - 1) * 0.05f + 1.f;
 
-		BaseDamage *= DamageIncreasePercentLight;
+		DefaultDamage *= DamageIncreasePercentLight;
 		//Debug::Print(TEXT("ScaledBaseDamageLight"), BaseDamage);
 	}
 	
@@ -121,15 +129,15 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 	{
 		const float DamageIncreasePercentHeavy = UsedHeavyAttackComboCount * 0.15f + 1.f;
 
-		BaseDamage *= DamageIncreasePercentHeavy;
+		DefaultDamage *= DamageIncreasePercentHeavy;
 		//Debug::Print(TEXT("ScaledBaseDamageHeavy"), BaseDamage);
 	}
 
 	// =============
 	// 최종 데미지
 	// =============
-	const float FinalDamageDone = BaseDamage * SourceAttackPower / TargetDefensePower;
-	Debug::Print(TEXT("BaseDamge"), BaseDamage);
+	const float FinalDamageDone = DefaultDamage * SourceAttackPower / TargetDefensePower;
+	Debug::Print(TEXT("DefaultDamage"), DefaultDamage);
 
 	if (FinalDamageDone > 0.f)
 	{

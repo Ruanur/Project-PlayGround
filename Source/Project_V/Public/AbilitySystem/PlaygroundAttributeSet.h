@@ -68,6 +68,10 @@ public:
 	FGameplayAttributeData BaseDamage;
 	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, BaseDamage)
 
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData BonusDamage;
+	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, BonusDamage)
+
 private:
 	TWeakInterfacePtr<IPawnUIInterface> CachedPawnUIInterface;
 };

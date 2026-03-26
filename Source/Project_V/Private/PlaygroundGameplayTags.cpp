@@ -96,6 +96,7 @@ namespace PlaygroundGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_SpawnProjectile, "Shared.Event.SpawnProjectile");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_BaseDamage, "Shared.SetByCaller.BaseDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_BonusDamage, "Shared.SetByCaller.BonusDamage");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Status_Dead, "Shared.Status.Dead");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Status_HitReact_Front, "Shared.Status.HitReact.Front");
@@ -108,6 +109,8 @@ namespace PlaygroundGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_Strength, "Data.Stats.Strength")
 	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_Defense, "Data.Stats.Defense")
 	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_AttackPower, "Data.Stats.AttackPower")
+	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_BaseDamage, "Data.Stats.BaseDamage")
+	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_BonusDamage, "Data.Stats.BonusDamage")
 
 	/* Game Data Tags */
 	UE_DEFINE_GAMEPLAY_TAG(GameData_Level_SurvivalGameModeMap, "GameData.Level.SurvivalGameModeMap");

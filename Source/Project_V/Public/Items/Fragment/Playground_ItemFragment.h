@@ -225,6 +225,21 @@ struct FPlayground_StrengthModifier : public FPlayground_EquipModifier
 	virtual void OnUnequip(APlayerController* PC) override;
 };
 
+USTRUCT(BlueprintType)
+struct FPlayground_BaseDamageModifier : public FPlayground_EquipModifier
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> EquipmentEffectClass;
+
+	// 장착 중 적용된 GE Handle
+	FActiveGameplayEffectHandle ActiveEffectHandle;
+
+	virtual void OnEquip(APlayerController* PC, float RarityMultiplier) override;
+	virtual void OnUnequip(APlayerController* PC) override;
+};
+
 class APlayground_EquipActor;
 USTRUCT(BlueprintType)
 struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment

@@ -20,6 +20,7 @@ UPlaygroundAttributeSet::UPlaygroundAttributeSet()
 	InitAttackPower(1.f);
 	InitDefensePower(1.f);
 	InitBaseDamage(1.f);
+	InitBonusDamage(1.f);
 }
 
 void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)

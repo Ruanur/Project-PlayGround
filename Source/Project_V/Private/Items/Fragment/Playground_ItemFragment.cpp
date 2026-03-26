@@ -187,6 +187,80 @@ void FPlayground_StrengthModifier::OnEquip(APlayerController* PC, float RarityMu
 	);
 }
 
+
+void FPlayground_BaseDamageModifier::OnEquip(APlayerController* PC, float RarityMultiplier)
+{
+	if (!PC || !EquipmentEffectClass) return;
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn) return;
+
+	if (!Pawn->HasAuthority()) return;
+
+	UAbilitySystemComponent* ASC = Pawn->FindComponentByClass<UAbilitySystemComponent>();
+	if (!ASC && PC->PlayerState)
+	{
+		ASC = PC->PlayerState->FindComponentByClass<UAbilitySystemComponent>();
+	}
+
+	if (!ASC) return;
+
+	if (ActiveEffectHandle.IsValid())
+	{
+		ASC->RemoveActiveGameplayEffect(ActiveEffectHandle);
+		ActiveEffectHandle.Invalidate();
+	}
+
+	FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+	Context.AddSourceObject(Pawn);
+
+	const float BaseValue = GetValue();
+	const float FinalValue = BaseValue * RarityMultiplier;
+
+	const float LevelToApply = 1.f;
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(EquipmentEffectClass, LevelToApply, Context);
+	if (!SpecHandle.IsValid()) return;
+
+	const FGameplayTag DamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Stats.BaseDamage"));
+	SpecHandle.Data->SetSetByCallerMagnitude(DamageTag, FinalValue);
+
+	ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	Debug::Print(FString::Printf(TEXT("BaseDamage increased by : %.1f"), FinalValue), FColor::Green);
+	Debug::Print(FString::Printf(
+		TEXT("BaseValue=%.2f, RarityMultiplier=%.2f, FinalValue=%.2f"),
+		BaseValue, RarityMultiplier, FinalValue),
+		FColor::Yellow
+	);
+}
+
+void FPlayground_BaseDamageModifier::OnUnequip(APlayerController* PC)
+{
+	if (!PC || !EquipmentEffectClass) return;
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn) return;
+
+	if (!Pawn->HasAuthority()) return;
+
+	UAbilitySystemComponent* ASC = Pawn->FindComponentByClass<UAbilitySystemComponent>();
+
+	if (!ASC && PC->PlayerState)
+	{
+		ASC = PC->PlayerState->FindComponentByClass<UAbilitySystemComponent>();
+	}
+	if (!ASC) return;
+
+	if (ActiveEffectHandle.IsValid())
+	{
+		ASC->RemoveActiveGameplayEffect(ActiveEffectHandle);
+		ActiveEffectHandle.Invalidate();
+	}
+
+	Debug::Print(TEXT("BaseDamage bonus removed"), FColor::Red);
+
+}
+
 void FPlayground_StrengthModifier::OnUnequip(APlayerController* PC)
 {
 	if (!PC) return;
@@ -287,5 +361,4 @@ void FPlayground_EquipmentFragment::SetEquippedActor(APlayground_EquipActor* Equ
 
 	EquippedActor = EquipActor;
 }
-
 
