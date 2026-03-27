@@ -19,6 +19,10 @@ namespace PlaygroundGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_SpecialWeaponAbility_Heavy, "InputTag.SpecialWeaponAbility.Heavy");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_PickUp_Stones, "InputTag.PickUp.Stones");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Interact_Object, "InputTag.Interact.Object");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_1, "InputTag.QuickSlot.1");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_2, "InputTag.QuickSlot.2");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_3, "InputTag.QuickSlot.3");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_QuickSlot_4, "InputTag.QuickSlot.4");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Inventory, "InputTag.Inventory");
 
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_MustBeHeld, "InputTag.MustBeHeld");
@@ -42,6 +46,10 @@ namespace PlaygroundGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_SpecialWeaponAbility_Heavy, "Player.Ability.SpecialWeaponAbility.Heavy");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_PickUp_Stones, "Player.Ability.PickUp.Stones");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Interact_Object, "Player.Ability.Interact.Object");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_QuickSlot_1, "Player.Ability.QuickSlot.1");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_QuickSlot_2, "Player.Ability.QuickSlot.2");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_QuickSlot_3, "Player.Ability.QuickSlot.3");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_QuickSlot_4, "Player.Ability.QuickSlot.4");
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Cooldown_SpecialWeaponAbility_Light, "Player.Cooldown.SpecialWeaponAbility.Light");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Cooldown_SpecialWeaponAbility_Heavy, "Player.Cooldown.SpecialWeaponAbility.Heavy");
@@ -58,6 +66,10 @@ namespace PlaygroundGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_AOE, "Player.Event.AOE");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_ConsumeStones, "Player.Event.ConsumeStones");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_InteractObject, "Player.Event.InteractObject");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_QuickSlot_1, "Player.Event.QuickSlot1");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_QuickSlot_2, "Player.Event.QuickSlot2");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_QuickSlot_3, "Player.Event.QuickSlot3");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_QuickSlot_4, "Player.Event.QuickSlot4");
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_JumpToFinisher, "Player.Status.JumpToFinisher");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Rolling, "Player.Status.Rolling");

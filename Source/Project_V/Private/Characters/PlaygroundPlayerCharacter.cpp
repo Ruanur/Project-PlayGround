@@ -151,14 +151,21 @@ void APlaygroundPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Play
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Interact_Object, ETriggerEvent::Started, this, &ThisClass::Input_InteractionObjectStarted);
 	//PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Inventory, ETriggerEvent::Started, this, &ThisClass::Input_Inventory);
 
+	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_QuickSlot_1, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot1);
+	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_QuickSlot_2, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot2);
+	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_QuickSlot_3, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot3);
+	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_QuickSlot_4, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot4);
+
 	PlaygroundInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &ThisClass::Input_AbilityInputPressed, &ThisClass::Input_AbilityInputReleased);
 	
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+
 	EnhancedInputComponent->BindAction(ToggleInventroyAction, ETriggerEvent::Started, this, &ThisClass::InventoryToggle);
-	EnhancedInputComponent->BindAction(UseQuickSlot1, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot1);
-	EnhancedInputComponent->BindAction(UseQuickSlot2, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot2);
-	EnhancedInputComponent->BindAction(UseQuickSlot3, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot3);
-	EnhancedInputComponent->BindAction(UseQuickSlot4, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot4);
+
+	//EnhancedInputComponent->BindAction(UseQuickSlot1, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot1);
+	//EnhancedInputComponent->BindAction(UseQuickSlot2, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot2);
+	//EnhancedInputComponent->BindAction(UseQuickSlot3, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot3);
+	//EnhancedInputComponent->BindAction(UseQuickSlot4, ETriggerEvent::Started, this, &ThisClass::Input_UseQuickSlot4);
 }
 
 void APlaygroundPlayerCharacter::BeginPlay()
@@ -195,10 +202,44 @@ void APlaygroundPlayerCharacter::PG_PrimaryInteract()
 	InventoryComponent->TryAddItem(ItemComp);
 }
 
-void APlaygroundPlayerCharacter::Input_UseQuickSlot1(const FInputActionValue& Value) { UseQuickSlot(0); }
-void APlaygroundPlayerCharacter::Input_UseQuickSlot2(const FInputActionValue& Value) { UseQuickSlot(1); }
-void APlaygroundPlayerCharacter::Input_UseQuickSlot3(const FInputActionValue& Value) { UseQuickSlot(2); }
-void APlaygroundPlayerCharacter::Input_UseQuickSlot4(const FInputActionValue& Value) { UseQuickSlot(3); }
+void APlaygroundPlayerCharacter::Input_UseQuickSlot1(const FInputActionValue& Value) 
+{ 
+	FGameplayEventData Data;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		this,
+		PlaygroundGameplayTags::Player_Event_QuickSlot_1, Data
+	);
+	//UseQuickSlot(0);
+}
+
+void APlaygroundPlayerCharacter::Input_UseQuickSlot2(const FInputActionValue& Value) 
+{
+	FGameplayEventData Data;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		this,
+		PlaygroundGameplayTags::Player_Event_QuickSlot_2, Data
+	);
+	//UseQuickSlot(1); 
+}
+
+void APlaygroundPlayerCharacter::Input_UseQuickSlot3(const FInputActionValue& Value) 
+{
+	FGameplayEventData Data;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		this,
+		PlaygroundGameplayTags::Player_Event_QuickSlot_3, Data
+	);
+	//UseQuickSlot(2); 
+}
+void APlaygroundPlayerCharacter::Input_UseQuickSlot4(const FInputActionValue& Value) 
+{
+	FGameplayEventData Data;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		this,
+		PlaygroundGameplayTags::Player_Event_QuickSlot_4, Data
+	);
+	//UseQuickSlot(3); 
+}
 
 void APlaygroundPlayerCharacter::InventoryToggle()
 {
