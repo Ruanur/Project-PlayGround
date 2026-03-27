@@ -265,6 +265,19 @@ struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment
 		return nullptr;
 	}
 
+	FPlayground_BaseDamageModifier* GetBaseDamageModifierMutable()
+	{
+		for (auto& Modifier : EquipModifiers)
+		{
+			if (FPlayground_BaseDamageModifier* BaseDamageModifier = Modifier.GetMutablePtr<FPlayground_BaseDamageModifier>())
+			{
+				return BaseDamageModifier;
+			}
+		}
+
+		return nullptr;
+	}
+
 	APlayground_EquipActor* SpawnAttachedActor(USkeletalMeshComponent* AttachMesh) const;
 	void DestroyAttachedActor() const;
 	FGameplayTag GetEquipmentType() const { return EquipmentType; }

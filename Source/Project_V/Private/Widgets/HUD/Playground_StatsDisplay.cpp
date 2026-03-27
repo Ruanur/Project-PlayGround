@@ -77,8 +77,8 @@ FGameplayAttribute UPlayground_StatsDisplay::GetAttributeForField(EPlaygroundSta
 		return UPlaygroundAttributeSet::GetAttackPowerAttribute();;
 	case EPlaygroundStatField::DefensePower:
 		return UPlaygroundAttributeSet::GetDefensePowerAttribute();
-	case EPlaygroundStatField::BaseDamage:
-		return UPlaygroundAttributeSet::GetBaseDamageAttribute();
+	case EPlaygroundStatField::BonusDamage:
+		return UPlaygroundAttributeSet::GetBonusDamageAttribute();
 	default:
 		return FGameplayAttribute();
 	}

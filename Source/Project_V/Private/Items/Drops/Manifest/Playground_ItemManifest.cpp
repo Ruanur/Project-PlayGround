@@ -56,6 +56,11 @@ UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter,
 			const float FinalDisplayValue = StrengthModifier->GetValue() * RarityMultiplier;
 			DisplayFragment->SetValue(FinalDisplayValue);
 		}
+		else if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
+		{
+			const float FinalDisplayValue = BaseDamageModifier->GetValue() * RarityMultiplier;
+			DisplayFragment->SetValue(FinalDisplayValue);
+		}
 	}
 
 	PG_ClearFragments();

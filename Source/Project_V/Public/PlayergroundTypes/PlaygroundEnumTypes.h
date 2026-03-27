@@ -62,7 +62,8 @@ enum class EPlaygroundStatField : uint8
 	MaxRage,
 	AttackPower,
 	DefensePower,
-	BaseDamage
+	BaseDamage,
+	BonusDamage
 };
 
 UENUM(BlueprintType)
