@@ -77,6 +77,30 @@ private:
 	bool PG_IsValidSlotIndex(int32 SlotIndex) const;
 	void EnsureSlotsSized();
 
+#pragma region QuickSlot_Save&Load_System
+private:
+	bool bAppliedLoadedSlots = false;
+
+	TArray<FPlayground_QuickSlotRef> PendingLoadedSlots;
+
+	// 읽기만 수행
+	void ReadQuickSlotFromSaveToPending();
+
+	// 적용
+	void ApplyPendingIfReady();
+
+	// 인벤토리 복구 완료 신호
+	UFUNCTION()
+	void HandleInventoryRestored();
+
+	void SaveQuickSlot();
+	void LoadQuickSlot();
+
+	static constexpr const TCHAR* SaveSlotName = TEXT("Inventory");
+	static constexpr int32 SaveUserIndex = 0;
+#pragma endregion
+
+
 public:	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

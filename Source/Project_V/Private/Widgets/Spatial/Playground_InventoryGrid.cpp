@@ -1601,6 +1601,16 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 		UpdateGridSlots(InvItem, InvIndex, bIsStackable, StackAmount);
 	}
 
+	if (InventoryComponent.IsValid())
+	{
+		if (ItemCategory == EPlayground_ItemCategory::Consumable)
+		{
+			Debug::Print(TEXT("Consumable Grid Loaded"));
+			InventoryComponent->OnInventoryRestored.Broadcast();
+		}
+		
+	}
+
 	Debug::Print(TEXT("=== Restore Complete ==="), FColor::Green);  
 }
 

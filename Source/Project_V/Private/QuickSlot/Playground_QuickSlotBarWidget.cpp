@@ -101,6 +101,20 @@ void UPlayground_QuickSlotBarWidget::PG_RefreshUI()
 
 	for (int32 i = 0; i < 4; ++i)
 	{
+		// 인벤토리 로드보다 먼저 호출됨 확인, 인벤토리 내 남아있는 아이템 없어서 UI 출력 안됨
+		const bool bHasSlot = Slots.IsValidIndex(i);
+		const FName DB_ItemID = bHasSlot ? Slots[i].ItemID : NAME_None;
+
+		const int32 DB_TotalCount = (bHasSlot && Inv.IsValid() && !DB_ItemID.IsNone())
+			? Inv->PG_GetTotalCountByItemID(DB_ItemID)
+			: -999;
+
+		UE_LOG(LogTemp, Warning, TEXT("[QSBar] i=%d Has=%d ItemID=%s TotalCount=%d"),
+			i,
+			bHasSlot ? 1 : 0,
+			*DB_ItemID.ToString(),
+			DB_TotalCount);
+
 		if (!Slots.IsValidIndex(i) || Slots[i].ItemID.IsNone())
 		{
 			SetSlotEmpty(i);
@@ -127,6 +141,10 @@ void UPlayground_QuickSlotBarWidget::PG_RefreshUI()
 		SetSlotFromItem(i, AnyItem, TotalCount);
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("[QSBar] Refresh QS=%d Inv=%d Pawn=%s"),
+		QS.IsValid() ? 1 : 0,
+		Inv.IsValid() ? 1 : 0,
+		GetOwningPlayer() && GetOwningPlayer()->GetPawn() ? *GetOwningPlayer()->GetPawn()->GetName() : TEXT("NULL"));
 }
 
 void UPlayground_QuickSlotBarWidget::SetSlotEmpty(int32 SlotIndex)

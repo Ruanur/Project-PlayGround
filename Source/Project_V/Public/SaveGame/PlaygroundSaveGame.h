@@ -6,6 +6,7 @@
 #include "GameFramework/SaveGame.h"
 #include "PlayergroundTypes/PlaygroundEnumTypes.h"
 #include "Inventory/Save/Playground_FInventorySlotInfo.h"
+#include "PlayergroundTypes/PlaygroundStructTypes.h"
 #include "PlaygroundSaveGame.generated.h"
 
 /**
@@ -37,4 +38,7 @@ public:
 
 	UPROPERTY(SaveGame)
 	TArray<FEquippedSlotInfo> SavedEquipmentSlots;
+
+	UPROPERTY(SaveGame)
+	TArray<FPlayground_QuickSlotRef> SavedQuickSlots;
 };

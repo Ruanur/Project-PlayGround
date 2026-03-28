@@ -23,6 +23,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemEquipStatusChanged, UPlayground
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryMenuToggled, bool, bOpen);
 DECLARE_MULTICAST_DELEGATE(FOnInventoryDataChanged);
 DECLARE_MULTICAST_DELEGATE(FOnInventoryLoaded);
+// 인벤토리 복구 완료 이벤트
+DECLARE_MULTICAST_DELEGATE(FOnInventoryRestored);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), Blueprintable)
 class PROJECT_V_API UPlayground_InventoryComponent : public UActorComponent
@@ -79,6 +81,7 @@ public:
 	FInventoryMenuToggled OnInventoryMenuToggled;
 	FOnInventoryDataChanged OnInventoryDataChanged;
 	FOnInventoryLoaded OnInventoryLoaded;
+	FOnInventoryRestored OnInventoryRestored;
 
 protected:
 	virtual void BeginPlay() override;

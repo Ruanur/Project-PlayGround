@@ -6,6 +6,8 @@
 #include "Inventory/Playground_InventoryComponent.h"
 #include "Items/Drops/Playground_InventoryItem.h"
 #include "GameFramework/Actor.h"
+#include "SaveGame/PlaygroundSaveGame.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -20,6 +22,14 @@ void UPlayground_QuickSlotComponent::BeginPlay()
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("[QuickSlotComp] BeginPlay Owner=%s"), *GetOwner()->GetName());
 	EnsureSlotsSized();
+	
+	// 읽어서 Pending에 저장
+	ReadQuickSlotFromSaveToPending();
+
+	if (UPlayground_InventoryComponent* Inv = GetInventory())
+	{
+		Inv->OnInventoryRestored.AddUObject(this, &ThisClass::HandleInventoryRestored);
+	}
 }
 
 void UPlayground_QuickSlotComponent::OnRep_Slots()
@@ -48,6 +58,75 @@ void UPlayground_QuickSlotComponent::EnsureSlotsSized()
 			Slots[i].SlotIndex = i;
 		}
 	}
+}
+
+void UPlayground_QuickSlotComponent::ReadQuickSlotFromSaveToPending()
+{
+	PendingLoadedSlots.Reset();
+
+	if (GetOwner() && !GetOwner()->HasAuthority()) return;
+	if (!UGameplayStatics::DoesSaveGameExist(SaveSlotName, SaveUserIndex)) return;
+
+	UPlaygroundSaveGame* SG = Cast<UPlaygroundSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, SaveUserIndex));
+	if (!SG) return;
+
+	PendingLoadedSlots = SG->SavedQuickSlots;
+	UE_LOG(LogTemp, Warning, TEXT("[QuickSlotComp] PendingLoadedSlots=%d"), PendingLoadedSlots.Num());
+
+}
+
+void UPlayground_QuickSlotComponent::ApplyPendingIfReady()
+{
+	if (bAppliedLoadedSlots) return;
+	if (GetOwner() && !GetOwner()->HasAuthority()) return;
+
+	// 인벤토리 아직 준비 안됐으면 리턴 (후에 호출 가능)
+	UPlayground_InventoryComponent* Inv = GetInventory();
+	if (!Inv) return;
+
+	// Apply
+	ApplySaveData(PendingLoadedSlots);
+	bAppliedLoadedSlots = true;
+
+	UE_LOG(LogTemp, Warning, TEXT("[QuickSlotComp] Apply Pending -> Done"));
+}
+
+void UPlayground_QuickSlotComponent::HandleInventoryRestored()
+{
+	ApplyPendingIfReady();
+}
+
+void UPlayground_QuickSlotComponent::SaveQuickSlot()
+{
+	if (GetOwner() && !GetOwner()->HasAuthority()) return;
+
+	UPlaygroundSaveGame* SG = nullptr;
+
+	if (UGameplayStatics::DoesSaveGameExist(SaveSlotName, SaveUserIndex))
+	{
+		SG = Cast<UPlaygroundSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, SaveUserIndex));
+	}
+	else
+	{
+		SG = Cast<UPlaygroundSaveGame>(UGameplayStatics::CreateSaveGameObject(UPlaygroundSaveGame::StaticClass()));
+	}
+
+	if (!SG) return;
+
+	BuildSaveData(SG->SavedQuickSlots);
+	UGameplayStatics::SaveGameToSlot(SG, SaveSlotName, SaveUserIndex);
+	Debug::Print(TEXT("[QuickSlot Comp] Save Quick Slot"));
+}
+
+void UPlayground_QuickSlotComponent::LoadQuickSlot()
+{
+	if (!UGameplayStatics::DoesSaveGameExist(SaveSlotName, SaveUserIndex)) return;
+
+	UPlaygroundSaveGame* SG = Cast<UPlaygroundSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, SaveUserIndex));
+	if (!SG) return;
+
+	ApplySaveData(SG->SavedQuickSlots);
+	Debug::Print(TEXT("[QuickSlot Comp] Load Quick Slot"));
 }
 
 void UPlayground_QuickSlotComponent::AssignSlot(int32 SlotIndex, UPlayground_InventoryItem* Item)
@@ -106,6 +185,8 @@ void UPlayground_QuickSlotComponent::Server_AssignSlot_Implementation(int32 Slot
 		SlotIndex,
 		*Slots[SlotIndex].ItemID.ToString(),
 		*Slots[SlotIndex].InstanceID.ToString());
+
+	SaveQuickSlot();
 }
 
 void UPlayground_QuickSlotComponent::UseSlot(int32 SlotIndex)
@@ -159,6 +240,7 @@ void UPlayground_QuickSlotComponent::Server_UseSlot_Implementation(int32 SlotInd
 		Slots[SlotIndex].ItemID = NAME_None;
 		OnQuickSlotsChanged.Broadcast();
 	}
+	SaveQuickSlot();
 }
 
 void UPlayground_QuickSlotComponent::ClearSlot(int32 SlotIndex)
@@ -186,6 +268,7 @@ void UPlayground_QuickSlotComponent::Server_ClearSlot_Implementation(int32 SlotI
 	Slots[SlotIndex].ItemID = NAME_None;
 
 	OnQuickSlotsChanged.Broadcast();
+	SaveQuickSlot();
 }
 
 void UPlayground_QuickSlotComponent::BuildSaveData(TArray<FPlayground_QuickSlotRef>& Out) const
