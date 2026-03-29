@@ -1601,6 +1601,7 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 		UpdateGridSlots(InvItem, InvIndex, bIsStackable, StackAmount);
 	}
 
+	// 소비 아이템 로드 시 퀵슬롯 이벤트 전송
 	if (InventoryComponent.IsValid())
 	{
 		if (ItemCategory == EPlayground_ItemCategory::Consumable)
