@@ -25,3 +25,55 @@ void APlaygroundDropsBase::OnPickUpCollisionSphereBeginOverlap(UPrimitiveCompone
 
 	Debug::Print(TEXT("Called This Func"));
 }
+
+void APlaygroundDropsBase::InitializeDropFromRarity(EPlaygroundRarity InRarity)
+{
+	DroppedRarity = InRarity;
+
+	Debug::Print(
+		FString::Printf(TEXT("InitializeDropFromRarity ActorClass = %s"), *GetClass()->GetName()),
+		FColor::Yellow
+	);
+
+	UPlayground_ItemComponent* ItemComp = FindComponentByClass<UPlayground_ItemComponent>();
+	if (!ItemComp)
+	{
+		Debug::Print(TEXT("InitFromRarity: Item Comp not Found"), FColor::Red);
+		return;
+	}
+
+	Debug::Print(TEXT("InitFromRarity: Item Comp Found"), FColor::Green);
+
+	// 기존 ItemComponent에 세팅된 원본 Manifest를 복사해서 사용
+	FPlayground_ItemManifest ManifestCopy = ItemComp->GetItemManifest();
+
+	Debug::Print(
+		FString::Printf(
+			TEXT("Source Manifest ItemID = %s, Source Rarity = %d"),
+			*ManifestCopy.ItemID.ToString(),
+			static_cast<int32>(ManifestCopy.GetConfiguredRarity())
+		),
+		FColor::Cyan
+	);
+
+	UPlayground_InventoryItem* CreatedItem = ManifestCopy.Manifest(this, InRarity);
+
+	if (!CreatedItem)
+	{
+		Debug::Print(TEXT("InitializeDropFromRarity: Failed to create item"), FColor::Red);
+		return;
+	}
+
+
+	// 최종적으로 희귀도 반영이 끝난 Manifest를 ItemComponent에 저장
+	ItemComp->InitItemManifest(CreatedItem->GetItemManifest());
+
+	Debug::Print(
+		FString::Printf(
+			TEXT("Drop initialized. ItemID=%s, Rarity=%d"),
+			*CreatedItem->GetItemManifest().ItemID.ToString(),
+			static_cast<int32>(InRarity)
+		),
+		FColor::Green
+	);
+}

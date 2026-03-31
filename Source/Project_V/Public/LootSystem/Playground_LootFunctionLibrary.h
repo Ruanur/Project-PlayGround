@@ -12,7 +12,7 @@
  */
 
 class UPlayground_LootTable;
-class APlayground_WorldDroppedItem;
+class APlaygroundDropsBase;
 struct FPlayground_LootEntry;
 
 UCLASS()
@@ -22,7 +22,7 @@ class PROJECT_V_API UPlayground_LootFunctionLibrary : public UBlueprintFunctionL
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "Loot", meta = (WorldContext = "WorldContextObject"))
-	static APlayground_WorldDroppedItem* SpawnLootFromTable(
+	static APlaygroundDropsBase* SpawnLootFromTable(
 		UObject* WorldContextObject,
 		const UPlayground_LootTable* LootTable,
 		const FTransform& SpawnTransform,

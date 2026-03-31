@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Items/PickUps/PlaygroundPickUpBase.h"
 #include "Characters/PlaygroundPlayerCharacter.h"
+#include "PlayergroundTypes/PlaygroundEnumTypes.h"
 #include "PlaygroundDropsBase.generated.h"
 
 /**
@@ -22,5 +23,14 @@ public:
 protected:
 	virtual void OnPickUpCollisionSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 
+#pragma region Loot_ItemManifest
+public:
+	UFUNCTION(BlueprintCallable, Category = "Drop")
+	void InitializeDropFromRarity(EPlaygroundRarity InRarity);
+
+protected:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Drop")
+	EPlaygroundRarity DroppedRarity = EPlaygroundRarity::Common;
+#pragma endregion
 
 };

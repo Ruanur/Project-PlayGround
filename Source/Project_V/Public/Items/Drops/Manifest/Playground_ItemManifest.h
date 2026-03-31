@@ -22,6 +22,7 @@ struct PROJECT_V_API FPlayground_ItemManifest
 	GENERATED_BODY()
 
 	TArray<TInstancedStruct<FPlayground_ItemFragment>>& GetFragmentsMutable() { return Fragments; }
+	UPlayground_InventoryItem* Manifest(UObject* NewOuter);
 	UPlayground_InventoryItem* Manifest(UObject* NewOuter, EPlaygroundRarity InRarity);
 	EPlayground_ItemCategory GetItemCategory() const { return ItemCategory; }
 	EPlaygroundRarity GetConfiguredRarity() const;

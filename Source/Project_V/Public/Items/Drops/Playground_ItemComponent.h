@@ -35,6 +35,7 @@ private:
 	UPROPERTY(EditAnywhere, Replicated, Category = "Inventory")
 	FPlayground_ItemManifest ItemManifest;
 
+	UPROPERTY(Replicated, VisibleAnywhere, Category = "Inventory")
 	EPlaygroundRarity ItemRarity = EPlaygroundRarity::Common;
 
 	UPROPERTY(EditAnywhere, Category = "Inventory")

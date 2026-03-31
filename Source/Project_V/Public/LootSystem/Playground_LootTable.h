@@ -12,7 +12,7 @@
  * 
  */
 
-class APlayground_WorldDroppedItem;
+class APlaygroundDropsBase;
 
 USTRUCT()
 struct FPlayground_RarityWeights
@@ -33,25 +33,6 @@ struct FPlayground_RarityWeights
 
 	UPROPERTY(EditAnywhere, Category = "Loot", meta = (ClampMin = "0.0"))
 	float Legendary = 1.f;
-
-	float GetWeightByRarity(EPlaygroundRarity InRarity) const
-	{
-		switch (InRarity)
-		{
-		case EPlaygroundRarity::Common:
-			return Common;
-		case EPlaygroundRarity::Uncommon:
-			return Uncommon;
-		case EPlaygroundRarity::Rare:
-			return Rare;
-		case EPlaygroundRarity::Epic:
-			return Epic;
-		case EPlaygroundRarity::Legendary:
-			return Legendary;
-		default:
-			return 0.f;
-		}
-	}
 };
 
 USTRUCT()
@@ -59,16 +40,9 @@ struct FPlayground_LootEntry
 {
 	GENERATED_BODY()
 
-	//실제 월드에 떨어질 액터 클래스
 	UPROPERTY(EditAnywhere, Category = "Loot")
-	TSubclassOf<APlayground_WorldDroppedItem> DroppedActorClass;
+	TSubclassOf<APlaygroundDropsBase> ItemActorClass;
 
-	// 이 아이템의 원본 Manifest
-	UPROPERTY(EditAnywhere, Category = "Loot")
-	FPlayground_ItemManifest ItemManifest;
-
-
-	// 같은 등급 내부에서의 가중치
 	UPROPERTY(EditAnywhere, Category = "Loot", meta = (ClampMin = "0.0"))
 	float Weight = 1.f;
 };

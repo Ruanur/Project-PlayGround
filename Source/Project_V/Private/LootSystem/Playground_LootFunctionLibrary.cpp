@@ -3,9 +3,9 @@
 
 #include "LootSystem/Playground_LootFunctionLibrary.h"
 #include "LootSystem/Playground_LootTable.h"
-#include "LootSystem/Playground_WorldDroppedItem.h"
+#include "Items/Drops/PlaygroundDropsBase.h"
 #include "Engine/World.h"
-#include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
 
 namespace PlaygroundLootInternal
 {
@@ -41,45 +41,63 @@ namespace PlaygroundLootInternal
 	}
 }
 
-APlayground_WorldDroppedItem* UPlayground_LootFunctionLibrary::SpawnLootFromTable(UObject* WorldContextObject, const UPlayground_LootTable* LootTable, const FTransform& SpawnTransform, AActor* Owner)
+APlaygroundDropsBase* UPlayground_LootFunctionLibrary::SpawnLootFromTable(UObject* WorldContextObject, const UPlayground_LootTable* LootTable, const FTransform& SpawnTransform, AActor* Owner)
 {
 	if (!WorldContextObject || !LootTable) return nullptr;
 
 	UWorld* World = WorldContextObject->GetWorld();
 	if (!World) return nullptr;
-
+	
 	const EPlaygroundRarity ChosenRarity = RollRarity(LootTable);
+
+	Debug::Print(
+		FString::Printf(TEXT("SpawnLootFromTable: ChosenRarity = %d"), static_cast<int32>(ChosenRarity)),
+		FColor::Cyan
+	);
+
 	const FPlayground_LootEntry* ChosenEntry = RollEntry(LootTable, ChosenRarity);
 
-	if (!ChosenEntry || !ChosenEntry->DroppedActorClass)
+	if (!ChosenEntry || !ChosenEntry->ItemActorClass)
 	{
+		Debug::Print(TEXT("SpawnLootFromTable: ChosenEntry is null or ItemActorClass is null"), FColor::Red);
 		return nullptr;
 	}
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = Owner;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	Debug::Print(
+		FString::Printf(TEXT("SpawnLootFromTable: Selected ItemActorClass = %s"), *ChosenEntry->ItemActorClass->GetName()),
+		FColor::Green
+	);
 
-	APlayground_WorldDroppedItem* DroppedActor =
-		World->SpawnActor<APlayground_WorldDroppedItem>(
-			ChosenEntry->DroppedActorClass,
-			SpawnTransform,
-			SpawnParams
-		);
+	APlaygroundDropsBase* SpawnedItem = World->SpawnActorDeferred<APlaygroundDropsBase>(
+		ChosenEntry->ItemActorClass, 
+		SpawnTransform, 
+		Owner, 
+		nullptr, 
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-	if (!DroppedActor)
+	if (!SpawnedItem)
 	{
+		Debug::Print(TEXT("SpawnLootFromTable: SpawnActorDeferred failed"), FColor::Red);
 		return nullptr;
 	}
 
-	DroppedActor->InitializedDroppedItem(ChosenEntry->ItemManifest, ChosenRarity);
-	return nullptr;
+	UGameplayStatics::FinishSpawningActor(SpawnedItem, SpawnTransform);
+
+	Debug::Print(
+		FString::Printf(TEXT("SpawnLootFromTable: InitializeDropFromRarity(%d)"), static_cast<int32>(ChosenRarity)),
+		FColor::Yellow
+	);
+
+	SpawnedItem->InitializeDropFromRarity(ChosenRarity);
+
+	return SpawnedItem;
 }
 
 EPlaygroundRarity UPlayground_LootFunctionLibrary::RollRarity(const UPlayground_LootTable* LootTable)
 {
 	if (!LootTable)
 	{
+		Debug::Print(TEXT("Roll Rarity : LootTable is Null, fallback Common"), FColor::Red);
 		return EPlaygroundRarity::Common;
 	}
 
@@ -98,32 +116,88 @@ EPlaygroundRarity UPlayground_LootFunctionLibrary::RollRarity(const UPlayground_
 
 	if (TotalWeight <= 0.f)
 	{
+		Debug::Print(TEXT("RollRarity: TotalWeight <= 0, fallback Common"), FColor::Red);
 		return EPlaygroundRarity::Common;
 	}
 
-	float Roll = FMath::FRandRange(0.f, TotalWeight);
+	float OriginalRoll = FMath::FRandRange(0.f, TotalWeight);
+	float Roll = OriginalRoll;
+
+	EPlaygroundRarity Result = EPlaygroundRarity::Common;
 
 	Roll -= CommonWeight;
-	if (Roll <= 0.f) return EPlaygroundRarity::Common;
+	if (Roll <= 0.f)
+	{
+		Result = EPlaygroundRarity::Common;
+	}
+	else
+	{
+		Roll -= UncommonWeight;
+		if (Roll <= 0.f)
+		{
+			Result = EPlaygroundRarity::Uncommon;
+		}
+		else
+		{
+			Roll -= RareWeight;
+			if (Roll <= 0.f)
+			{
+				Result = EPlaygroundRarity::Rare;
+			}
+			else
+			{
+				Roll -= EpicWeight;
+				if (Roll <= 0.f)
+				{
+					Result = EPlaygroundRarity::Epic;
+				}
+				else
+				{
+					Result = EPlaygroundRarity::Legendary;
+				}
+			}
+		}
+	}
 
-	Roll -= UncommonWeight;
-	if (Roll <= 0.f) return EPlaygroundRarity::Uncommon;
+	Debug::Print(
+		FString::Printf(
+			TEXT("RollRarity: Result = %d | Roll = %.2f / TotalWeight = %.2f"),
+			static_cast<int32>(Result),
+			OriginalRoll,
+			TotalWeight
+		),
+		FColor::Yellow
+	);
 
-	Roll -= RareWeight;
-	if (Roll <= 0.f) return EPlaygroundRarity::Rare;
-
-	Roll -= EpicWeight;
-	if (Roll <= 0.f) return EPlaygroundRarity::Epic;
-
-	return EPlaygroundRarity::Legendary;
+	return Result;
 }
 
 const FPlayground_LootEntry* UPlayground_LootFunctionLibrary::RollEntry(const UPlayground_LootTable* LootTable, EPlaygroundRarity InRarity)
 {
-	if (!LootTable) return nullptr;
+	if (!LootTable)
+	{
+		Debug::Print(TEXT("RollEntry: LootTable is null"), FColor::Red);
+		return nullptr;
+	}
 
 	const TArray<FPlayground_LootEntry>* Pool = LootTable->GetPool(InRarity);
-	if (!Pool || Pool->IsEmpty()) return nullptr;
+
+	if (!Pool || Pool->IsEmpty())
+	{
+		Debug::Print(
+			FString::Printf(TEXT("RollEntry: Pool is null or empty for rarity = %d"), static_cast<int32>(InRarity)),
+			FColor::Red
+		);
+		return nullptr;
+	}
+
+	Debug::Print(
+		FString::Printf(TEXT("RollEntry: Rarity = %d, Pool Num = %d"),
+			static_cast<int32>(InRarity),
+			Pool->Num()),
+		FColor::Cyan
+	);
+
 
 	return PlaygroundLootInternal::RollWeightEntry(*Pool);
 }

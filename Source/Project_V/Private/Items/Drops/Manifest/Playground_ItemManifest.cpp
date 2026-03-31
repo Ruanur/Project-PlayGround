@@ -9,6 +9,11 @@
 #include "PlayergroundTypes/PlaygroundEnumTypes.h"
 #include "Widgets/Composite/Playground_CompositeBase.h"
 
+UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter)
+{
+	return Manifest(NewOuter, GetConfiguredRarity());
+}
+
 UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter, EPlaygroundRarity InRarity)
 {
 	Debug::Print(
@@ -23,7 +28,7 @@ UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter,
 
 	float RarityMultiplier = 1.f;
 
-	InRarity = GetConfiguredRarity();
+	//InRarity = GetConfiguredRarity();
 
 	if (FPlayground_ItemRarity* RarityFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_ItemRarity>())
 	{
