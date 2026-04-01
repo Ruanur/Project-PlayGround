@@ -26,18 +26,18 @@ UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter,
 
 	FPlayground_ItemManifest& ItemManifest = Item->GetItemManifestMutable();
 
-	float RarityMultiplier = 1.f;
+	//float RarityMultiplier = 1.f;
 
 	//InRarity = GetConfiguredRarity();
 
 	if (FPlayground_ItemRarity* RarityFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_ItemRarity>())
 	{
 		RarityFragment->SetRarity(InRarity);
-		RarityMultiplier = RarityFragment->GetStatMultiplier();
+		//RarityMultiplier = RarityFragment->GetStatMultiplier();
 
 		Debug::Print(FString::Printf(TEXT("Set Rarity = %d / Multiplier = %.2f"),
 			static_cast<int32>(RarityFragment->GetRarity()),
-			RarityMultiplier), FColor::Green);
+			RarityFragment->GetStatMultiplier()), FColor::Green);
 	}
 	else
 	{
@@ -50,23 +50,26 @@ UPlayground_InventoryItem* FPlayground_ItemManifest::Manifest(UObject* NewOuter,
 		Fragment.GetMutable().Manifest();
 	}
 
-	FPlayground_LabeledNumberFragment* DisplayFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_LabeledNumberFragment>();
+	// 현재 아이템 상태 기준 표시값 재계산
+	ItemManifest.RefreshDisplayValueFromCurrentState();
 
-	FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
+	//FPlayground_LabeledNumberFragment* DisplayFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_LabeledNumberFragment>();
 
-	if (DisplayFragment && EquipmentFragment)
-	{
-		if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
-		{
-			const float FinalDisplayValue = StrengthModifier->GetValue() * RarityMultiplier;
-			DisplayFragment->SetValue(FinalDisplayValue);
-		}
-		else if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
-		{
-			const float FinalDisplayValue = BaseDamageModifier->GetValue() * RarityMultiplier;
-			DisplayFragment->SetValue(FinalDisplayValue);
-		}
-	}
+	//FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
+
+	//if (DisplayFragment && EquipmentFragment)
+	//{
+	//	if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
+	//	{
+	//		const float FinalDisplayValue = StrengthModifier->GetValue() * RarityMultiplier;
+	//		DisplayFragment->SetValue(FinalDisplayValue);
+	//	}
+	//	else if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
+	//	{
+	//		const float FinalDisplayValue = BaseDamageModifier->GetValue() * RarityMultiplier;
+	//		DisplayFragment->SetValue(FinalDisplayValue);
+	//	}
+	//}
 
 	PG_ClearFragments();
 
@@ -115,27 +118,49 @@ void FPlayground_ItemManifest::ApplySavedInstanceData(UPlayground_InventoryItem*
 	FPlayground_ItemManifest& ItemManifest = Item->GetItemManifestMutable();
 
 	// 1. Rarity 복원
-	float RarityMultiplier = 1.f;
+	//float RarityMultiplier = 1.f;
 
 	if (FPlayground_ItemRarity* RarityFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_ItemRarity>())
 	{
 		RarityFragment->SetRarity(SavedRarity);
-		RarityMultiplier = RarityFragment->GetStatMultiplier();
+		//RarityMultiplier = RarityFragment->GetStatMultiplier();
 	}
 
 	// 2. 랜덤 Base Value 최종값 복원 (Ex. BaseDamage Fragment)
-	FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
-	
-	if (EquipmentFragment)
+	//FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
+	//
+	//if (EquipmentFragment)
+	//{
+	//	if (bHasSavedBaseDamage)
+	//	{
+	//		if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
+	//		{
+	//			BaseDamageModifier->SetValue(SavedBaseDamageValue);
+	//		}
+	//	}
+	//	if (bHasSavedStrenth)
+	//	{
+	//		if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
+	//		{
+	//			StrengthModifier->SetValue(SavedStrengthValue);
+	//		}
+	//	}
+	//}
+
+	if (bHasSavedBaseDamage)
 	{
-		if (bHasSavedBaseDamage)
+		if (FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>())
 		{
 			if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
 			{
 				BaseDamageModifier->SetValue(SavedBaseDamageValue);
 			}
 		}
-		if (bHasSavedStrenth)
+	}
+
+	if (bHasSavedStrenth)
+	{
+		if (FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>())
 		{
 			if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
 			{
@@ -146,20 +171,49 @@ void FPlayground_ItemManifest::ApplySavedInstanceData(UPlayground_InventoryItem*
 
 
 	// 3. 표시값 재배치
-	FPlayground_LabeledNumberFragment* DisplayFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_LabeledNumberFragment>();
+	ItemManifest.RefreshDisplayValueFromCurrentState();
+	
+	//FPlayground_LabeledNumberFragment* DisplayFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_LabeledNumberFragment>();
 
-	if (DisplayFragment && EquipmentFragment)
+	//if (DisplayFragment && EquipmentFragment)
+	//{
+	//	if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
+	//	{
+	//		const float FinalDisplayValue = StrengthModifier->GetValue() * RarityMultiplier;
+	//		DisplayFragment->SetValue(FinalDisplayValue);
+	//	}
+	//	else if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
+	//	{
+	//		const float FinalDisplayValue = BaseDamageModifier->GetValue() * RarityMultiplier;
+	//		DisplayFragment->SetValue(FinalDisplayValue);
+	//	}
+	//}
+}
+
+void FPlayground_ItemManifest::RefreshDisplayValueFromCurrentState()
+{
+	float RarityMultiplier = 1.f;
+
+	if (FPlayground_ItemRarity* RarityFragment = GetFragmentOfTypeMutable<FPlayground_ItemRarity>())
 	{
-		if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
-		{
-			const float FinalDisplayValue = StrengthModifier->GetValue() * RarityMultiplier;
-			DisplayFragment->SetValue(FinalDisplayValue);
-		}
-		else if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
-		{
-			const float FinalDisplayValue = BaseDamageModifier->GetValue() * RarityMultiplier;
-			DisplayFragment->SetValue(FinalDisplayValue);
-		}
+		RarityMultiplier = RarityFragment->GetStatMultiplier();
+	}
+
+	FPlayground_LabeledNumberFragment* DisplayFragment = GetFragmentOfTypeMutable<FPlayground_LabeledNumberFragment>();
+
+	FPlayground_EquipmentFragment* EquipmentFragment = GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
+
+	if (!DisplayFragment || !EquipmentFragment) return;
+
+	if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
+	{
+		const float FinalDisplayValue = StrengthModifier->GetValue() * RarityMultiplier;
+		DisplayFragment->SetValue(FinalDisplayValue);
+	}
+	else if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
+	{
+		const float FinalDisplayValue = BaseDamageModifier->GetValue() * RarityMultiplier;
+		DisplayFragment->SetValue(FinalDisplayValue);
 	}
 }
 

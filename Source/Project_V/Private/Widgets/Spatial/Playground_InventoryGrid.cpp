@@ -1488,8 +1488,8 @@ void UPlayground_InventoryGrid::GetSlotInfos(TArray<FInventorySlotInfo>& OutInfo
 	for (const auto& GridSlot : GridSlots)
 	{
 		if (!IsValid(GridSlot)) continue;
+
 		UPlayground_InventoryItem* Item = GridSlot->GetInventoryItem().Get();
-		
 		// If the item is invalid, save a null entry
 		if (!IsValid(Item)) continue;
 
@@ -1500,7 +1500,6 @@ void UPlayground_InventoryGrid::GetSlotInfos(TArray<FInventorySlotInfo>& OutInfo
 		EPlaygroundRarity SavedRarity = Manifest.GetConfiguredRarity();
 		bool bHasSavedBaseDamage = false;
 		float SavedBaseDamageValue = 0.f;
-
 		bool bHasSavedStrength = false;
 		float SavedStrengthValue = 0.f;
 
@@ -1637,7 +1636,7 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 		InvItem->SetInstancedID(SavedSlot.InstanceID);
 		InvItem->SetTotalStackCount(SavedSlot.StackAmount);
 
-		FPlayground_ItemManifest& LoadedManifest = InvItem->GetItemManifestMutable();
+		const FPlayground_ItemManifest& LoadedManifest = InvItem->GetItemManifest();
 		LoadedManifest.ApplySavedInstanceData(
 			InvItem,
 			SavedSlot.SavedRarity,

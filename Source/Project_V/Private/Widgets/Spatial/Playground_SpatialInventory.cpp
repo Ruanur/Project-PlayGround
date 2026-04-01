@@ -391,12 +391,44 @@ void UPlayground_SpatialInventory::GetEquippedSlotInfos(TArray<FEquippedSlotInfo
 		const FGameplayTag& EquipmentTypeTag = EquippedGridSlot->GetEquipmentTypeTag();
 		if (!EquipmentTypeTag.IsValid()) continue;
 
+		const FPlayground_ItemManifest& Manifest = Item->GetItemManifest();
+
+		EPlaygroundRarity SavedRarity = Manifest.GetConfiguredRarity();
+
+		bool bHasSavedGBaseDamage = false;
+		float SavedBaseDamageValue = 0.f;
+
+		bool bHasStrengthDamage = false;
+		float SavedStrengthValue = 0.f;
+
+		FPlayground_ItemManifest& MutableManifest = const_cast<FPlayground_ItemManifest&>(Manifest);
+
+
+		if (FPlayground_EquipmentFragment* EquipmentFragment = MutableManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>())
+		{
+			if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
+			{
+				bHasSavedGBaseDamage = true;
+				SavedBaseDamageValue = BaseDamageModifier->GetValue();
+			}
+			if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
+			{
+				bHasStrengthDamage = true;
+				SavedStrengthValue = StrengthModifier->GetValue();
+			}
+		}
+
 		OutInfos.Emplace(
 			EquipmentTypeTag,
 			Item->GetItemID(),
 			Item->GetInstancedID(),
 			Item->IsStackable(),
-			Item->GetTotalStackCount()
+			Item->GetTotalStackCount(),
+			SavedRarity,
+			bHasSavedGBaseDamage,
+			SavedBaseDamageValue,
+			bHasStrengthDamage,
+			SavedStrengthValue
 		);
 	}
 
@@ -443,6 +475,18 @@ void UPlayground_SpatialInventory::RestoreFromEquippedSlotInfos()
 		
 		InvItem->SetInstancedID(SavedSlot.InstanceID);
 		InvItem->SetTotalStackCount(SavedSlot.StackAmount);
+
+		// 인스턴스 상태 복원
+		const FPlayground_ItemManifest& LoadedManifest = InvItem->GetItemManifest();
+		LoadedManifest.ApplySavedInstanceData(
+			InvItem,
+			SavedSlot.SavedRarity,
+			SavedSlot.bHasSavedBaseDamage,
+			SavedSlot.SavedBaseDamageValue,
+			SavedSlot.bHasSavedStrengthDamage,
+			SavedSlot.SavedStrengthValue
+		);
+
 		//UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer())
 		if (InventoryComponent.IsValid())
 		{

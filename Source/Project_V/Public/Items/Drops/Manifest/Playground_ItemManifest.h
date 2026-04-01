@@ -47,6 +47,8 @@ struct PROJECT_V_API FPlayground_ItemManifest
 
 	void ApplySavedInstanceData(UPlayground_InventoryItem* Item, EPlaygroundRarity SavedRarity, bool bHasSavedBaseDamage, float SavedBaseDamageValue, bool bHasSavedStrenth, float SavedStrengthValue) const;
 
+	void RefreshDisplayValueFromCurrentState();
+
 	UPROPERTY(EditDefaultsOnly)
 	FName ItemID;
 

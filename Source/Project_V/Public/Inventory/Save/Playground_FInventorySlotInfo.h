@@ -135,8 +135,8 @@ struct FEquippedSlotInfo
         EPlaygroundRarity InSavedRarity = EPlaygroundRarity::Common,
         bool bInHasSavedBaseDamage = false,
         float InSavedBaseDamageValue = 0.f,
-        bool bHasSavedStrengthDamage = false,
-        float SavedStrengthValue = 0.f)
+        bool bInHasSavedStrengthDamage = false,
+        float InSavedStrengthValue = 0.f)
         : EquipmentTypeTag(InEquipmentTypeTag)
         , ItemID(InItemID)
         , InstanceID(InInstanceID)
@@ -145,8 +145,8 @@ struct FEquippedSlotInfo
         , SavedRarity(InSavedRarity)
         , bHasSavedBaseDamage(bInHasSavedBaseDamage)
         , SavedBaseDamageValue(InSavedBaseDamageValue)
-        , bHasSavedStrengthDamage(bHasSavedStrengthDamage)
-        , SavedStrengthValue(SavedStrengthValue)
+        , bHasSavedStrengthDamage(bInHasSavedStrengthDamage)
+        , SavedStrengthValue(InSavedStrengthValue)
     {
     }
 };
