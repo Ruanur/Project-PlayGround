@@ -45,6 +45,8 @@ struct PROJECT_V_API FPlayground_ItemManifest
 		const FVector& SpawnLocation, 
 		const FRotator& SpawnRotation);
 
+	void ApplySavedInstanceData(UPlayground_InventoryItem* Item, EPlaygroundRarity SavedRarity, bool bHasSavedBaseDamage, float SavedBaseDamageValue, bool bHasSavedStrenth, float SavedStrengthValue) const;
+
 	UPROPERTY(EditDefaultsOnly)
 	FName ItemID;
 

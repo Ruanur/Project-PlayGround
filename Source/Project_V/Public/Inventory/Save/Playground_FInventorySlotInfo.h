@@ -35,17 +35,51 @@ struct FInventorySlotInfo
     UPROPERTY(SaveGame)
     int32 StackAmount = 0;
 
+    // =================
+    // 인스턴스 상태 저장
+    // =================
+    UPROPERTY(SaveGame)
+    EPlaygroundRarity SavedRarity = EPlaygroundRarity::Common;
+
+    UPROPERTY(SaveGame)
+    bool bHasSavedBaseDamage = false;
+
+    UPROPERTY(SaveGame)
+    bool bHasSavedStrengthDamage = false;
+
+    UPROPERTY(SaveGame)
+    float SavedBaseDamageValue = 0.f;
+
+    UPROPERTY(SaveGame)
+    float SavedStrengthValue = 0.f;
+
     // Default constructor
     FInventorySlotInfo() = default;
 
     // Convenience Constructor - matches what I use in Emplace 
-    explicit FInventorySlotInfo(FName InItemID, FGuid InInstanceID, int32 Index, int32 UpperLeftIndex, bool bInIsStackable, int32 InStack = 0)
+    explicit FInventorySlotInfo(
+        FName InItemID,
+        FGuid InInstanceID,
+        int32 InIndex,
+        int32 InUpperLeftIndex,
+        bool bInIsStackable,
+        int32 InStack = 0,
+        EPlaygroundRarity InSavedRarity = EPlaygroundRarity::Common,
+        bool bInHasSavedBaseDamage = false,
+        float InSavedBaseDamageValue = 0.f,
+        bool bInHasSavedStrengthDamage = false,
+        float InSavedStrengthValue = 0.f)
         : ItemID(InItemID)
         , InstanceID(InInstanceID)
-        , Index(Index)
-        , UpperLeftIndex(UpperLeftIndex)
+        , Index(InIndex)
+        , UpperLeftIndex(InUpperLeftIndex)
         , bIsStackable(bInIsStackable)
         , StackAmount(InStack)
+        , SavedRarity(InSavedRarity)
+        , bHasSavedBaseDamage(bInHasSavedBaseDamage)
+        , SavedBaseDamageValue(InSavedBaseDamageValue)
+        , bHasSavedStrengthDamage(bInHasSavedStrengthDamage)
+        , SavedStrengthValue(InSavedStrengthValue)
     {
     }
 
@@ -72,6 +106,24 @@ struct FEquippedSlotInfo
     UPROPERTY(SaveGame)
     int32 StackAmount = 1;
 
+    // =================
+    // 인스턴스 상태 저장
+    // =================
+    UPROPERTY(SaveGame)
+    EPlaygroundRarity SavedRarity = EPlaygroundRarity::Common;
+
+    UPROPERTY(SaveGame)
+    bool bHasSavedBaseDamage = false;
+
+    UPROPERTY(SaveGame)
+    bool bHasSavedStrengthDamage = false;
+
+    UPROPERTY(SaveGame)
+    float SavedBaseDamageValue = 0.f;
+
+    UPROPERTY(SaveGame)
+    float SavedStrengthValue = 0.f;
+
     FEquippedSlotInfo() = default;
 
     FEquippedSlotInfo(
@@ -79,12 +131,22 @@ struct FEquippedSlotInfo
         FName InItemID,
         const FGuid& InInstanceID,
         bool bInIsStackable,
-        int32 InStackAmount)
+        int32 InStackAmount,
+        EPlaygroundRarity InSavedRarity = EPlaygroundRarity::Common,
+        bool bInHasSavedBaseDamage = false,
+        float InSavedBaseDamageValue = 0.f,
+        bool bHasSavedStrengthDamage = false,
+        float SavedStrengthValue = 0.f)
         : EquipmentTypeTag(InEquipmentTypeTag)
         , ItemID(InItemID)
         , InstanceID(InInstanceID)
         , bIsStackable(bInIsStackable)
         , StackAmount(InStackAmount)
+        , SavedRarity(InSavedRarity)
+        , bHasSavedBaseDamage(bInHasSavedBaseDamage)
+        , SavedBaseDamageValue(InSavedBaseDamageValue)
+        , bHasSavedStrengthDamage(bHasSavedStrengthDamage)
+        , SavedStrengthValue(SavedStrengthValue)
     {
     }
 };

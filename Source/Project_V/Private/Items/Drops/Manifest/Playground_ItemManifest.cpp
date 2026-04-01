@@ -108,6 +108,61 @@ void FPlayground_ItemManifest::PG_SpawnPickupActor(const UObject* WorldContextOb
 	ItemComp->InitItemManifest(*this);
 }
 
+void FPlayground_ItemManifest::ApplySavedInstanceData(UPlayground_InventoryItem* Item, EPlaygroundRarity SavedRarity, bool bHasSavedBaseDamage, float SavedBaseDamageValue, bool bHasSavedStrenth, float SavedStrengthValue) const
+{
+	if (!IsValid(Item)) return;
+
+	FPlayground_ItemManifest& ItemManifest = Item->GetItemManifestMutable();
+
+	// 1. Rarity 복원
+	float RarityMultiplier = 1.f;
+
+	if (FPlayground_ItemRarity* RarityFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_ItemRarity>())
+	{
+		RarityFragment->SetRarity(SavedRarity);
+		RarityMultiplier = RarityFragment->GetStatMultiplier();
+	}
+
+	// 2. 랜덤 Base Value 최종값 복원 (Ex. BaseDamage Fragment)
+	FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>();
+	
+	if (EquipmentFragment)
+	{
+		if (bHasSavedBaseDamage)
+		{
+			if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
+			{
+				BaseDamageModifier->SetValue(SavedBaseDamageValue);
+			}
+		}
+		if (bHasSavedStrenth)
+		{
+			if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
+			{
+				StrengthModifier->SetValue(SavedStrengthValue);
+			}
+		}
+	}
+
+
+	// 3. 표시값 재배치
+	FPlayground_LabeledNumberFragment* DisplayFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_LabeledNumberFragment>();
+
+	if (DisplayFragment && EquipmentFragment)
+	{
+		if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
+		{
+			const float FinalDisplayValue = StrengthModifier->GetValue() * RarityMultiplier;
+			DisplayFragment->SetValue(FinalDisplayValue);
+		}
+		else if (FPlayground_BaseDamageModifier* BaseDamageModifier = EquipmentFragment->GetBaseDamageModifierMutable())
+		{
+			const float FinalDisplayValue = BaseDamageModifier->GetValue() * RarityMultiplier;
+			DisplayFragment->SetValue(FinalDisplayValue);
+		}
+	}
+}
+
 void FPlayground_ItemManifest::PG_ClearFragments()
 {
 	for (auto& Fragment : Fragments)
