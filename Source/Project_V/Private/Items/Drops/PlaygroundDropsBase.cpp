@@ -7,6 +7,8 @@
 #include "Inventory/Playground_InventoryComponent.h"
 #include "Items/Drops/Playground_ItemComponent.h"
 #include "PlaygroundGameplayTags.h"
+#include "Components/MeshComponent.h"
+#include "Materials/MaterialInterface.h"
 
 #include "PlaygroundDebugHelper.h"
 void APlaygroundDropsBase::OnPickUpCollisionSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -68,6 +70,8 @@ void APlaygroundDropsBase::InitializeDropFromRarity(EPlaygroundRarity InRarity)
 	// 최종적으로 희귀도 반영이 끝난 Manifest를 ItemComponent에 저장
 	ItemComp->InitItemManifest(CreatedItem->GetItemManifest());
 
+	ApplyOutlineMaterialByRarity(InRarity);
+
 	Debug::Print(
 		FString::Printf(
 			TEXT("Drop initialized. ItemID=%s, Rarity=%d"),
@@ -76,4 +80,55 @@ void APlaygroundDropsBase::InitializeDropFromRarity(EPlaygroundRarity InRarity)
 		),
 		FColor::Green
 	);
+}
+
+UMeshComponent* APlaygroundDropsBase::FindOutlineTargetMesh() const
+{
+	TArray<UMeshComponent*> MeshComponents;
+	GetComponents<UMeshComponent>(MeshComponents);
+
+	for (UMeshComponent* MeshComp : MeshComponents)
+	{
+		if (IsValid(MeshComp))
+		{
+			return MeshComp;
+		}
+	}
+	return nullptr;
+}
+
+UMaterialInterface* APlaygroundDropsBase::GetOutlineMaterialByRarity(EPlaygroundRarity InRarity) const
+{
+	switch (InRarity)
+	{
+	case EPlaygroundRarity::Common:
+		return OutlineMaterial_Common;
+	case EPlaygroundRarity::Uncommon:
+		return OutlineMaterial_Uncommon;
+	case EPlaygroundRarity::Rare:
+		return OutlineMaterial_Rare;
+	case EPlaygroundRarity::Epic:
+		return OutlineMaterial_Epic;
+	case EPlaygroundRarity::Legendary:
+		return OutlineMaterial_Legendary;
+	default:
+		return OutlineMaterial_Common;
+	}
+}
+
+void APlaygroundDropsBase::ApplyOutlineMaterialByRarity(EPlaygroundRarity InRarity)
+{
+	UMeshComponent* MeshComp = FindOutlineTargetMesh();
+	if (!MeshComp)
+	{
+		return;
+	}
+
+	UMaterialInterface* OutlineMat = GetOutlineMaterialByRarity(InRarity);
+	if (!OutlineMat)
+	{
+		return;
+	}
+
+	MeshComp->SetOverlayMaterial(OutlineMat);
 }

@@ -33,4 +33,27 @@ protected:
 	EPlaygroundRarity DroppedRarity = EPlaygroundRarity::Common;
 #pragma endregion
 
+#pragma region Outline
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Outline")
+	TObjectPtr<UMaterialInterface> OutlineMaterial_Common = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Outline")
+	TObjectPtr<UMaterialInterface> OutlineMaterial_Uncommon = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Outline")
+	TObjectPtr<UMaterialInterface> OutlineMaterial_Rare = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Outline")
+	TObjectPtr<UMaterialInterface> OutlineMaterial_Epic = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Outline")
+	TObjectPtr<UMaterialInterface> OutlineMaterial_Legendary = nullptr;
+
+	UMeshComponent* FindOutlineTargetMesh() const;
+	UMaterialInterface* GetOutlineMaterialByRarity(EPlaygroundRarity InRarity) const;
+	void ApplyOutlineMaterialByRarity(EPlaygroundRarity InRarity);
+#pragma endregion
+
+
 };
