@@ -9,6 +9,7 @@
 #include "PlaygroundGameplayTags.h"
 #include "Components/MeshComponent.h"
 #include "Materials/MaterialInterface.h"
+#include "Components/PrimitiveComponent.h"
 
 #include "PlaygroundDebugHelper.h"
 void APlaygroundDropsBase::OnPickUpCollisionSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -71,6 +72,7 @@ void APlaygroundDropsBase::InitializeDropFromRarity(EPlaygroundRarity InRarity)
 	ItemComp->InitItemManifest(CreatedItem->GetItemManifest());
 
 	ApplyOutlineMaterialByRarity(InRarity);
+	ApplySpawnImpulse();
 
 	Debug::Print(
 		FString::Printf(
@@ -131,4 +133,55 @@ void APlaygroundDropsBase::ApplyOutlineMaterialByRarity(EPlaygroundRarity InRari
 	}
 
 	MeshComp->SetOverlayMaterial(OutlineMat);
+}
+
+UPrimitiveComponent* APlaygroundDropsBase::FindDropPhysicsComponent() const
+{
+	TArray<UPrimitiveComponent*> PrimitiveComponents;
+	GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+
+	for (UPrimitiveComponent* PrimComp : PrimitiveComponents)
+	{
+		if (!IsValid(PrimComp)) continue;
+
+		// 보조 컴포넌트 제외 시
+		// SimulatePhysics 가능한 컴포넌트만 찾음
+		if (PrimComp->IsSimulatingPhysics())
+		{
+			return PrimComp;
+		}
+	}
+
+	return nullptr;
+}
+
+void APlaygroundDropsBase::ApplySpawnImpulse()
+{
+	if (!bApplySpawnImpulse) return;
+
+	UPrimitiveComponent* PrimComp = FindDropPhysicsComponent();
+	if (!PrimComp)
+	{
+		Debug::Print(TEXT("ApplySpawnImpulse: No Physics component found"), FColor::Red);
+		return;
+	}
+	
+	if (!PrimComp->IsSimulatingPhysics())
+	{
+		Debug::Print(TEXT("ApplySpawnImpulse: Physics simulation is disables"), FColor::Red);
+		return;
+	}
+
+	const float RandomX = FMath::FRandRange(-SpawnImpulseHorizontal, SpawnImpulseHorizontal);
+	const float RandomY = FMath::FRandRange(-SpawnImpulseHorizontal, SpawnImpulseHorizontal);
+
+	const FVector Impulse(RandomX, RandomY, SpawnImpulseUpward);
+
+	PrimComp->AddImpulse(Impulse, NAME_None, true);
+	PrimComp->WakeAllRigidBodies();
+
+	Debug::Print(
+		FString::Printf(TEXT("ApplySpawnImpulse: Impulse = X %.2f Y %.2f Z %.2f"), RandomX, RandomY, SpawnImpulseUpward),
+		FColor::Green
+	);
 }

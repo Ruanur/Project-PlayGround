@@ -11,6 +11,9 @@
 /**
  * 
  */
+
+class UPrimitiveComponent;
+
 UCLASS()
 class PROJECT_V_API APlaygroundDropsBase : public APlaygroundPickUpBase
 {
@@ -55,5 +58,18 @@ protected:
 	void ApplyOutlineMaterialByRarity(EPlaygroundRarity InRarity);
 #pragma endregion
 
+#pragma region Drop_Animation
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Drop|Impulse")
+	bool bApplySpawnImpulse = true;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Drop|Impulse", meta = (ClampMin = "0.0"))
+	float SpawnImpulseUpward = 250.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Drop|Impulse", meta = (ClampMin = "0.0"))
+	float SpawnImpulseHorizontal = 80.f;
+
+	UPrimitiveComponent* FindDropPhysicsComponent() const;
+	void ApplySpawnImpulse();
+#pragma endregion
 };
