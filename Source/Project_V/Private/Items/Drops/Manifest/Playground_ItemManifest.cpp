@@ -111,7 +111,7 @@ void FPlayground_ItemManifest::PG_SpawnPickupActor(const UObject* WorldContextOb
 	ItemComp->InitItemManifest(*this);
 }
 
-void FPlayground_ItemManifest::ApplySavedInstanceData(UPlayground_InventoryItem* Item, EPlaygroundRarity SavedRarity, bool bHasSavedBaseDamage, float SavedBaseDamageValue, bool bHasSavedStrenth, float SavedStrengthValue) const
+void FPlayground_ItemManifest::ApplySavedInstanceData(UPlayground_InventoryItem* Item, EPlaygroundRarity SavedRarity, bool bHasSavedBaseDamage, float SavedBaseDamageValue, bool bHasSavedStrenth, float SavedStrengthValue, bool bHasSavedHealth, float SavedHealthValue, bool bHasSavedDefense, float SavedDefenseValue) const
 {
 	if (!IsValid(Item)) return;
 
@@ -147,6 +147,7 @@ void FPlayground_ItemManifest::ApplySavedInstanceData(UPlayground_InventoryItem*
 	//	}
 	//}
 
+	// 공격력 옵션 저장
 	if (bHasSavedBaseDamage)
 	{
 		if (FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>())
@@ -158,6 +159,7 @@ void FPlayground_ItemManifest::ApplySavedInstanceData(UPlayground_InventoryItem*
 		}
 	}
 
+	// 피해 배율 옵션 저장
 	if (bHasSavedStrenth)
 	{
 		if (FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>())
@@ -165,6 +167,30 @@ void FPlayground_ItemManifest::ApplySavedInstanceData(UPlayground_InventoryItem*
 			if (FPlayground_StrengthModifier* StrengthModifier = EquipmentFragment->GetStrengthModifierMutable())
 			{
 				StrengthModifier->SetValue(SavedStrengthValue);
+			}
+		}
+	}
+
+	// 체력 옵션 저장
+	if (bHasSavedHealth)
+	{
+		if (FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>())
+		{
+			if (FPlayground_HealthModifier* HealthModifier = EquipmentFragment->GetHealthModifierMutable())
+			{
+				HealthModifier->SetValue(SavedHealthValue);
+			}
+		}
+	}
+
+	// 방어력 옵션 저장
+	if (bHasSavedDefense)
+	{
+		if (FPlayground_EquipmentFragment* EquipmentFragment = ItemManifest.GetFragmentOfTypeMutable<FPlayground_EquipmentFragment>())
+		{
+			if (FPlayground_DefenseModifier* DefenseModifier = EquipmentFragment->GetDefenseModifierMutable())
+			{
+				DefenseModifier->SetValue(SavedDefenseValue);
 			}
 		}
 	}

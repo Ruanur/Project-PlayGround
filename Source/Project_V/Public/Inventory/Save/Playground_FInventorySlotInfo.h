@@ -48,10 +48,22 @@ struct FInventorySlotInfo
     bool bHasSavedStrengthDamage = false;
 
     UPROPERTY(SaveGame)
+    bool bHasSavedHealth = false;
+
+    UPROPERTY(SaveGame)
+    bool bHasSavedDefense = false;
+
+    UPROPERTY(SaveGame)
     float SavedBaseDamageValue = 0.f;
 
     UPROPERTY(SaveGame)
     float SavedStrengthValue = 0.f;
+
+    UPROPERTY(SaveGame)
+    float SavedHealthValue = 0.f;
+
+    UPROPERTY(SaveGame)
+    float SavedDefenseValue = 0.f;
 
     // Default constructor
     FInventorySlotInfo() = default;
@@ -68,7 +80,11 @@ struct FInventorySlotInfo
         bool bInHasSavedBaseDamage = false,
         float InSavedBaseDamageValue = 0.f,
         bool bInHasSavedStrengthDamage = false,
-        float InSavedStrengthValue = 0.f)
+        float InSavedStrengthValue = 0.f,
+        bool bInHasSavedHealth = false,
+        float InSavedHealthValue = 0.f,
+        bool bInHasSavedDefense = false,
+        float InSavedDefenseValue = 0.f)
         : ItemID(InItemID)
         , InstanceID(InInstanceID)
         , Index(InIndex)
@@ -80,6 +96,10 @@ struct FInventorySlotInfo
         , SavedBaseDamageValue(InSavedBaseDamageValue)
         , bHasSavedStrengthDamage(bInHasSavedStrengthDamage)
         , SavedStrengthValue(InSavedStrengthValue)
+        , bHasSavedHealth(bInHasSavedHealth)
+        , SavedHealthValue(InSavedHealthValue)
+        , bHasSavedDefense(bInHasSavedDefense)
+        , SavedDefenseValue(InSavedDefenseValue)
     {
     }
 
@@ -119,10 +139,22 @@ struct FEquippedSlotInfo
     bool bHasSavedStrengthDamage = false;
 
     UPROPERTY(SaveGame)
+    bool bHasSavedHealth = false;
+
+    UPROPERTY(SaveGame)
+    bool bHasSavedDefense = false;
+
+    UPROPERTY(SaveGame)
     float SavedBaseDamageValue = 0.f;
 
     UPROPERTY(SaveGame)
     float SavedStrengthValue = 0.f;
+
+    UPROPERTY(SaveGame)
+    float SavedHealthValue = 0.f;
+
+    UPROPERTY(SaveGame)
+    float SavedDefenseValue = 0.f;
 
     FEquippedSlotInfo() = default;
 
@@ -136,7 +168,11 @@ struct FEquippedSlotInfo
         bool bInHasSavedBaseDamage = false,
         float InSavedBaseDamageValue = 0.f,
         bool bInHasSavedStrengthDamage = false,
-        float InSavedStrengthValue = 0.f)
+        float InSavedStrengthValue = 0.f,
+        bool bInHasSavedHealth = false,
+        float InSavedHealthValue = 0.f,
+        bool bInHasSavedDefense = false,
+        float InSavedDefenseValue = 0.f)
         : EquipmentTypeTag(InEquipmentTypeTag)
         , ItemID(InItemID)
         , InstanceID(InInstanceID)
@@ -147,6 +183,10 @@ struct FEquippedSlotInfo
         , SavedBaseDamageValue(InSavedBaseDamageValue)
         , bHasSavedStrengthDamage(bInHasSavedStrengthDamage)
         , SavedStrengthValue(InSavedStrengthValue)
+        , bHasSavedHealth(bInHasSavedHealth)
+        , SavedHealthValue(InSavedHealthValue)
+        , bHasSavedDefense(bInHasSavedDefense)
+        , SavedDefenseValue(InSavedDefenseValue)
     {
     }
 };

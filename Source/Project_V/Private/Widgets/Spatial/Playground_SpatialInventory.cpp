@@ -401,6 +401,12 @@ void UPlayground_SpatialInventory::GetEquippedSlotInfos(TArray<FEquippedSlotInfo
 		bool bHasStrengthDamage = false;
 		float SavedStrengthValue = 0.f;
 
+		bool bHasHealth = false;
+		float SavedHealthValue = 0.f;
+
+		bool bHasDefense = false;
+		float SavedDefenseValue = 0.f;
+
 		FPlayground_ItemManifest& MutableManifest = const_cast<FPlayground_ItemManifest&>(Manifest);
 
 
@@ -416,6 +422,16 @@ void UPlayground_SpatialInventory::GetEquippedSlotInfos(TArray<FEquippedSlotInfo
 				bHasStrengthDamage = true;
 				SavedStrengthValue = StrengthModifier->GetValue();
 			}
+			if (FPlayground_HealthModifier* HealthModifier = EquipmentFragment->GetHealthModifierMutable())
+			{
+				bHasHealth = true;
+				SavedHealthValue = HealthModifier->GetValue();
+			}
+			if (FPlayground_DefenseModifier* DefenseModifier = EquipmentFragment->GetDefenseModifierMutable())
+			{
+				bHasDefense = true;
+				SavedDefenseValue = DefenseModifier->GetValue();
+			}
 		}
 
 		OutInfos.Emplace(
@@ -428,7 +444,11 @@ void UPlayground_SpatialInventory::GetEquippedSlotInfos(TArray<FEquippedSlotInfo
 			bHasSavedGBaseDamage,
 			SavedBaseDamageValue,
 			bHasStrengthDamage,
-			SavedStrengthValue
+			SavedStrengthValue,
+			bHasHealth, 
+			SavedHealthValue,
+			bHasDefense,
+			SavedDefenseValue
 		);
 	}
 
@@ -484,7 +504,11 @@ void UPlayground_SpatialInventory::RestoreFromEquippedSlotInfos()
 			SavedSlot.bHasSavedBaseDamage,
 			SavedSlot.SavedBaseDamageValue,
 			SavedSlot.bHasSavedStrengthDamage,
-			SavedSlot.SavedStrengthValue
+			SavedSlot.SavedStrengthValue,
+			SavedSlot.bHasSavedHealth,
+			SavedSlot.SavedHealthValue,
+			SavedSlot.bHasSavedDefense,
+			SavedSlot.SavedDefenseValue
 		);
 
 		//UPlayground_InventoryComponent* InventoryComponent = UPlayground_InventoryStatics::PG_GetInventoryComponent(GetOwningPlayer())

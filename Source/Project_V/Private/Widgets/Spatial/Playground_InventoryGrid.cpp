@@ -1498,10 +1498,15 @@ void UPlayground_InventoryGrid::GetSlotInfos(TArray<FInventorySlotInfo>& OutInfo
 		const FPlayground_ItemManifest& Manifest = Item->GetItemManifest();
 
 		EPlaygroundRarity SavedRarity = Manifest.GetConfiguredRarity();
+
 		bool bHasSavedBaseDamage = false;
 		float SavedBaseDamageValue = 0.f;
 		bool bHasSavedStrength = false;
 		float SavedStrengthValue = 0.f;
+		bool bHasSavedHealth = false;
+		float SavedHealthValue = 0.f;
+		bool bHasSavedDefense = false;
+		float SavedDefenseValue = 0.f;
 
 		FPlayground_ItemManifest& MutableManifest = const_cast<FPlayground_ItemManifest&>(Manifest);
 
@@ -1521,6 +1526,20 @@ void UPlayground_InventoryGrid::GetSlotInfos(TArray<FInventorySlotInfo>& OutInfo
 				bHasSavedBaseDamage = true;
 				SavedBaseDamageValue = BaseDamageModifier->GetValue();
 			}
+
+			if (FPlayground_HealthModifier* HealthModifier =
+				EquipmentFragment->GetHealthModifierMutable())
+			{
+				bHasSavedHealth = true;
+				SavedHealthValue = HealthModifier->GetValue();
+			}
+
+			if (FPlayground_DefenseModifier* DefenseModifier =
+				EquipmentFragment->GetDefenseModifierMutable())
+			{
+				bHasSavedDefense = true;
+				SavedDefenseValue = DefenseModifier->GetValue();
+			}
 		}
 
 		// Save the item info to the struct array
@@ -1535,19 +1554,23 @@ void UPlayground_InventoryGrid::GetSlotInfos(TArray<FInventorySlotInfo>& OutInfo
 			bHasSavedBaseDamage,
 			SavedBaseDamageValue,
 			bHasSavedStrength,
-			SavedStrengthValue);
+			SavedStrengthValue,
+			bHasSavedHealth,
+			SavedHealthValue,
+			bHasSavedDefense,
+			SavedDefenseValue);
 
-		Debug::Print(
-			FString::Printf(
-				TEXT("[SaveSlot] ItemID=%s Rarity=%d HasBaseDamage=%d BaseDamage=%.2f Stack=%d"),
-				*Item->GetItemID().ToString(),
-				static_cast<int32>(SavedRarity),
-				bHasSavedBaseDamage ? 1 : 0,
-				SavedBaseDamageValue,
-				GridSlot->GetStackCount()
-			),
-			FColor::Yellow
-		);
+		//Debug::Print(
+		//	FString::Printf(
+		//		TEXT("[SaveSlot] ItemID=%s Rarity=%d HasBaseDamage=%d BaseDamage=%.2f Stack=%d"),
+		//		*Item->GetItemID().ToString(),
+		//		static_cast<int32>(SavedRarity),
+		//		bHasSavedBaseDamage ? 1 : 0,
+		//		SavedBaseDamageValue,
+		//		GridSlot->GetStackCount()
+		//	),
+		//	FColor::Yellow
+		//);
 	}
 
 	Debug::Print(TEXT("GetSlotInfo End"));
@@ -1643,21 +1666,25 @@ void UPlayground_InventoryGrid::RestoreFromSlotInfos()
 			SavedSlot.bHasSavedBaseDamage,
 			SavedSlot.SavedBaseDamageValue,
 			SavedSlot.bHasSavedStrengthDamage,
-			SavedSlot.SavedStrengthValue
+			SavedSlot.SavedStrengthValue,
+			SavedSlot.bHasSavedHealth,
+			SavedSlot.SavedHealthValue,
+			SavedSlot.bHasSavedDefense,
+			SavedSlot.SavedDefenseValue
 		);
 
-		Debug::Print(
-			FString::Printf(
-				TEXT("Restore Item: ItemID=%s | Guid=%s | SavedRarity=%d | SavedBaseDamage=%.2f | Stack=%d | UpperLeft=%d"),
-				*SavedSlot.ItemID.ToString(),
-				*SavedSlot.InstanceID.ToString(),
-				static_cast<int32>(SavedSlot.SavedRarity),
-				SavedSlot.SavedBaseDamageValue,
-				SavedSlot.StackAmount,
-				SavedSlot.UpperLeftIndex
-			),
-			FColor::Yellow
-		);
+		//Debug::Print(
+		//	FString::Printf(
+		//		TEXT("Restore Item: ItemID=%s | Guid=%s | SavedRarity=%d | SavedBaseDamage=%.2f | Stack=%d | UpperLeft=%d"),
+		//		*SavedSlot.ItemID.ToString(),
+		//		*SavedSlot.InstanceID.ToString(),
+		//		static_cast<int32>(SavedSlot.SavedRarity),
+		//		SavedSlot.SavedBaseDamageValue,
+		//		SavedSlot.StackAmount,
+		//		SavedSlot.UpperLeftIndex
+		//	),
+		//	FColor::Yellow
+		//);
 
 		if (InventoryComponent.IsValid())
 		{
