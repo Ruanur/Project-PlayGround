@@ -74,4 +74,5 @@ public:
 
 private:
 	TWeakInterfacePtr<IPawnUIInterface> CachedPawnUIInterface;
+	void ShowFloatingText(const FGameplayEffectModCallbackData& Data, float Damage) const;
 };

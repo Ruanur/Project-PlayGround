@@ -8,6 +8,7 @@
 #include "Interfaces/PawnUIInterface.h"
 #include "Components/UI/PawnUIComponent.h"
 #include "Components/UI/PlayerUIComponent.h"
+#include "Controllers/PlayGroundPlayerController.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -173,6 +174,10 @@ void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMod
 		//이벤트 전달, 브로드캐스트 - 이 항목이 없으면 체력 변화에도 체력바가 동기화되지 않음
 		PawnUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealth());
 
+		if (DamageDone > 0.f)
+		{
+			ShowFloatingText(Data, DamageDone);
+		}
 		
 		//TODO: Handle Character Death 
 		if (GetCurrentHealth() == 0.f)
@@ -180,4 +185,27 @@ void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMod
 			UPlaygroundFunctionLibrary::AddGameplayTagToActorIfNone(Data.Target.GetAvatarActor(), PlaygroundGameplayTags::Shared_Status_Dead);
 		}
 	}
+}
+
+void UPlaygroundAttributeSet::ShowFloatingText(const FGameplayEffectModCallbackData& Data, float Damage) const
+{
+	if (Damage <= 0.f) return;
+
+	AActor* TargetActor = Data.Target.GetAvatarActor();
+	if (!IsValid(TargetActor)) return;
+
+	UAbilitySystemComponent* SourceASC = Data.EffectSpec.GetContext().GetOriginalInstigatorAbilitySystemComponent();
+
+	AActor* SourceActor = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
+	if (!IsValid(SourceActor)) return;
+
+	if (SourceActor == TargetActor) return;
+
+	APawn* SourcePawn = Cast<APawn>(SourceActor);
+	if (!SourcePawn) return;
+
+	APlayGroundPlayerController* PC = Cast<APlayGroundPlayerController>(SourcePawn->GetController());
+	if (!PC) return;
+
+	PC->ShowDamageNumber(Damage, TargetActor);
 }

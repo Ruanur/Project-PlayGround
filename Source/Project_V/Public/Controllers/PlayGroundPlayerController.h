@@ -12,6 +12,7 @@
  */
 
 class UPlayground_InventoryGrid;
+class UPlayground_DamageTextComponent;
 
 UCLASS()
 class PROJECT_V_API APlayGroundPlayerController : public APlayerController, public IGenericTeamAgentInterface
@@ -25,7 +26,12 @@ public:
 	virtual FGenericTeamId GetGenericTeamId() const override;
 	//~ End IGenericTeamAgentInterface Interface
 
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, AActor* TargetCharacter);
+
 private:
 	FGenericTeamId PlayerTeamID;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UPlayground_DamageTextComponent> DamageTextComponentClass;
 };
