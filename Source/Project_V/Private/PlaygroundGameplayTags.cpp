@@ -123,6 +123,7 @@ namespace PlaygroundGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_AttackPower, "Data.Stats.AttackPower")
 	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_BaseDamage, "Data.Stats.BaseDamage")
 	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_BonusDamage, "Data.Stats.BonusDamage")
+	UE_DEFINE_GAMEPLAY_TAG(Data_Stats_Health, "Data.Stats.Health")
 
 	/* Game Data Tags */
 	UE_DEFINE_GAMEPLAY_TAG(GameData_Level_SurvivalGameModeMap, "GameData.Level.SurvivalGameModeMap");

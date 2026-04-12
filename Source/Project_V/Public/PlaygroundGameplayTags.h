@@ -128,6 +128,7 @@ namespace PlaygroundGameplayTags
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Stats_AttackPower);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Stats_BaseDamage);
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Stats_BonusDamage);
+	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Stats_Health);
 
 	/* Game Data Tags */
 	PROJECT_V_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameData_Level_SurvivalGameModeMap);

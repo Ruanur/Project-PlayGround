@@ -234,6 +234,85 @@ void FPlayground_BaseDamageModifier::OnEquip(APlayerController* PC, float Rarity
 	);
 }
 
+void FPlayground_HealthModifier::OnEquip(APlayerController* PC, float RarityMultiplier)
+{
+	if (!PC || !EquipmentEffectClass) return;
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn) return;
+
+	if (!Pawn->HasAuthority()) return;
+
+	UAbilitySystemComponent* ASC = Pawn->FindComponentByClass<UAbilitySystemComponent>();
+	if (!ASC && PC->PlayerState)
+	{
+		ASC = PC->PlayerState->FindComponentByClass<UAbilitySystemComponent>();
+	}
+
+	if (!ASC) return;
+
+	if (ActiveEffectHandle.IsValid())
+	{
+		ASC->RemoveActiveGameplayEffect(ActiveEffectHandle);
+		ActiveEffectHandle.Invalidate();
+	}
+
+	FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+	Context.AddSourceObject(Pawn);
+
+	const float BaseValue = GetValue();
+	const float FinalValue = BaseValue * RarityMultiplier;
+
+	const float LevelToApply = 1.f;
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(EquipmentEffectClass, LevelToApply, Context);
+	if (!SpecHandle.IsValid()) return;
+
+	const FGameplayTag DamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Stats.Health"));
+	SpecHandle.Data->SetSetByCallerMagnitude(DamageTag, FinalValue);
+
+	ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+void FPlayground_DefenseModifier::OnEquip(APlayerController* PC, float RarityMultiplier)
+{
+	if (!PC || !EquipmentEffectClass) return;
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn) return;
+
+	if (!Pawn->HasAuthority()) return;
+
+	UAbilitySystemComponent* ASC = Pawn->FindComponentByClass<UAbilitySystemComponent>();
+	if (!ASC && PC->PlayerState)
+	{
+		ASC = PC->PlayerState->FindComponentByClass<UAbilitySystemComponent>();
+	}
+
+	if (!ASC) return;
+
+	if (ActiveEffectHandle.IsValid())
+	{
+		ASC->RemoveActiveGameplayEffect(ActiveEffectHandle);
+		ActiveEffectHandle.Invalidate();
+	}
+
+	FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+	Context.AddSourceObject(Pawn);
+
+	const float BaseValue = GetValue();
+	const float FinalValue = BaseValue * RarityMultiplier;
+
+	const float LevelToApply = 1.f;
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(EquipmentEffectClass, LevelToApply, Context);
+	if (!SpecHandle.IsValid()) return;
+
+	const FGameplayTag DamageTag = FGameplayTag::RequestGameplayTag(TEXT("Data.Stats.Defense"));
+	SpecHandle.Data->SetSetByCallerMagnitude(DamageTag, FinalValue);
+
+	ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+
 void FPlayground_BaseDamageModifier::OnUnequip(APlayerController* PC)
 {
 	if (!PC || !EquipmentEffectClass) return;
@@ -256,9 +335,6 @@ void FPlayground_BaseDamageModifier::OnUnequip(APlayerController* PC)
 		ASC->RemoveActiveGameplayEffect(ActiveEffectHandle);
 		ActiveEffectHandle.Invalidate();
 	}
-
-	Debug::Print(TEXT("BaseDamage bonus removed"), FColor::Red);
-
 }
 
 void FPlayground_StrengthModifier::OnUnequip(APlayerController* PC)
@@ -288,6 +364,53 @@ void FPlayground_StrengthModifier::OnUnequip(APlayerController* PC)
 	Debug::Print(TEXT("Strength decreased by : 15.0"), FColor::Red);
 }
 
+void FPlayground_HealthModifier::OnUnequip(APlayerController* PC)
+{
+	if (!PC || !EquipmentEffectClass) return;
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn) return;
+
+	if (!Pawn->HasAuthority()) return;
+
+	UAbilitySystemComponent* ASC = Pawn->FindComponentByClass<UAbilitySystemComponent>();
+
+	if (!ASC && PC->PlayerState)
+	{
+		ASC = PC->PlayerState->FindComponentByClass<UAbilitySystemComponent>();
+	}
+	if (!ASC) return;
+
+	if (ActiveEffectHandle.IsValid())
+	{
+		ASC->RemoveActiveGameplayEffect(ActiveEffectHandle);
+		ActiveEffectHandle.Invalidate();
+	}
+}
+
+void FPlayground_DefenseModifier::OnUnequip(APlayerController* PC)
+{
+	if (!PC || !EquipmentEffectClass) return;
+
+	APawn* Pawn = PC->GetPawn();
+	if (!Pawn) return;
+
+	if (!Pawn->HasAuthority()) return;
+
+	UAbilitySystemComponent* ASC = Pawn->FindComponentByClass<UAbilitySystemComponent>();
+
+	if (!ASC && PC->PlayerState)
+	{
+		ASC = PC->PlayerState->FindComponentByClass<UAbilitySystemComponent>();
+	}
+	if (!ASC) return;
+
+	if (ActiveEffectHandle.IsValid())
+	{
+		ASC->RemoveActiveGameplayEffect(ActiveEffectHandle);
+		ActiveEffectHandle.Invalidate();
+	}
+}
 
 void FPlayground_EquipmentFragment::OnEquip(APlayerController* PC, float RarityMultiplier)
 {
@@ -361,4 +484,5 @@ void FPlayground_EquipmentFragment::SetEquippedActor(APlayground_EquipActor* Equ
 
 	EquippedActor = EquipActor;
 }
+
 

@@ -24,6 +24,58 @@ UPlaygroundAttributeSet::UPlaygroundAttributeSet()
 	InitBonusDamage(1.f);
 }
 
+void UPlaygroundAttributeSet::BroadcastHealthUI() const
+{
+	if (!CachedPawnUIInterface.IsValid()) return;
+
+	UPawnUIComponent* PawnUIComponent = CachedPawnUIInterface->GetPawnUIComponent();
+	UPlayerUIComponent* PlayerUIComponent = CachedPawnUIInterface->GetPlayerUIComponent();
+
+	const float MaxHealthValue = GetMaxHealth();
+	const float HealthPercent = MaxHealthValue > 0.f ? GetCurrentHealth() / MaxHealthValue : 0.f;
+
+	if (PawnUIComponent)
+	{
+		PawnUIComponent->OnCurrentHealthChanged.Broadcast(HealthPercent);
+	}
+
+	if (PlayerUIComponent)
+	{
+		PlayerUIComponent->OnHealthValuesChanged.Broadcast(GetCurrentHealth(), GetMaxHealth());
+	}
+}
+
+void UPlaygroundAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeBaseChange(Attribute, OldValue, NewValue);
+
+	if (!CachedPawnUIInterface.IsValid())
+	{
+		if (UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent())
+		{
+			if (AActor* AvatarActor = ASC->GetAvatarActor())
+			{
+				CachedPawnUIInterface = TWeakInterfacePtr<IPawnUIInterface>(AvatarActor);
+			}
+		}
+	}
+
+	// 장비 / 지속 GameEffect 등으로 MaxHealth가 바뀌는 경우를 여기서 잡음
+	if (Attribute == GetMaxHealthAttribute())
+	{
+		const float ClampedHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealth());
+
+		if (!FMath::IsNearlyEqual(GetCurrentHealth(), ClampedHealth))
+		{
+			SetCurrentHealth(ClampedHealth);
+		}
+
+		BroadcastHealthUI();
+	}
+}
+
+
+
 void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	if (!CachedPawnUIInterface.IsValid())
@@ -48,30 +100,31 @@ void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMod
 
 		SetCurrentHealth(NewCurrentHealth);
 
-		// 퍼센트 Health
-		PawnUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth()/GetMaxHealth());
+		BroadcastHealthUI();
+		//// 퍼센트 Health
+		//PawnUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth()/GetMaxHealth());
 
-		if (PlayerUIComponent)
-		{
-			PlayerUIComponent->OnHealthValuesChanged.Broadcast(GetCurrentHealth(), GetMaxHealth());
-		}
+		//if (PlayerUIComponent)
+		//{
+		//	PlayerUIComponent->OnHealthValuesChanged.Broadcast(GetCurrentHealth(), GetMaxHealth());
+		//}
 	}
 
 	// ----------------------
 	// MaxHealth
 	// ----------------------
-	if (Data.EvaluatedData.Attribute == GetMaxHealthAttribute())
-	{
-		const float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealth());
-		SetCurrentHealth(NewCurrentHealth);
+	//if (Data.EvaluatedData.Attribute == GetMaxHealthAttribute())
+	//{
+	//	const float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealth());
+	//	SetCurrentHealth(NewCurrentHealth);
 
-		PawnUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealth());
+	//	PawnUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealth());
 
-		if (PlayerUIComponent)
-		{
-			PlayerUIComponent->OnHealthValuesChanged.Broadcast(GetCurrentHealth(), GetMaxHealth());
-		}
-	}
+	//	if (PlayerUIComponent)
+	//	{
+	//		PlayerUIComponent->OnHealthValuesChanged.Broadcast(GetCurrentHealth(), GetMaxHealth());
+	//	}
+	//}
 
 
 	// ----------------------
@@ -209,3 +262,4 @@ void UPlaygroundAttributeSet::ShowFloatingText(const FGameplayEffectModCallbackD
 
 	PC->ShowDamageNumber(Damage, TargetActor);
 }
+

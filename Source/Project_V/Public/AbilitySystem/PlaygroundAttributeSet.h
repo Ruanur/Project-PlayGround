@@ -75,4 +75,9 @@ public:
 private:
 	TWeakInterfacePtr<IPawnUIInterface> CachedPawnUIInterface;
 	void ShowFloatingText(const FGameplayEffectModCallbackData& Data, float Damage) const;
+
+protected:
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+
+	void BroadcastHealthUI() const;
 };

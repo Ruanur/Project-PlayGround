@@ -215,6 +215,16 @@ void FPlayground_ItemManifest::RefreshDisplayValueFromCurrentState()
 		const float FinalDisplayValue = BaseDamageModifier->GetValue() * RarityMultiplier;
 		DisplayFragment->SetValue(FinalDisplayValue);
 	}
+	else if (FPlayground_HealthModifier* HealthModifier = EquipmentFragment->GetHealthModifierMutable())
+	{
+		const float FinalDisplayValue = HealthModifier->GetValue() * RarityMultiplier;
+		DisplayFragment->SetValue(FinalDisplayValue);
+	}
+	else if (FPlayground_DefenseModifier* DefenseModifier = EquipmentFragment->GetDefenseModifierMutable())
+	{
+		const float FinalDisplayValue = DefenseModifier->GetValue() * RarityMultiplier;
+		DisplayFragment->SetValue(FinalDisplayValue);
+	}
 }
 
 void FPlayground_ItemManifest::PG_ClearFragments()

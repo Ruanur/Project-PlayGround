@@ -240,6 +240,36 @@ struct FPlayground_BaseDamageModifier : public FPlayground_EquipModifier
 	virtual void OnUnequip(APlayerController* PC) override;
 };
 
+USTRUCT(BlueprintType)
+struct FPlayground_HealthModifier : public FPlayground_EquipModifier
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> EquipmentEffectClass;
+
+	// 장착 중 적용된 GE Handle
+	FActiveGameplayEffectHandle ActiveEffectHandle;
+
+	virtual void OnEquip(APlayerController* PC, float RarityMultiplier) override;
+	virtual void OnUnequip(APlayerController* PC) override;
+};
+
+USTRUCT(BlueprintType)
+struct FPlayground_DefenseModifier : public FPlayground_EquipModifier
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> EquipmentEffectClass;
+
+	// 장착 중 적용된 GE Handle
+	FActiveGameplayEffectHandle ActiveEffectHandle;
+
+	virtual void OnEquip(APlayerController* PC, float RarityMultiplier) override;
+	virtual void OnUnequip(APlayerController* PC) override;
+};
+
 class APlayground_EquipActor;
 USTRUCT(BlueprintType)
 struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment
@@ -272,6 +302,32 @@ struct FPlayground_EquipmentFragment : public FPlayground_InventoryItemFragment
 			if (FPlayground_BaseDamageModifier* BaseDamageModifier = Modifier.GetMutablePtr<FPlayground_BaseDamageModifier>())
 			{
 				return BaseDamageModifier;
+			}
+		}
+
+		return nullptr;
+	}
+
+	FPlayground_HealthModifier* GetHealthModifierMutable()
+	{
+		for (auto& Modifier : EquipModifiers)
+		{
+			if (FPlayground_HealthModifier* HealthModifier = Modifier.GetMutablePtr<FPlayground_HealthModifier>())
+			{
+				return HealthModifier;
+			}
+		}
+
+		return nullptr;
+	}
+
+	FPlayground_DefenseModifier* GetDefenseModifierMutable()
+	{
+		for (auto& Modifier : EquipModifiers)
+		{
+			if (FPlayground_DefenseModifier* DefenseModifier = Modifier.GetMutablePtr<FPlayground_DefenseModifier>())
+			{
+				return DefenseModifier;
 			}
 		}
 
