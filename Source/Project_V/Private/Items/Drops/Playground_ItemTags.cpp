@@ -40,9 +40,9 @@ namespace GameItems
 		{
 			UE_DEFINE_GAMEPLAY_TAG(Necklace, "GameItems.Equipment.Necklace")
 		}
-		namespace Earring
+		namespace Artifact
 		{
-			UE_DEFINE_GAMEPLAY_TAG(Earring, "GameItems.Equipment.Earring")
+			UE_DEFINE_GAMEPLAY_TAG(Artifact, "GameItems.Equipment.Artifact")
 		}
 	}
 

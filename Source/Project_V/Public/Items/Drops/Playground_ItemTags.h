@@ -41,9 +41,9 @@ namespace GameItems
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Necklace)
 		}
-		namespace Earring
+		namespace Artifact
 		{
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Earring)
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Artifact)
 		}
 	}
 
