@@ -111,9 +111,13 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 		}
 	}
 
+	// =============
+	// 기본 피해
+	// =============
 	float DefaultDamage = BaseDamage + BonusDamage;
 
 	//피해 계산식
+	
 	// ================= 
 	// 콤보 배율
 	// =================
@@ -133,10 +137,48 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 		//Debug::Print(TEXT("ScaledBaseDamageHeavy"), BaseDamage);
 	}
 
+	// ================== 
+	// 피해 & 방어 보정
+	// ==================
+	const float SafeDefaultDamage = FMath::Max(DefaultDamage, 1.f);
+	const float SafeAttackPower = FMath::Max(SourceAttackPower, 0.1f);
+	const float SafeDefensePower = FMath::Max(TargetDefensePower, 1.f);
+
+	// ==================
+	// 튜닝 파라미터
+	// ==================
+	// 높은 기본피해 장비 우대
+	const float DamageReference = 20.f;
+	const float DamageExponent = 0.15f;
+
+	// 방어 효율 스케일링
+	const float DefenseSoftCap = 5.f;
+	const float DefenseExponent = 0.75f;
+
+	// ===============================
+	// 1. 기본 피해가 높을 수록 효율 증가
+	// ===============================
+	const float DamageScaling = FMath::Pow(SafeDefaultDamage / DamageReference, DamageExponent);
+
+	const float ScaledDamage = SafeDefaultDamage * DamageScaling;
+
+	// ===============================
+	// 2. 방어력이 높아질수록 효율 감소
+	// ===============================
+	const float EffectiveDefense = FMath::Pow(SafeDefensePower, DefenseExponent);
+
+	const float DefenseMultiplier = DefenseSoftCap / (DefenseSoftCap + EffectiveDefense);
+
+	// ===============================
+	// 3. AttackPower 조정
+	// ===============================
+	const float AttackMultiplierPerPoint = 0.1f;
+	const float AttackMultiplier = 1.f + ((SafeAttackPower - 1.f) * AttackMultiplierPerPoint);
+
 	// =============
 	// 최종 데미지
 	// =============
-	const float FinalDamageDone = DefaultDamage * SourceAttackPower / TargetDefensePower;
+	const float FinalDamageDone = ScaledDamage * AttackMultiplier * DefenseMultiplier;
 	Debug::Print(TEXT("DefaultDamage"), DefaultDamage);
 
 	if (FinalDamageDone > 0.f)
