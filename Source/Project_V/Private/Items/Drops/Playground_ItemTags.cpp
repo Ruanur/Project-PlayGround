@@ -32,6 +32,18 @@ namespace GameItems
 		{
 			UE_DEFINE_GAMEPLAY_TAG(IronBoots, "GameItems.Equipment.Boots.IronBoots")
 		}
+		namespace Ring
+		{
+			UE_DEFINE_GAMEPLAY_TAG(Ring, "GameItems.Equipment.Ring")
+		}
+		namespace Necklace
+		{
+			UE_DEFINE_GAMEPLAY_TAG(Necklace, "GameItems.Equipment.Necklace")
+		}
+		namespace Earring
+		{
+			UE_DEFINE_GAMEPLAY_TAG(Earring, "GameItems.Equipment.Earring")
+		}
 	}
 
 	namespace Consumables

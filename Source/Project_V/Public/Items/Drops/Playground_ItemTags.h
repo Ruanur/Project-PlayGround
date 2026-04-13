@@ -33,6 +33,18 @@ namespace GameItems
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(IronBoots)
 		}
+		namespace Ring
+		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ring)
+		}
+		namespace Necklace
+		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Necklace)
+		}
+		namespace Earring
+		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Earring)
+		}
 	}
 
 	namespace Consumables
