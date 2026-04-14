@@ -240,6 +240,11 @@ void UPlaygroundAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMod
 	}
 }
 
+void UPlaygroundAttributeSet::RequestBroadcastHealthUI() const
+{
+	BroadcastHealthUI();
+}
+
 void UPlaygroundAttributeSet::ShowFloatingText(const FGameplayEffectModCallbackData& Data, float Damage) const
 {
 	if (Damage <= 0.f) return;

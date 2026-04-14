@@ -22,6 +22,7 @@
 #include "Controllers/PlayGroundPlayerController.h"
 #include "Widgets/Spatial/Playground_InventoryGrid.h"
 #include "QuickSlot/Playground_QuickSlotComponent.h"
+#include "AbilitySystem/PlaygroundAttributeSet.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -239,6 +240,42 @@ void APlaygroundPlayerCharacter::Input_UseQuickSlot4(const FInputActionValue& Va
 		PlaygroundGameplayTags::Player_Event_QuickSlot_4, Data
 	);
 	//UseQuickSlot(3); 
+}
+
+void APlaygroundPlayerCharacter::RestoreFullHealthAfterEquipmentLoad()
+{
+	if (HasAuthority())
+	{
+		RestoreFullHealthAfterEquipmentLoad_Internal();
+	}
+	else
+	{
+		Server_RestoreFullHealthAfterEquipmentLoad();
+	}
+}
+
+void APlaygroundPlayerCharacter::Server_RestoreFullHealthAfterEquipmentLoad_Implementation()
+{
+	RestoreFullHealthAfterEquipmentLoad_Internal();
+}
+
+void APlaygroundPlayerCharacter::RestoreFullHealthAfterEquipmentLoad_Internal()
+{
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(this);
+	if (!ASC) return;
+
+	const UPlaygroundAttributeSet* AttributeSet = ASC->GetSet<UPlaygroundAttributeSet>();
+	if (!AttributeSet) return;
+
+	const float MaxHealthValue = AttributeSet->GetMaxHealth();
+
+	//Debug::Print(FString::Printf(TEXT("Before Restore | Current=%.2f Max=%.2f"), AttributeSet->GetCurrentHealth(), AttributeSet->GetMaxHealth()));
+	ASC->SetNumericAttributeBase(UPlaygroundAttributeSet::GetCurrentHealthAttribute(), MaxHealthValue);
+	//Debug::Print(FString::Printf(TEXT("After Restore | TargetCurrent=%.2f"), MaxHealthValue));
+
+	AttributeSet->RequestBroadcastHealthUI();
+
+	Debug::Print(TEXT("Restore Full Health After Equipment Load"));
 }
 
 void APlaygroundPlayerCharacter::InventoryToggle()

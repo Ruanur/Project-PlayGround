@@ -18,6 +18,7 @@
 #include "SaveGame/PlaygroundSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 #include "Inventory/Save/Playground_FInventorySlotInfo.h"
+#include "Characters/PlaygroundPlayerCharacter.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -375,6 +376,18 @@ void UPlayground_SpatialInventory::LoadEquipment()
 
 	EquipmentSlots = CurrentSaveGame->SavedEquipmentSlots;
 	RestoreFromEquippedSlotInfos();
+
+	//
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+			{
+				APlaygroundPlayerCharacter* PlayerCharacter = Cast<APlaygroundPlayerCharacter>(GetOwningPlayerPawn());
+				if (!IsValid(PlayerCharacter)) return;
+
+				PlayerCharacter->RestoreFullHealthAfterEquipmentLoad();
+			});
+	}
 }
 
 void UPlayground_SpatialInventory::GetEquippedSlotInfos(TArray<FEquippedSlotInfo>& OutInfos) const
@@ -534,6 +547,8 @@ void UPlayground_SpatialInventory::RestoreFromEquippedSlotInfos()
 			InventoryComponent->OnItemEquipped.Broadcast(InvItem);
 		}
 	}
+
+
 	Debug::Print(TEXT(" === Equipment Restore Complete === "), FColor::Green);
 }
 
@@ -549,7 +564,6 @@ UPlayground_EquippedGridSlot* UPlayground_SpatialInventory::FindEquippedGridSlot
 
 	return FoundSlot ? *FoundSlot : nullptr;
 }
-
 
 void UPlayground_SpatialInventory::ShowEquippedItemDescription(UPlayground_InventoryItem* Item)
 {

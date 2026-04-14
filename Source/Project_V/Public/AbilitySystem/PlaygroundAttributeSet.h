@@ -30,6 +30,7 @@ public:
 
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
+	void RequestBroadcastHealthUI() const;
 
 	// Health
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
@@ -71,6 +72,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData BonusDamage;
 	ATTRIBUTE_ACCESSORS(UPlaygroundAttributeSet, BonusDamage)
+
 
 private:
 	TWeakInterfacePtr<IPawnUIInterface> CachedPawnUIInterface;

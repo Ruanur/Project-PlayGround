@@ -169,4 +169,18 @@ private:
 public:
 	FORCEINLINE UPlayerCombatComponent* GetPlayerCombatComponent() const { return PlayerCombatComponent; }
 
+
+#pragma region RecoverdHealth
+
+public:
+	void RestoreFullHealthAfterEquipmentLoad();
+
+protected:
+	UFUNCTION(Server, Reliable)
+	void Server_RestoreFullHealthAfterEquipmentLoad();
+
+private:
+	void RestoreFullHealthAfterEquipmentLoad_Internal();
+
+#pragma endregion
 };
