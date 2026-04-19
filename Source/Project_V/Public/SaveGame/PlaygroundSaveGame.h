@@ -27,6 +27,24 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	float SavedLookSensitivityPitch = 1.0f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Audio")
+	float MasterVolume = 1.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Audio")
+	float BGMVolume = 1.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Audio")
+	float SFXVolume = 1.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Audio")
+	float UIVolume = 1.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Audio")
+	FString SlotName = TEXT("AudioSettings");
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Audio")
+	int32 UserIndex = 0;
+
 	UPROPERTY(SaveGame)
 	TArray<FInventorySlotInfo> SavedEquippable;
 
