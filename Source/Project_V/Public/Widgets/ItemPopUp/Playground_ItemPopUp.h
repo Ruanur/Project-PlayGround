@@ -12,9 +12,11 @@
  */
 class UButton;
 class USlider;
+class UCanvasPanel;
 class UTextBlock;
 class USizeBox;
 class UPlayground_QuickSlotWidget;
+
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FPopUpMenuSplit, int32, SplitAmount, int32, Index);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FPopUpMenuDrop, int32, Index);
@@ -50,6 +52,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "QuickSlot")
 	TSubclassOf<UPlayground_QuickSlotWidget> QuickSlotSelectWidgetClass;
 
+	void SetOwningCanvas(UCanvasPanel* InCanvas) { OwningCanvasPanel = InCanvas; }
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> Button_Split;
@@ -72,8 +76,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> Button_AssignQuick;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, Category = "Inventory|QuickSlot")
 	TObjectPtr<UPlayground_QuickSlotWidget> QuickSlotSelectWidget;
+
+	TObjectPtr<UCanvasPanel> OwningCanvasPanel;
+
 
 	int32 GridIndex{INDEX_NONE};
 

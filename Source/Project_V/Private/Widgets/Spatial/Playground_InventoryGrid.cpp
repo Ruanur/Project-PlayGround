@@ -1040,6 +1040,8 @@ void UPlayground_InventoryGrid::PG_CreateItemPopUp(const int32 GridIndex)
 	ItemPopUp = CreateWidget<UPlayground_ItemPopUp>(this, ItemPopUpClass);
 	GridSlots[GridIndex]->SetItemPopUp(ItemPopUp);
 
+	ItemPopUp->SetOwningCanvas(OwningCanvasPanel.Get());
+
 	OwningCanvasPanel->AddChild(ItemPopUp);
 	UCanvasPanelSlot* CanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(ItemPopUp);
 	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetOwningPlayer());

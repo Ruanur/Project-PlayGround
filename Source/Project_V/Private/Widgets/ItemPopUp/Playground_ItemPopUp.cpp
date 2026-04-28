@@ -7,7 +7,10 @@
 #include "Components/Slider.h"
 #include "Components/TextBlock.h"
 #include "Components/SizeBox.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "QuickSlot/Playground_QuickSlotWidget.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 #include "PlaygroundDebugHelper.h"
 
@@ -124,6 +127,31 @@ void UPlayground_ItemPopUp::PG_AssignQuickButtonClicked()
 
 	QuickSlotSelectWidget->OnPicked.BindDynamic(this, &ThisClass::PG_OnQuickSlotPicked);
 
+	if (OwningCanvasPanel)
+	{
+		OwningCanvasPanel->AddChild(QuickSlotSelectWidget);
+
+		if (UCanvasPanelSlot* QSCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(QuickSlotSelectWidget))
+		{
+			QSCanvasSlot->SetAutoSize(true);
+			QSCanvasSlot->SetAnchors(FAnchors(0.f, 0.f));
+			QSCanvasSlot->SetAlignment(FVector2D(0.f, 0.f));
+			QSCanvasSlot->SetZOrder(10000);
+
+			// 팝업 자기 자신의 캔버스 위치 기준으로 옆에 띄우기
+			FVector2D PopupPos(0.f, 0.f);
+			if (UCanvasPanelSlot* PopupCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this))
+			{
+				PopupPos = PopupCanvasSlot->GetPosition();
+			}
+
+			// 팝업 오른쪽에 살짝 띄우기 (원하면 오프셋 조절)
+			const FVector2D Offset(20.f, 0.f);
+			QSCanvasSlot->SetPosition(PopupPos + Offset);
+		}
+		return;
+	}
+	//fallback : 캔버스 못찾으면 viewport로 띄움 (미설정시)
 	QuickSlotSelectWidget->AddToViewport(9999);
 }
 
