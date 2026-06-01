@@ -35,6 +35,8 @@ public:
 		return InputTag.IsValid() && InputAction;
 	}
 };
+
+
 // -----------------------------
 // 입력 설정을 Data Asset으로 관리하는 클래스
 // -----------------------------
