@@ -29,10 +29,12 @@
  
 APlaygroundPlayerCharacter::APlaygroundPlayerCharacter()
 {
+	// 캐릭터 충돌 캡슐 크기 설정
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 
 	//컨트롤러의 회전을 캐릭터에 적용하지 않음
-	//움직이는 방향으로 캐릭터가 회전하도록 설정
+	// 움직이는 방향으로 캐릭터가 회전하도록 설정
+	// 즉, 마우스를 움직여도 캐릭터의 몸통이 즉시 회전하지 않는다.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
@@ -59,14 +61,19 @@ APlaygroundPlayerCharacter::APlaygroundPlayerCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-	//Combat Component 추가
+	// Combat Component 추가
+	// 공격, 타겟팅, 무기 처리 등 플레이어 전투 관련 기능 담당
 	PlayerCombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("PlayerCombatComponent"));
 
+	// 플레이어 전용 ui 컴포넌트 생성
+	// HUD, 체력바 등 플레이어 UI 데이터 전달에 사용
 	PlayerUIComponent = CreateDefaultSubobject<UPlayerUIComponent>(TEXT("PlayerUIComponent"));
 }
 
 UPawnCombatComponent* APlaygroundPlayerCharacter::GetPawnCombatComponent() const
 {
+	// IPawnCombatInterface를 통해 외부 시스템이 전투 컴포넌트에 접근할 수 있게 함.
+	// 구체 클래스인 APlaygroundPlayerCharacter에 직접 의존하지 않게 만드는 구조
 	return PlayerCombatComponent;
 }
 
@@ -81,7 +88,8 @@ UPlayerUIComponent* APlaygroundPlayerCharacter::GetPlayerUIComponent() const
 }
 
 
-//플레이어가 Controller에 의해 소유될 때 호출
+// 플레이어가 Controller에 의해 소유될 때 호출
+// 서버에서 ASC 초기화, Ability 부여, Attribute 초기화 등을 처리하기 좋은 시점
 void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -90,10 +98,15 @@ void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
 	//플레이어 시작 시 어빌리티, 애트리뷰트 부여
 	if (!CharacterStartUpData.IsNull())
 	{
+		// 동기 로드, StartUpData 즉시 불러옴
 		if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous())
 		{
+			// Ability나 Attribute를 적용할 레벨
+			// 난이도에 따라 다르게 적용하기 위함, 즉 보정치
 			int32 AbilityApplyLevel = 1;
 
+			// 현재 GameMode에서 난이도를 가져옴
+			// GetAuthGameMode는 서버 권한에서만 유효함.
 			if (APlaygroundGameModeBase* BaseGameMode = GetWorld()->GetAuthGameMode<APlaygroundGameModeBase>())
 			{
 				switch (BaseGameMode->GetCurrentGameDifficulty())
@@ -123,25 +136,65 @@ void APlaygroundPlayerCharacter::PossessedBy(AController* NewController)
 				}
 			}
 
+			// StartUpData에 정의된 Ability, Attribute, Effect 등을
+			// PlaygroundAbilitySytstemComponent에 부여함
 			LoadedData->GiveToAbilitySystemComponent(PlaygroundAbilitySystemComponent, AbilityApplyLevel);
 		}
 	}
 }
 
-//입력 바인딩 - Enhanced Input System
+// 입력 바인딩 - Enhanced Input System
+// Unreal이 Pawn InputComponent를 준비한 뒤 호출한다.
 void APlaygroundPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	// 입력 설정 DataAsset이 반드지 지정되어야 함.
+	// 이 DataAsset 안에 MappingContext와 InputTag -> InputAction 매핑 정보 들어있음
 	checkf(InputConfigDataAsset, TEXT("Forgot to assign a valid data asset as input config"));
+
+	// 현재 캐릭터를 조종하는 PlayerController의 LocalPlayer를 가져옴
 	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
 
+	// Enhanced Input은 LocalPlayer SubSystem에 MappingContext를 등록해야 작동함
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
 
 	check(Subsystem);
 
+	// DataAsset에 지정된 기본 MappingContext를 이 플레이어에게 등록한다.
+	//
+	// Ex.
+	// IMC_Player 안에
+	// WASD → IA_Move
+	// Mouse → IA_Look
+	// E → IA_Interact
+	// 1 → IA_QuickSlot1
+	// 같은 매핑이 포함되어 있음
 	Subsystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
 
+	// Unreal이 넘겨준 기본 UInputComponent를
+	// 프로젝트 전용 UPlaygroundInputComponent로 캐스팅한다.
+	//
+	// 이 캐스팅이 성공해야 아래의
+	// BindNativeInputAction()
+	// BindAbilityInputAction()
+	// 을 사용할 수 있다.
+	//
+	// 주의:
+	// 실제 InputComponent 클래스가 UPlaygroundInputComponent가 아니라면
+	// CastChecked에서 런타임 에러가 발생한다.
 	UPlaygroundInputComponent* PlaygroundInputComponent = CastChecked<UPlaygroundInputComponent>(PlayerInputComponent);
 
+
+	// =========================
+	// Native Input 바인딩
+	// =========================
+	//
+	// Native Input은 캐릭터가 직접 처리하는 입력이다.
+	// 이동, 시점, 상호작용, 퀵슬롯처럼 캐릭터 함수로 바로 연결된다.
+	//
+	// 내부 흐름:
+	// InputTag_Move
+	// → InputConfigDataAsset에서 해당 태그의 InputAction 검색
+	// → 찾은 InputAction의 Triggered 이벤트에 Input_Move 함수 바인딩
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
 	PlaygroundInputComponent->BindNativeInputAction(InputConfigDataAsset, PlaygroundGameplayTags::InputTag_Look, ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
 

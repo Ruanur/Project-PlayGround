@@ -13,6 +13,8 @@
  * DataAsset_InputConfig에 등록된 GameplayTag -> InputAction 매핑을 찾아 입력 함수 연결
  * 일반 입력과 Ability 입력을 구분하여 바인딩할 수 있도록 하기 위함
  * GAS/GameplayTag 기반 입력 구조 최적화
+ * 
+ * Project Setting -> Input Component 해당 컴포넌트로 설정 필요
  */
 UCLASS()
 class PROJECT_V_API UPlaygroundInputComponent : public UEnhancedInputComponent
